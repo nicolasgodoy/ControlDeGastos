@@ -19,6 +19,7 @@ const reclaim = async () => {
     console.log(`Reclaiming debts for user: ${userId}...`);
 
     const q = collection(db, 'debts');
+
     const snapshot = await getDocs(q);
 
     let count = 0;
