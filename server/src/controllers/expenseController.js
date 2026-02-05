@@ -79,3 +79,36 @@ export const deleteExpense = (req, res) => {
         res.status(500).json({ message: 'Error deleting expense' });
     }
 };
+export const updateExpense = (req, res) => {
+    try {
+        const { id } = req.params;
+        const { description, amount, category, date } = req.body;
+
+        const p = ensureExpensesFile();
+        const data = fs.readFileSync(p, 'utf8');
+        let expenses = JSON.parse(data || '[]');
+
+        const index = expenses.findIndex(e => e.id === id);
+
+        if (index === -1) {
+            return res.status(404).json({ message: 'Expense not found' });
+        }
+
+        const updatedExpense = {
+            ...expenses[index],
+            description: description || expenses[index].description,
+            amount: amount ? parseFloat(amount) : expenses[index].amount,
+            category: category || expenses[index].category,
+            date: date || expenses[index].date,
+            updatedAt: new Date().toISOString()
+        };
+
+        expenses[index] = updatedExpense;
+        fs.writeFileSync(p, JSON.stringify(expenses, null, 2));
+
+        res.json(updatedExpense);
+    } catch (error) {
+        console.error('Error updating expense:', error);
+        res.status(500).json({ message: 'Error updating expense' });
+    }
+};

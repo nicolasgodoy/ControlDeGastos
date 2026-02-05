@@ -1,0 +1,2012 @@
+[
+  {
+    "id": "ICBC-136",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-03-06",
+    "amount": 35630.21,
+    "status": "paid",
+    "installments_paid": 0,
+    "installments_total": 0
+  },
+  {
+    "id": "UALA-73",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-03-07",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-74",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-03-07",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-139",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-03-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-140",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-03-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-137",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-03-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-138",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-03-21",
+    "amount": 20.22887,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-75",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-04-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-76",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-04-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-141",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-04-06",
+    "amount": 35630.21,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-37",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-04-07",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-38",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-04-07",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-39",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-04-07",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-144",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-04-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-145",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-04-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-142",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-04-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-143",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-04-21",
+    "amount": 20.22888,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-40",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-05-05",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-41",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-05-05",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-42",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-05-05",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-77",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-05-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-78",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-05-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-146",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-05-06",
+    "amount": 35630.21,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-149",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-05-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-150",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-05-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-147",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-05-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-148",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-05-21",
+    "amount": 20.22889,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-43",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-06-05",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-44",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-06-05",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-45",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-06-05",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-151",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-06-06",
+    "amount": 35630.21,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-79",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-06-07",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-80",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-06-07",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-154",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-06-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-155",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-06-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-152",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-06-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-153",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-06-21",
+    "amount": 20.2289,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-81",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-07-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-82",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-07-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-156",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-07-06",
+    "amount": 35630.21,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-46",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-07-07",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-47",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-07-07",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-48",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-07-07",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-159",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-07-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-160",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-07-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-157",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-07-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-158",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-07-21",
+    "amount": 20.22891,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-49",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-08-05",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-50",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-08-05",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-51",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-08-05",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-83",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-08-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-84",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-08-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-161",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-08-06",
+    "amount": 35630.21,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-164",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-08-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-165",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-08-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-162",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-08-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-163",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-08-21",
+    "amount": 20.22892,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-97",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-09-02",
+    "amount": 39493,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-52",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-09-05",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-53",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-09-05",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-54",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-09-05",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-85",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-09-06",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-86",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-09-06",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-166",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-09-06",
+    "amount": 35630.21,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-1",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-09-10",
+    "amount": 75017.65,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-2",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-09-10",
+    "amount": 71593.93,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-3",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-09-10",
+    "amount": 70744.65,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-169",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-09-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-170",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-09-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-4",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-09-12",
+    "amount": 59912.56,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-5",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 5",
+    "date": "2025-09-15",
+    "amount": 59912.56,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-167",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-09-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-168",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-09-21",
+    "amount": 20.22893,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-87",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-10-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-88",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-10-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-55",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-10-06",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-56",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-10-06",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-57",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-10-06",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-171",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-10-06",
+    "amount": 34172.03,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-174",
+    "entity": "ICBC",
+    "loanName": "TARJETA",
+    "date": "2025-10-10",
+    "amount": 54999.68,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-175",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-10-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-176",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-10-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-6",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-10-13",
+    "amount": 82244.23,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-7",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-10-13",
+    "amount": 81833.57,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-8",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-10-13",
+    "amount": 81729.09,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-9",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-10-13",
+    "amount": 69963.33,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-11",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 6",
+    "date": "2025-10-13",
+    "amount": 78715.6,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-98",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-10-13",
+    "amount": 39493,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-99",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-10-13",
+    "amount": 164493.93,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-100",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-10-13",
+    "amount": 44734.51,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-101",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-10-13",
+    "amount": 4601,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-10",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 5",
+    "date": "2025-10-15",
+    "amount": 69963.33,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-172",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-10-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-173",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-10-21",
+    "amount": 20.22893,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-58",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-11-05",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-59",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-11-05",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-60",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-11-05",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-89",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2025-11-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-90",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2025-11-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-177",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-11-06",
+    "amount": 33924.95,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-180",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-11-06",
+    "amount": 78760,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-12",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-11-10",
+    "amount": 81312.23,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-13",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-11-10",
+    "amount": 80906.57,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-14",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-11-10",
+    "amount": 80803.27,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-17",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 6",
+    "date": "2025-11-10",
+    "amount": 72036.5,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-181",
+    "entity": "ICBC",
+    "loanName": "TARJETA",
+    "date": "2025-11-10",
+    "amount": 54999.68,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-182",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-11-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-183",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-11-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-102",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-11-11",
+    "amount": 39493,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-15",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-11-12",
+    "amount": 69170.79,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-103",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-11-13",
+    "amount": 164493.93,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-104",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-11-13",
+    "amount": 44734.51,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-105",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-11-13",
+    "amount": 4601,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-16",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 5",
+    "date": "2025-11-17",
+    "amount": 69170.79,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-178",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-11-21",
+    "amount": 16300.1,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-179",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-11-21",
+    "amount": 20.22894,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-61",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2025-12-05",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-62",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2025-12-05",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-63",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2025-12-05",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-184",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-12-06",
+    "amount": 33666.26,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-187",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-12-06",
+    "amount": 78760,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-18",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 1",
+    "date": "2025-12-10",
+    "amount": 80298.62,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-19",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-12-10",
+    "amount": 79897.68,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-20",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-12-10",
+    "amount": 79795.67,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-23",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 6",
+    "date": "2025-12-10",
+    "amount": 71220.47,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-188",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-12-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-189",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2025-12-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-21",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-12-12",
+    "amount": 68308.24,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-106",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-12-13",
+    "amount": 164493.93,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-107",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-12-13",
+    "amount": 44734.51,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-108",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2025-12-13",
+    "amount": 4601,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-22",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 5",
+    "date": "2025-12-15",
+    "amount": 68308.24,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-185",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2025-12-21",
+    "amount": 15900.38,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-186",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2025-12-21",
+    "amount": 19800.38,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-64",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2026-01-05",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-65",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2026-01-05",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-66",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2026-01-05",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-93",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2026-01-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-94",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2026-01-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-190",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2026-01-06",
+    "amount": 33397.26,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-193",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-01-06",
+    "amount": 78760,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-234",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-01-06",
+    "amount": 78760,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-194",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2026-01-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-195",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2026-01-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-24",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 1",
+    "date": "2026-01-12",
+    "amount": 79195.1,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-25",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-01-12",
+    "amount": 78799.68,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-26",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-01-12",
+    "amount": 78699.06,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-27",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-01-12",
+    "amount": 67369.5,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-28",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 5",
+    "date": "2026-01-12",
+    "amount": 67369.5,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-29",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 6",
+    "date": "2026-01-12",
+    "amount": 70332.37,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-109",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-01-13",
+    "amount": 164493.93,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-110",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-01-13",
+    "amount": 44734.51,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-111",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-01-13",
+    "amount": 4601,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-191",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-01-21",
+    "amount": 15900.38,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-192",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-01-21",
+    "amount": 19800.38,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-67",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2026-02-05",
+    "amount": 65962.75,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-68",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2026-02-05",
+    "amount": 67876.68,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-69",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2026-02-05",
+    "amount": 71439.65,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-95",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2026-02-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-96",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2026-02-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-196",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 1",
+    "date": "2026-02-06",
+    "amount": 33115.72,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-199",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-02-06",
+    "amount": 78760,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-237",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-02-06",
+    "amount": 78760,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-30",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 1",
+    "date": "2026-02-10",
+    "amount": 77994.08,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-31",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-02-10",
+    "amount": 77604.65,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-32",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-02-10",
+    "amount": 77505.58,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-33",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-02-10",
+    "amount": 66347.82,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-34",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 5",
+    "date": "2026-02-10",
+    "amount": 66347.82,
+    "status": "paid"
+  },
+  {
+    "id": "GALICIA-35",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 6",
+    "date": "2026-02-10",
+    "amount": 69365.81,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-200",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2026-02-10",
+    "amount": 40070.71,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-201",
+    "entity": "ICBC",
+    "loanName": "TARJETA(Adelante Efectivo no prestamos)",
+    "date": "2026-02-10",
+    "amount": 14883.41,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-112",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-02-13",
+    "amount": 164493.93,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-113",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-02-13",
+    "amount": 44734.51,
+    "status": "paid"
+  },
+  {
+    "id": "MERCADO PAGO-114",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-02-13",
+    "amount": 4601,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-197",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-02-21",
+    "amount": 15900.38,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-198",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-02-21",
+    "amount": 19800.38,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-70",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 1 - 500.000",
+    "date": "2026-03-05",
+    "amount": 65962.75,
+    "status": "pending"
+  },
+  {
+    "id": "UALA-71",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 2   -   500.000",
+    "date": "2026-03-05",
+    "amount": 67876.68,
+    "status": "pending"
+  },
+  {
+    "id": "UALA-72",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 3   -  500.000",
+    "date": "2026-03-05",
+    "amount": 71439.65,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-204",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-03-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "GALICIA-36",
+    "entity": "GALICIA",
+    "loanName": "PRESTAMO 6",
+    "date": "2026-03-10",
+    "amount": 77994.08,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-115",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-03-13",
+    "amount": 164493.93,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-116",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-03-13",
+    "amount": 44734.51,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-117",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-03-13",
+    "amount": 4601,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-202",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-03-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-203",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-03-21",
+    "amount": 19800.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-207",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-04-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-118",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-04-13",
+    "amount": 164493.93,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-119",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-04-13",
+    "amount": 44734.51,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-120",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-04-13",
+    "amount": 4601,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-205",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-04-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-206",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-04-21",
+    "amount": 19800.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-210",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-05-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-121",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-05-13",
+    "amount": 164493.93,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-122",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-05-13",
+    "amount": 44734.51,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-123",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-05-13",
+    "amount": 4601,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-208",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-05-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-209",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-05-21",
+    "amount": 19800.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-213",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-06-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-124",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-06-13",
+    "amount": 164493.93,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-125",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-06-13",
+    "amount": 44734.51,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-126",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-06-13",
+    "amount": 4601,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-211",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-06-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-212",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-06-21",
+    "amount": 19800.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-216",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-07-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-127",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-07-13",
+    "amount": 164493.93,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-128",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-07-13",
+    "amount": 44734.51,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-129",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-07-13",
+    "amount": 4601,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-214",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-07-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-215",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-07-21",
+    "amount": 19800.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-219",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-08-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-130",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-08-13",
+    "amount": 164493.93,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-131",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-08-13",
+    "amount": 44734.51,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-132",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-08-13",
+    "amount": 4601,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-217",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-08-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-218",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-08-21",
+    "amount": 19800.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-222",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-09-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-133",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-09-13",
+    "amount": 164493.93,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-134",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-09-13",
+    "amount": 44734.51,
+    "status": "pending"
+  },
+  {
+    "id": "MERCADO PAGO-135",
+    "entity": "MERCADO PAGO",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-09-13",
+    "amount": 4601,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-220",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-09-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-221",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-09-21",
+    "amount": 19800.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-225",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-10-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-223",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-10-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-224",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-10-21",
+    "amount": 19800.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-228",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-11-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-226",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-11-21",
+    "amount": 15900.38,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-227",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-11-21",
+    "amount": 18800.31,
+    "status": "pending"
+  },
+  {
+    "id": "UALA-91",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 4  -  500.000",
+    "date": "2026-12-05",
+    "amount": 72684.23,
+    "status": "paid"
+  },
+  {
+    "id": "UALA-92",
+    "entity": "UALA",
+    "loanName": "PRESTAMO 5  -  500.000",
+    "date": "2026-12-05",
+    "amount": 72891.23,
+    "status": "paid"
+  },
+  {
+    "id": "ICBC-231",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2026-12-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-229",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2026-12-21",
+    "amount": 14900.28,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-230",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2026-12-21",
+    "amount": 18800.31,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-232",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2027-01-21",
+    "amount": 14900.28,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-233",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2027-01-21",
+    "amount": 18800.31,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-235",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2027-02-21",
+    "amount": 14900.28,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-236",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2027-02-21",
+    "amount": 18800.31,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-240",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-03-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-238",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2027-03-21",
+    "amount": 14900.28,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-239",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2027-03-21",
+    "amount": 18800.31,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-243",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-04-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-241",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 2",
+    "date": "2027-04-21",
+    "amount": 14900.28,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-242",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 3",
+    "date": "2027-04-21",
+    "amount": 18800.31,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-244",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-05-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-245",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-06-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-246",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-07-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-247",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-08-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-248",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-09-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-249",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-10-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-250",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-11-06",
+    "amount": 78760,
+    "status": "pending"
+  },
+  {
+    "id": "ICBC-251",
+    "entity": "ICBC",
+    "loanName": "PRESTAMO 4",
+    "date": "2027-12-06",
+    "amount": 78760,
+    "status": "pending"
+  }
+]

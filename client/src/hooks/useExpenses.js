@@ -1,31 +1,63 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { db } from '../firebase';
+import { useAuth } from '../context/AuthContext';
+import {
+    collection,
+    query,
+    orderBy,
+    onSnapshot,
+    addDoc,
+    deleteDoc,
+    updateDoc,
+    doc,
+    serverTimestamp,
+    where
+} from 'firebase/firestore';
 
 export const useExpenses = () => {
     const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    const fetchExpenses = async () => {
-        try {
-            const response = await axios.get('/api/expenses');
-            setExpenses(response.data);
-            setError(null);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { user } = useAuth();
 
     useEffect(() => {
-        fetchExpenses();
-    }, []);
+        if (!user) {
+            setExpenses([]);
+            setLoading(false);
+            return;
+        }
+
+        const q = query(
+            collection(db, 'expenses'),
+            where('userId', '==', user.uid),
+            orderBy('date', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const expenseData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setExpenses(expenseData);
+            setLoading(false);
+            setError(null);
+        }, (err) => {
+            console.error('Error fetching expenses:', err);
+            setError(err.message);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [user]);
 
     const addExpense = async (expenseData) => {
+        if (!user) return { success: false, error: 'User not authenticated' };
         try {
-            const response = await axios.post('/api/expenses', expenseData);
-            setExpenses(prev => [response.data, ...prev]); // Add to top
+            await addDoc(collection(db, 'expenses'), {
+                ...expenseData,
+                userId: user.uid,
+                createdAt: serverTimestamp()
+            });
             return { success: true };
         } catch (err) {
             console.error('Error adding expense:', err);
@@ -35,8 +67,7 @@ export const useExpenses = () => {
 
     const deleteExpense = async (id) => {
         try {
-            await axios.delete(`/api/expenses/${id}`);
-            setExpenses(prev => prev.filter(e => e.id !== id));
+            await deleteDoc(doc(db, 'expenses', id));
             return { success: true };
         } catch (err) {
             console.error('Error deleting expense:', err);
@@ -44,5 +75,15 @@ export const useExpenses = () => {
         }
     };
 
-    return { expenses, loading, error, addExpense, deleteExpense, refreshExpenses: fetchExpenses };
+    const updateExpense = async (id, updatedData) => {
+        try {
+            await updateDoc(doc(db, 'expenses', id), updatedData);
+            return { success: true };
+        } catch (err) {
+            console.error('Error updating expense:', err);
+            return { success: false, error: err.message };
+        }
+    };
+
+    return { expenses, loading, error, addExpense, deleteExpense, updateExpense, refreshExpenses: () => { } };
 };
