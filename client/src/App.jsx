@@ -235,6 +235,39 @@ function AppContent() {
                 message="Esta acción eliminará el gasto permanentemente."
             />
 
+            {/* Bottom Mobile Navigation */}
+            <nav className="bottom-nav">
+                <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <LayoutDashboard size={24} />
+                </NavLink>
+                <NavLink to="/gastos" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <Wallet size={24} />
+                </NavLink>
+
+                {location.pathname === '/gastos' && (
+                    <div style={{ position: 'relative', top: '-24px' }}>
+                        <button
+                            onClick={() => { setEditingExpense(null); setModalOpen(true); }}
+                            style={{
+                                width: '56px', height: '56px', borderRadius: '50%',
+                                background: 'var(--primary)', border: '4px solid #141419',
+                                color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.5)', cursor: 'pointer'
+                            }}
+                        >
+                            <PlusCircle size={28} />
+                        </button>
+                    </div>
+                )}
+
+                <NavLink to="/deudas" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <CreditCard size={24} />
+                </NavLink>
+                <NavLink to="/juntadas" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <Users size={24} />
+                </NavLink>
+            </nav>
+
             <Toast
                 show={toast.show}
                 message={toast.message}

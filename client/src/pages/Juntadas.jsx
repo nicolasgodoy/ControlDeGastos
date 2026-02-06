@@ -216,7 +216,7 @@ function Juntadas() {
 
     return (
         <div className="page-content" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h2>Juntadas con los pibes/as</h2>
                     <p style={{ color: 'var(--text-dim)' }}>Divisor de gastos (ahora con detalle de consumos)</p>

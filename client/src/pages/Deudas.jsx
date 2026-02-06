@@ -33,12 +33,37 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
         }
     }, [statusModal]);
 
+    // --- Pagination & Filtering State ---
+    const [entityFilter, setEntityFilter] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(10);
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter, entityFilter]);
+
     if (loading) return <p>Cargando deudas...</p>;
 
+    // 1. Get Unique Entities for Dropdown
+    const uniqueEntities = [...new Set(debts.map(d => d.entity))].sort();
+
+    // 2. Apply Filters
     const filteredDebts = debts.filter(d => {
-        if (filter === 'all') return true;
-        return d.status === filter;
+        // Status Filter
+        if (filter !== 'all' && d.status !== filter) return false;
+        // Entity Filter
+        if (entityFilter !== 'all' && d.entity !== entityFilter) return false;
+        return true;
     });
+
+    // 3. Pagination Logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentDebts = filteredDebts.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredDebts.length / itemsPerPage);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const handleSaveDebt = async (data) => {
         let result = { success: true };
@@ -93,9 +118,8 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
 
     return (
         <div className="fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ fontWeight: '700', margin: 0 }}>Mis Deudas</h2>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                     <input
                         type="file"
                         id="excel-upload"
@@ -107,6 +131,7 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                         className="action-btn"
                         onClick={() => document.getElementById('excel-upload').click()}
                         style={{ padding: '0.65rem 1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                        title="Importar desde Excel"
                     >
                         Importar Excel
                     </button>
@@ -120,33 +145,63 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                 </div>
             </div>
 
-            {/* Filter Tabs */}
-            <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            {/* Filter Bar */}
+            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', background: 'var(--card-bg)', padding: '1rem', borderRadius: '1rem', border: '1px solid var(--glass-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-dim)', fontSize: '0.9rem' }}>
+                    <Filter size={18} />
+                    <span>Filtros:</span>
+                </div>
+
+                {/* Status Filter */}
                 <div className="filter-tabs">
                     <button
                         className={filter === 'all' ? 'active' : ''}
                         onClick={() => setFilter('all')}
                     >
-                        Todas ({debts.length})
+                        Todas
                     </button>
                     <button
                         className={filter === 'pending' ? 'active' : ''}
                         onClick={() => setFilter('pending')}
                     >
-                        Pendientes ({debts.filter(d => d.status === 'pending').length})
+                        Pendientes
                     </button>
                     <button
                         className={filter === 'paid' ? 'active' : ''}
                         onClick={() => setFilter('paid')}
                     >
-                        Pagadas ({debts.filter(d => d.status === 'paid').length})
+                        Pagadas
                     </button>
                 </div>
+
+                <div style={{ width: '1px', height: '24px', background: 'var(--glass-border)', margin: '0 0.5rem' }}></div>
+
+                {/* Entity Filter */}
+                <select
+                    value={entityFilter}
+                    onChange={e => setEntityFilter(e.target.value)}
+                    style={{
+                        padding: '0.5rem 1rem',
+                        borderRadius: '0.75rem',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid var(--glass-border)',
+                        color: 'var(--text-main)',
+                        fontSize: '0.9rem',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        maxWidth: '200px'
+                    }}
+                >
+                    <option value="all">Todas las Entidades</option>
+                    {uniqueEntities.map(entity => (
+                        <option key={entity} value={entity}>{entity}</option>
+                    ))}
+                </select>
             </div>
 
             <div className="glass-card">
                 <div className="debts-table">
-                    <div className="table-header deudas-grid" style={{ gridTemplateColumns: '1.5fr 1.5fr 1fr 1fr 1fr 100px' }}>
+                    <div className="table-header deudas-grid">
                         <span>Entidad</span>
                         <span>Préstamo</span>
                         <span>Vencimiento</span>
@@ -155,13 +210,13 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                         <span>Acciones</span>
                     </div>
                     <div className="table-body">
-                        {filteredDebts.length === 0 ? (
+                        {currentDebts.length === 0 ? (
                             <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-dim)' }}>
                                 No hay deudas encontradas.
                             </div>
                         ) : (
-                            filteredDebts.map(debt => (
-                                <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''}`} style={{ gridTemplateColumns: '1.5fr 1.5fr 1fr 1fr 1fr 100px' }}>
+                            currentDebts.map(debt => (
+                                <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''}`}>
                                     <span style={{ fontWeight: '500', color: 'var(--text-main)' }}>{debt.entity}</span>
                                     <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{debt.loanName}</span>
                                     <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>
@@ -171,7 +226,11 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                                         ${debt.amount.toLocaleString('es-AR')}
                                     </span>
                                     <span>
-                                        <span className={`status ${debt.status}`}>
+                                        <span className={`status ${debt.status}`} style={{
+                                            width: '100%',
+                                            display: 'inline-block', // Ensure it respects width
+                                            textAlign: 'center'
+                                        }}>
                                             {debt.status === 'pending' ? 'Pendiente' : 'Pagado'}
                                         </span>
                                     </span>
@@ -213,6 +272,43 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                         )}
                     </div>
                 </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1.5rem', gap: '1rem', borderTop: '1px solid var(--glass-border)' }}>
+                        <button
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            style={{
+                                background: 'rgba(255,255,255,0.05)',
+                                border: 'none',
+                                padding: '0.5rem 1rem',
+                                borderRadius: '0.5rem',
+                                color: currentPage === 1 ? 'var(--text-dim)' : 'var(--text-main)',
+                                cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+                            }}
+                        >
+                            Anterior
+                        </button>
+                        <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>
+                            Página <strong style={{ color: 'var(--text-main)' }}>{currentPage}</strong> de {totalPages}
+                        </span>
+                        <button
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            style={{
+                                background: 'rgba(255,255,255,0.05)',
+                                border: 'none',
+                                padding: '0.5rem 1rem',
+                                borderRadius: '0.5rem',
+                                color: currentPage === totalPages ? 'var(--text-dim)' : 'var(--text-main)',
+                                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                            }}
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Modals */}

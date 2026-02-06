@@ -66,12 +66,13 @@ export const useDebts = () => {
                 const batch = writeBatch(db);
                 debtData.forEach(d => {
                     const newDocRef = doc(collection(db, 'debts'));
-                    batch.set(newDocRef, { ...d, userId: user.uid, createdAt: serverTimestamp() });
+                    batch.set(newDocRef, { ...d, status: 'pending', userId: user.uid, createdAt: serverTimestamp() });
                 });
                 await batch.commit();
             } else {
                 await addDoc(collection(db, 'debts'), {
                     ...debtData,
+                    status: 'pending',
                     userId: user.uid,
                     createdAt: serverTimestamp()
                 });
@@ -135,6 +136,7 @@ export const useDebts = () => {
                 const { id, ...data } = d;
                 batch.set(newDocRef, {
                     ...data,
+                    status: data.status || 'pending',
                     userId: user.uid,
                     createdAt: serverTimestamp()
                 });

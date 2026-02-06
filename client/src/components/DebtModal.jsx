@@ -72,19 +72,24 @@ function DebtModal({ isOpen, onClose, onSave, initialData }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Ensure amount is a number
+        const amountNumber = parseFloat(formData.amount);
+        const updatedFormData = { ...formData, amount: amountNumber };
+
         // Split Installments Logic
         if (!initialData && formData.installments_total > 1 && !pendingSplitConfirm) {
             setPendingSplitConfirm(true);
             return;
         }
 
-        await onSave(formData);
+        await onSave(updatedFormData);
         onClose();
     };
 
     const confirmSplit = async () => {
-        const baseAmount = Math.floor(formData.amount / formData.installments_total);
-        const remainder = formData.amount % formData.installments_total;
+        const amountNumber = parseFloat(formData.amount);
+        const baseAmount = Math.floor(amountNumber / formData.installments_total);
+        const remainder = amountNumber % formData.installments_total;
         const baseDate = new Date(formData.date);
 
         const debtsToCreate = [];
@@ -94,12 +99,12 @@ function DebtModal({ isOpen, onClose, onSave, initialData }) {
             currentDueDate.setMonth(baseDate.getMonth() + i);
 
             // Add remainder to last installment to ensure exact total
-            const amount = i === formData.installments_total - 1 ? baseAmount + remainder : baseAmount;
+            const installmentAmount = i === formData.installments_total - 1 ? baseAmount + remainder : baseAmount;
 
             debtsToCreate.push({
                 ...formData,
                 loanName: `${formData.loanName} (${i + 1}/${formData.installments_total})`,
-                amount: amount,
+                amount: installmentAmount, // This is already a number
                 date: currentDueDate.toISOString().split('T')[0],
                 installments_total: 1, // Each one is a single debt now
                 installments_paid: 0

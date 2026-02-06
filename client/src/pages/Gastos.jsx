@@ -20,7 +20,7 @@ function Gastos({ expenses, loading, onDeleteExpense, onEditExpense }) {
                             Total: {expenses.length}
                         </div>
                         <div className="debts-table"> {/* Reusing logic for consistency */}
-                            <div className="table-header" style={{ gridTemplateColumns: '2fr 1.5fr 1fr 1fr 80px' }}>
+                            <div className="table-header gastos-grid" style={{ gridTemplateColumns: '2fr 1.5fr 1fr 1fr 80px' }}>
                                 <span>Descripción</span>
                                 <span>Categoría</span>
                                 <span>Fecha</span>
@@ -29,7 +29,7 @@ function Gastos({ expenses, loading, onDeleteExpense, onEditExpense }) {
                             </div>
                             <div className="table-body">
                                 {expenses.map(expense => (
-                                    <div key={expense.id} className="table-row" style={{ gridTemplateColumns: '2fr 1.5fr 1fr 1fr 80px' }}>
+                                    <div key={expense.id} className="table-row gastos-grid" style={{ gridTemplateColumns: '2fr 1.5fr 1fr 1fr 80px' }}>
                                         <span style={{ fontWeight: '500', color: 'var(--text-main)' }}>{expense.description}</span>
                                         <span>
                                             <span className="category-tag">
