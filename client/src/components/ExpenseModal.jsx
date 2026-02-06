@@ -41,7 +41,11 @@ function ExpenseModal({ isOpen, onClose, onSave, initialData }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await onSave(formData);
+        if (!formData.amount || isNaN(formData.amount)) return;
+        await onSave({
+            ...formData,
+            amount: parseFloat(formData.amount)
+        });
         // Form reset is handled by the effect or Parent closing logic, 
         // but nice to clear if staying open (though we usually close)
         onClose();

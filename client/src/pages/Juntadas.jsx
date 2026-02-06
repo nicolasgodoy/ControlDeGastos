@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Trash2, User, UserPlus, DollarSign, ArrowRight, RefreshCw, Users, AlertCircle, Check } from 'lucide-react';
+import { Trash2, User, UserPlus, DollarSign, RefreshCw, Users, AlertCircle, Check, CheckSquare, Square } from 'lucide-react';
 
 function Juntadas() {
     // --- State ---
@@ -13,9 +13,20 @@ function Juntadas() {
     });
 
     const [newParticipant, setNewParticipant] = useState('');
+
+    // Expense Form State
     const [amount, setAmount] = useState('');
     const [description, setDescription] = useState('');
     const [payer, setPayer] = useState('');
+    const [selectedConsumers, setSelectedConsumers] = useState([]); // Array of names
+
+    // Init selectedConsumers when participants change (default to all)
+    useEffect(() => {
+        // Only if we haven't manually deselected everyone? 
+        // Simple logic: When participants change, auto-select new ones? 
+        // Or just reset to all when opening form? 
+        // Let's keep it simple: sync default to all for now or handle in addParticipant
+    }, [participants]);
 
     // --- Persistence ---
     useEffect(() => {
@@ -30,33 +41,62 @@ function Juntadas() {
     const addParticipant = (e) => {
         e.preventDefault();
         if (!newParticipant.trim()) return;
-        if (participants.includes(newParticipant.trim())) return alert('El participante ya existe');
-        setParticipants([...participants, newParticipant.trim()]);
+        const nameNode = newParticipant.trim();
+        if (participants.includes(nameNode)) return alert('El participante ya existe');
+
+        const newParticipants = [...participants, nameNode];
+        setParticipants(newParticipants);
+        // Add to current selection if most are selected? Let's just default to selecting the new guy too
+        setSelectedConsumers(prev => [...prev, nameNode]);
+
         setNewParticipant('');
     };
 
     const removeParticipant = (name) => {
         setParticipants(participants.filter(p => p !== name));
-        // Also remove expenses by this user to avoid errors? Or minimize? 
-        // Better to keep expenses but warn? For simplicity, we keep expenses but logic might break if payer missing.
-        // Let's filter expenses too for safety in this simple version
+        // Also remove from expenses? 
+        // Doing strictly what was there before but safer
         setExpenses(expenses.filter(e => e.payer !== name));
+        setSelectedConsumers(selectedConsumers.filter(p => p !== name));
+    };
+
+    const toggleConsumer = (name) => {
+        if (selectedConsumers.includes(name)) {
+            setSelectedConsumers(selectedConsumers.filter(p => p !== name));
+        } else {
+            setSelectedConsumers([...selectedConsumers, name]);
+        }
+    };
+
+    const toggleAllConsumers = () => {
+        if (selectedConsumers.length === participants.length) {
+            setSelectedConsumers([]);
+        } else {
+            setSelectedConsumers([...participants]);
+        }
     };
 
     const addExpense = (e) => {
         e.preventDefault();
         if (!amount || !description || !payer) return;
+        if (selectedConsumers.length === 0) return alert('Debe haber al menos un consumidor.');
 
         const newExpense = {
             id: Date.now(),
             payer,
             description,
-            amount: parseFloat(amount)
+            amount: parseFloat(amount),
+            consumers: selectedConsumers // Save who consumed this
         };
 
         setExpenses([newExpense, ...expenses]);
+
+        // Reset form but keep payer? Or reset?
         setAmount('');
         setDescription('');
+        // Keep payer and consumers for convenience? Or reset consumers to all?
+        // Resetting consumers to all is usually safer
+        setSelectedConsumers([...participants]);
     };
 
     const removeExpense = (id) => {
@@ -67,48 +107,91 @@ function Juntadas() {
         if (window.confirm('¿Borrar todo y empezar de cero?')) {
             setParticipants([]);
             setExpenses([]);
+            setSelectedConsumers([]);
         }
     };
 
+    // Initialize Selection when participants load/change initially if empty
+    useEffect(() => {
+        // If we have participants but no selection (e.g. fresh load), select all
+        // But we need to distinguish fresh load vs user deselected all.
+        // For now, let's just ensure if we add a participant, they are selected (handled in addParticipant).
+        // On first load, if we have participants, default to all.
+        if (participants.length > 0 && selectedConsumers.length === 0) {
+            // Check if it's really the first run? 
+            // Simplest: just default check all locally in the Form render if special state not needed?
+            // No, consistent state is better.
+            setSelectedConsumers(participants);
+        }
+    }, []); // Run once? No, participants dependency? 
+    // Careful with infinite loops or overwriting user intent.
+    // Let's just use a dedicated effect for when participants array grows.
+
+    useEffect(() => {
+        // Sync: remove consumers that no longer exist
+        setSelectedConsumers(prev => prev.filter(p => participants.includes(p)));
+    }, [participants]);
+
+
     // --- Calculation Logic ---
     const calculateBalances = () => {
-        if (participants.length === 0) return { balances: [], transactions: [], total: 0, average: 0 };
+        if (participants.length === 0) return { balances: [], transactions: [], total: 0 };
 
         const total = expenses.reduce((acc, curr) => acc + curr.amount, 0);
-        const average = total / participants.length;
 
-        // Calculate balance per person
-        // Balance = Paid - Average
-        // Positive: Paid more than average (Others owe him)
-        // Negative: Paid less (Owes info)
+        // 1. Initialize maps
+        const paidMap = {};      // Total paid by user
+        const consumedMap = {};  // Total consumed (owed) by user
 
-        const paidMap = {};
-        participants.forEach(p => paidMap[p] = 0);
+        participants.forEach(p => {
+            paidMap[p] = 0;
+            consumedMap[p] = 0;
+        });
+
+        // 2. Process expenses
         expenses.forEach(e => {
+            // Payer credit
             if (paidMap[e.payer] !== undefined) {
                 paidMap[e.payer] += e.amount;
             }
+
+            // Consumption debit
+            // Compatibility: if e.consumers is missing, assume all participants
+            const expenseConsumers = (e.consumers && e.consumers.length > 0)
+                ? e.consumers
+                : participants;
+
+            // Filter valid ones (in case a user was deleted)
+            const validConsumers = expenseConsumers.filter(c => participants.includes(c));
+
+            if (validConsumers.length > 0) {
+                const amountPerPerson = e.amount / validConsumers.length;
+                validConsumers.forEach(c => {
+                    consumedMap[c] += amountPerPerson;
+                });
+            }
         });
 
+        // 3. Balance
         const balances = participants.map(p => ({
             name: p,
             paid: paidMap[p],
-            balance: paidMap[p] - average
-        })).sort((a, b) => b.balance - a.balance); // Sort by highest positive balance first
+            consumed: consumedMap[p],
+            balance: paidMap[p] - consumedMap[p]
+        })).sort((a, b) => b.balance - a.balance);
 
-        // Calculate Transactions to settle
+        // 4. Settle
         const transactions = [];
-        let debtors = balances.filter(b => b.balance < -0.01).sort((a, b) => a.balance - b.balance); // Ascending (most negative first)
-        let creditors = balances.filter(b => b.balance > 0.01).sort((a, b) => b.balance - a.balance); // Descending (most positive first)
+        let debtors = balances.filter(b => b.balance < -0.01).sort((a, b) => a.balance - b.balance);
+        let creditors = balances.filter(b => b.balance > 0.01).sort((a, b) => b.balance - a.balance);
 
-        let i = 0; // creditor index
-        let j = 0; // debtor index
+        let i = 0;
+        let j = 0;
 
         while (i < creditors.length && j < debtors.length) {
             let creditor = creditors[i];
             let debtor = debtors[j];
 
-            // The amount to settle is min( |debtor.balance|, creditor.balance )
             let amount = Math.min(Math.abs(debtor.balance), creditor.balance);
 
             if (amount > 0) {
@@ -119,26 +202,24 @@ function Juntadas() {
                 });
             }
 
-            // Adjust
             creditor.balance -= amount;
             debtor.balance += amount;
 
-            // Move indices if settled (approx 0)
             if (creditor.balance < 0.01) i++;
             if (Math.abs(debtor.balance) < 0.01) j++;
         }
 
-        return { balances, transactions, total, average };
+        return { balances, transactions, total };
     };
 
-    const { balances, transactions, total, average } = calculateBalances();
+    const { balances, transactions, total } = calculateBalances();
 
     return (
         <div className="page-content" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                     <h2>Juntadas con los pibes/as</h2>
-                    <p style={{ color: 'var(--text-dim)' }}>Divisor de gastos equitativo</p>
+                    <p style={{ color: 'var(--text-dim)' }}>Divisor de gastos (ahora con detalle de consumos)</p>
                 </div>
                 <button onClick={resetAll} className="action-btn" title="Reiniciar todo">
                     <RefreshCw size={20} />
@@ -228,17 +309,58 @@ function Juntadas() {
                                         />
                                     </div>
                                 </div>
+
                                 <div>
                                     <label style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.25rem', display: 'block' }}>Concepto</label>
                                     <input
                                         type="text"
-                                        placeholder="Ej: Asado, Bebidas..."
+                                        placeholder="Ej: Asado, Bebidas, Taxi..."
                                         value={description}
                                         onChange={e => setDescription(e.target.value)}
                                         style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }}
                                         required
                                     />
                                 </div>
+
+                                {/* Consumers Selection */}
+                                <div>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span>Consumidores</span>
+                                        <button
+                                            type="button"
+                                            onClick={toggleAllConsumers}
+                                            style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem' }}
+                                        >
+                                            {selectedConsumers.length === participants.length ? 'Deseleccionar todos' : 'Todos'}
+                                        </button>
+                                    </label>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.5rem' }}>
+                                        {participants.map(p => {
+                                            const isSelected = selectedConsumers.includes(p);
+                                            return (
+                                                <div
+                                                    key={p}
+                                                    onClick={() => toggleConsumer(p)}
+                                                    style={{
+                                                        cursor: 'pointer',
+                                                        padding: '0.5rem',
+                                                        borderRadius: '0.5rem',
+                                                        background: isSelected ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.05)',
+                                                        border: isSelected ? '1px solid var(--primary)' : '1px solid transparent',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.5rem',
+                                                        fontSize: '0.85rem'
+                                                    }}
+                                                >
+                                                    {isSelected ? <CheckSquare size={16} color="var(--primary)" /> : <Square size={16} color="var(--text-dim)" />}
+                                                    <span style={{ color: isSelected ? 'var(--text-main)' : 'var(--text-dim)' }}>{p}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
                                 <button type="submit" className="add-btn" style={{ width: '100%', justifyContent: 'center' }}>Agregar Gasto</button>
                             </form>
                         )}
@@ -250,14 +372,23 @@ function Juntadas() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
                     {/* Summary Stats */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        <div className="glass-card" style={{ padding: '1rem', textAlign: 'center' }}>
-                            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Total Gastado</p>
-                            <p style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-main)' }}>${total.toLocaleString('es-AR')}</p>
-                        </div>
-                        <div className="glass-card" style={{ padding: '1rem', textAlign: 'center' }}>
-                            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>C/u debe poner</p>
-                            <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#6366f1' }}>${average.toLocaleString('es-AR', { maximumFractionDigits: 0 })}</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                        {/* Balances List */}
+                        <div className="glass-card" style={{ padding: '1rem' }}>
+                            <h4 style={{ marginBottom: '0.5rem', color: 'var(--text-dim)', fontSize: '0.9rem' }}>Balances Individuales</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {balances.map(b => (
+                                    <div key={b.name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                                        <span>{b.name}</span>
+                                        <span style={{
+                                            fontWeight: '600',
+                                            color: b.balance > 0 ? 'var(--success)' : (b.balance < 0 ? 'var(--danger)' : 'var(--text-dim)')
+                                        }}>
+                                            {b.balance > 0 ? '+' : ''}{Math.round(b.balance).toLocaleString('es-AR')}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -276,7 +407,7 @@ function Juntadas() {
                                             <span style={{ fontWeight: '600', color: 'var(--success)' }}>{t.to}</span>
                                         </div>
                                         <div style={{ fontWeight: '700', color: 'var(--text-main)' }}>
-                                            ${t.amount.toLocaleString('es-AR')}
+                                            ${Math.round(t.amount).toLocaleString('es-AR')}
                                         </div>
                                     </div>
                                 ))}
@@ -287,24 +418,37 @@ function Juntadas() {
                     {/* Expense Log */}
                     <div className="glass-card" style={{ padding: '1.5rem', flex: 1 }}>
                         <h3 style={{ marginBottom: '1rem' }}>Detalle de Gastos</h3>
-                        <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <div style={{ maxHeight: '400px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             {expenses.length === 0 ? (
                                 <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-dim)' }}>Aún no hay gastos cargados.</p>
                             ) : (
-                                expenses.map(exp => (
-                                    <div key={exp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '0.75rem' }}>
-                                        <div>
-                                            <p style={{ fontWeight: '500', margin: 0 }}>{exp.description}</p>
-                                            <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', margin: 0 }}>Pagó <strong style={{ color: 'var(--primary)' }}>{exp.payer}</strong></p>
+                                expenses.map(exp => {
+                                    const consumerCount = exp.consumers ? exp.consumers.length : participants.length;
+                                    const isEveryone = consumerCount === participants.length && participants.length > 0;
+
+                                    return (
+                                        <div key={exp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '0.75rem' }}>
+                                            <div>
+                                                <p style={{ fontWeight: '500', margin: 0 }}>{exp.description}</p>
+                                                <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
+                                                    Pagó <strong style={{ color: 'var(--primary)' }}>{exp.payer}</strong>
+                                                    <span style={{ margin: '0 0.5rem' }}>|</span>
+                                                    <span>
+                                                        {isEveryone ? 'Para todos' :
+                                                            (exp.consumers ? `Div: ${exp.consumers.join(', ')}` : 'Para todos')
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <span style={{ fontWeight: '600' }}>${exp.amount.toLocaleString('es-AR')}</span>
+                                                <button onClick={() => removeExpense(exp.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--danger)' }}>
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                            <span style={{ fontWeight: '600' }}>${exp.amount.toLocaleString('es-AR')}</span>
-                                            <button onClick={() => removeExpense(exp.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--danger)' }}>
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))
+                                    );
+                                })
                             )}
                         </div>
                     </div>
