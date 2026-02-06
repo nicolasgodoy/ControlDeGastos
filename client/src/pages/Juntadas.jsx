@@ -323,17 +323,23 @@ function Juntadas() {
                                 </div>
 
                                 {/* Consumers Selection */}
-                                <div>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span>Consumidores</span>
+                                <div style={{ background: 'rgba(99, 102, 241, 0.1)', padding: '1rem', borderRadius: '0.5rem', border: '1px dashed var(--primary)' }}>
+                                    <label style={{ fontSize: '0.9rem', color: 'var(--primary)', marginBottom: '0.75rem', fontWeight: '600', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <Users size={16} />
+                                            <span>¿Quiénes consumieron?</span>
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={toggleAllConsumers}
-                                            style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem' }}
+                                            style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer', fontSize: '0.75rem', textDecoration: 'underline' }}
                                         >
                                             {selectedConsumers.length === participants.length ? 'Deseleccionar todos' : 'Todos'}
                                         </button>
                                     </label>
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.75rem' }}>
+                                        Desmarca a quienes no participaron de este gasto.
+                                    </p>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.5rem' }}>
                                         {participants.map(p => {
                                             const isSelected = selectedConsumers.includes(p);
@@ -345,16 +351,19 @@ function Juntadas() {
                                                         cursor: 'pointer',
                                                         padding: '0.5rem',
                                                         borderRadius: '0.5rem',
-                                                        background: isSelected ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.05)',
-                                                        border: isSelected ? '1px solid var(--primary)' : '1px solid transparent',
+                                                        background: isSelected ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                                                        boxShadow: isSelected ? '0 2px 8px rgba(99, 102, 241, 0.4)' : 'none',
+                                                        border: '1px solid transparent',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         gap: '0.5rem',
-                                                        fontSize: '0.85rem'
+                                                        fontSize: '0.85rem',
+                                                        transition: 'all 0.2s',
+                                                        color: isSelected ? 'white' : 'var(--text-dim)'
                                                     }}
                                                 >
-                                                    {isSelected ? <CheckSquare size={16} color="var(--primary)" /> : <Square size={16} color="var(--text-dim)" />}
-                                                    <span style={{ color: isSelected ? 'var(--text-main)' : 'var(--text-dim)' }}>{p}</span>
+                                                    {isSelected ? <Check size={14} /> : <div style={{ width: 14, height: 14 }} />}
+                                                    <span style={{ fontWeight: isSelected ? '600' : '400' }}>{p}</span>
                                                 </div>
                                             );
                                         })}
