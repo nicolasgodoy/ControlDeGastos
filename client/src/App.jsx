@@ -263,6 +263,9 @@ function AppContent() {
                 <NavLink to="/deudas" className={({ isActive }) => isActive ? 'active' : ''}>
                     <CreditCard size={24} />
                 </NavLink>
+                <NavLink to="/reportes" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <ChartIcon size={24} />
+                </NavLink>
                 <NavLink to="/juntadas" className={({ isActive }) => isActive ? 'active' : ''}>
                     <Users size={24} />
                 </NavLink>
