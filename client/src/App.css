@@ -446,10 +446,47 @@ header h1 {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 0.5rem 1rem;
+    padding: 0.35rem 0.75rem;
     background: var(--card-bg);
     border: 1px solid var(--glass-border);
     border-radius: 2rem;
+}
+
+.theme-toggle {
+    background: rgba(241, 99, 99, 0.1);
+    /* Default (Dark mode - Sun) */
+    border: 2px solid #e9700c;
+    /* Orange */
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #e9700c;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px rgba(233, 112, 12, 0.3);
+    padding: 0;
+}
+
+.theme-toggle:hover {
+    transform: rotate(15deg) scale(1.05);
+    box-shadow: 0 0 12px rgba(233, 112, 12, 0.5);
+    background: rgba(241, 99, 99, 0.2);
+}
+
+[data-theme="light"] .theme-toggle {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: #38bdf8;
+    /* Light Blue */
+    color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+[data-theme="light"] .theme-toggle:hover {
+    background: rgba(56, 189, 248, 0.2);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
 }
 
 /* Modal and Toast */
@@ -713,10 +750,14 @@ header h1 {
 }
 
 .entity-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: inline-block;
+    width: 12px !important;
+    height: 12px !important;
+    min-width: 12px !important;
+    min-height: 12px !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+    flex: none !important;
+    /* Prevents any stretching or squeezing */
 }
 
 /* Deudas Grid */
@@ -963,72 +1004,80 @@ select option {
     /* --- GASTOS CARD CONFIG --- */
     /* 1:Desc, 2:Cat, 3:Date, 4:Amount, 5:Action */
 
-    .table-row.gastos-grid span:nth-child(1) {
+    .table-row.gastos-grid>*:nth-child(1) {
         /* Description */
         grid-column: 1;
         grid-row: 1;
-        font-size: 1.1rem;
-        font-weight: 700;
+        font-size: 1.15rem !important;
+        font-weight: 700 !important;
         color: var(--text-main);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        padding-bottom: 2px;
     }
 
-    .table-row.gastos-grid span:nth-child(4) {
+    .table-row.gastos-grid>*:nth-child(4) {
         /* Amount */
         grid-column: 2;
         grid-row: 1;
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--primary);
+        font-size: 1.4rem !important;
+        font-weight: 800 !important;
+        color: var(--text-main);
         text-align: right;
     }
 
-    .table-row.gastos-grid span:nth-child(2) {
+    .table-row.gastos-grid>*:nth-child(2) {
         /* Category */
         grid-column: 1;
         grid-row: 2;
         font-size: 0.85rem;
         color: var(--text-dim);
-        background: rgba(255, 255, 255, 0.05);
-        padding: 2px 8px;
-        border-radius: 4px;
+        background: rgba(128, 128, 128, 0.1);
+        padding: 4px 10px;
+        border-radius: 6px;
         width: fit-content;
+        margin-top: 4px;
+        justify-content: flex-start;
+        display: inline-flex !important;
     }
 
-    .table-row.gastos-grid span:nth-child(3) {
+    .table-row.gastos-grid>*:nth-child(3) {
         /* Date */
         grid-column: 2;
         grid-row: 2;
-        font-size: 0.8rem;
+        font-size: 0.9rem !important;
         color: var(--text-dim);
         text-align: right;
+        justify-content: flex-end;
     }
 
-    .table-row.gastos-grid span:nth-child(5) {
+    .table-row.gastos-grid>*:nth-child(5) {
         /* Actions */
         grid-column: 1 / -1;
         grid-row: 3;
-        margin-top: 0.75rem;
+        margin-top: 1rem !important;
         padding-top: 0.75rem;
         border-top: 1px solid var(--glass-border);
         display: flex !important;
         justify-content: flex-end;
-        gap: 1rem;
+        gap: 1.25rem !important;
         width: 100%;
     }
 
     /* --- DEUDAS CARD CONFIG --- */
-    /* 1:Entity, 2:Loan, 3:Date, 4:Amount, 5:Status, 6:Action */
+    /* 1:Entity (Now div.entity-info), 2:Loan, 3:Date, 4:Amount, 5:Status, 6:Action */
 
-    .table-row.deudas-grid span:nth-child(1) {
+    .table-row.deudas-grid .entity-info {
         /* Entity */
         grid-column: 1;
         grid-row: 1;
         font-size: 1.1rem;
         font-weight: 700;
         color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
 
     .table-row.deudas-grid span:nth-child(4) {
@@ -1079,9 +1128,10 @@ select option {
         width: 100%;
     }
 
-    /* Reset default flex spans */
+    /* Reset default flex spans - Changed to flex for dot alignment */
     .table-row span {
         width: auto;
-        display: block;
+        display: flex;
+        align-items: center;
     }
 }

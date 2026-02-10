@@ -191,10 +191,10 @@ function AppContent() {
                     <div className="user-profile">
                         <button
                             onClick={toggleTheme}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-main)', display: 'flex', alignItems: 'center' }}
+                            className="theme-toggle"
                             title={theme === 'dark' ? "Activar Modo Claro" : "Activar Modo Oscuro"}
                         >
-                            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                            {theme === 'dark' ? <Sun size={18} strokeWidth={2.5} /> : <Moon size={18} strokeWidth={2.5} />}
                         </button>
                         <span>Hola, {user.displayName || user.email?.split('@')[0]}</span>
                     </div>

@@ -30,13 +30,15 @@ function ExpenseModal({ isOpen, onClose, onSave, initialData }) {
     }, [initialData, isOpen]);
 
     const categories = [
+        { value: 'otros', label: 'Otros' },
+        { value: 'suplementos', label: 'Suplementos' },
         { value: 'comida', label: 'Comida' },
+        { value: 'gym', label: 'Gym' },
         { value: 'juntadas', label: 'Juntadas' },
+        { value: 'farmacia', label: 'Farmacia' },
         { value: 'kiosko', label: 'Kiosko' },
         { value: 'supermercado', label: 'Supermercado' },
-        { value: 'gym', label: 'Gimnasio' },
-        { value: 'suplementos', label: 'Suplementos' },
-        { value: 'otros', label: 'Otros' }
+        { value: 'verduleria', label: 'Verduleria' }
     ];
 
     const handleSubmit = async (e) => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertCircle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { CATEGORY_COLORS, ENTITY_COLORS } from '../constants/colors';
 
 // --- Icon Mapping Wrapper to match User's "getCategoryById" logic ---
 const getCategoryIcon = (cat) => {
@@ -44,42 +45,7 @@ const getEntityIcon = (entityName, category) => {
     return Building; // Generic default
 };
 
-// --- Colors from User Snippet ---
-const categoryColors = {
-    food: "#f59e0b", // Amber
-    transport: "#0ea5e9", // Sky
-    home: "#22c55e", // Green
-    entertainment: "#a855f7", // Purple
-    health: "#ef4444", // Red
-    shopping: "#ec4899", // Pink
-    education: "#8b5cf6", // Violet
-    other: "#71717a", // Zinc
-
-    // Specific Mappings with DISTINCT colors
-    'comida': "#f59e0b",      // Amber (Orange)
-    'supermercado': "#ec4899", // Pink
-    'kiosko': "#8b5cf6",      // Violet
-    'transporte': "#0ea5e9",  // Sky Blue
-    'hogar': "#22c55e",       // Green
-    'servicios': "#10b981",   // Emerald
-    'entretenimiento': "#a855f7", // Purple
-    'salud': "#ef4444",       // Red
-    'farmacia': "#f43f5e",    // Rose
-    'compras': "#db2777",     // Pink-700
-    'ropa': "#d946ef",        // Fuchsia
-    'educacion': "#6366f1",   // Indigo
-    'cursos': "#4f46e5",      // Indigo-600
-    'otros': "#64748b",       // Slate-500
-    'varios': "#94a3b8",      // Slate-400
-    'juntadas': "#f97316",    // Orange
-    'gym': "#ef4444",         // Red
-    'deporte': "#ef4444",     // Red
-    'suplementos': "#f43f5e", // Rose
-    'regalos': "#f472b6",     // Pink-400
-    'taxis': "#0284c7"        // Sky-600
-};
-
-const ENTITY_COLORS = ["#8b5cf6", "#06b6d4", "#f59e0b", "#ec4899", "#22c55e"];
+// --- Colors imported from ../constants/colors ---
 
 function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
     const totalDebt = debts.reduce((acc, debt) => acc + debt.amount, 0);
@@ -249,7 +215,7 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                                             {categoryData.map((entry, index) => (
                                                 <Cell
                                                     key={`cell-${index}`}
-                                                    fill={categoryColors[entry.category] || categoryColors.other}
+                                                    fill={CATEGORY_COLORS[entry.category] || CATEGORY_COLORS.default}
                                                 />
                                             ))}
                                         </Bar>
@@ -344,7 +310,7 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                             const Icon = getEntityIcon(debt.entity, debt.category);
 
                             // Color logic for icon bg (simplified)
-                            const iconColor = categoryColors[debt.category?.toLowerCase()] || categoryColors.other;
+                            const iconColor = CATEGORY_COLORS[debt.category?.toLowerCase()] || CATEGORY_COLORS.default;
 
                             return (
                                 <div key={debt.id} className="payment-item">

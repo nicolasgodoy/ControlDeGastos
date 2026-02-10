@@ -3,8 +3,9 @@ import { Check, Filter, PlusCircle, Pencil, Trash2 } from 'lucide-react';
 import DebtModal from '../components/DebtModal';
 import Toast from '../components/Toast';
 import ConfirmationModal from '../components/ConfirmationModal';
+import { ENTITY_COLORS } from '../constants/colors';
 
-const ENTITY_COLORS = ["#8b5cf6", "#06b6d4", "#f59e0b", "#ec4899", "#22c55e"];
+// ENTITY_COLORS imported from ../constants/colors
 
 function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDeleteDebt }) {
     const [filter, setFilter] = useState('all'); // all, pending, paid
@@ -228,10 +229,10 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                                 const entityColor = ENTITY_COLORS[entityIndex % ENTITY_COLORS.length];
                                 return (
                                     <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''}`}>
-                                        <span style={{ fontWeight: '500', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                            <span className="entity-dot" style={{ backgroundColor: entityColor }}></span>
+                                        <div className="entity-info" style={{ fontWeight: '500', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                            <div className="entity-dot" style={{ backgroundColor: entityColor }}></div>
                                             {debt.entity}
-                                        </span>
+                                        </div>
                                         <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{debt.loanName}</span>
                                         <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>
                                             {new Date(debt.date).toLocaleDateString()}
