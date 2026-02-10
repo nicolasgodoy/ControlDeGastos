@@ -679,34 +679,37 @@ header h1 {
     align-items: center;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .top-actions {
-        justify-content: flex-end;
+        justify-content: center;
+        /* Centered */
         width: 100%;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
     }
 
     .top-actions div {
         display: flex;
         flex-direction: row;
-        gap: 0.4rem;
+        gap: 0.5rem;
         width: 100%;
+        justify-content: center;
+        /* Centered internal buttons */
     }
 
     .top-actions button {
         flex: 1;
-        /* Make them grow equally */
-        padding: 0.6rem 0.4rem !important;
-        font-size: 0.8rem !important;
+        max-width: 180px;
+        /* Slightly wider max-width */
+        padding: 0.65rem 0.5rem !important;
+        font-size: 0.85rem !important;
         white-space: nowrap;
         min-width: 0;
-        /* Allow shrinking */
     }
+}
 
-    .add-btn svg {
-        width: 16px;
-        height: 16px;
-    }
+.add-btn svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* Deudas Grid */
@@ -822,10 +825,17 @@ header h1 {
     border-color: var(--primary);
 }
 
-/* Fix for Select Options in Dark Mode */
-.form-group select option {
-    background-color: var(--card-bg);
-    color: var(--text-main);
+/* Fix for Select Options in Dark Mode - Global */
+select option {
+    background-color: #18181b;
+    /* Zinc 900 */
+    color: #f4f4f5;
+    /* Zinc 100 */
+}
+
+[data-theme="light"] select option {
+    background-color: #ffffff;
+    color: #09090b;
 }
 
 /* Ensure Datalist Arrow is visible in Dark Mode */
