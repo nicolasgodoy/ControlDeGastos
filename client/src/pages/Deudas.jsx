@@ -4,6 +4,8 @@ import DebtModal from '../components/DebtModal';
 import Toast from '../components/Toast';
 import ConfirmationModal from '../components/ConfirmationModal';
 
+const ENTITY_COLORS = ["#8b5cf6", "#06b6d4", "#f59e0b", "#ec4899", "#22c55e"];
+
 function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDeleteDebt }) {
     const [filter, setFilter] = useState('all'); // all, pending, paid
     const [modalOpen, setModalOpen] = useState(false);
@@ -45,8 +47,13 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
 
     if (loading) return <p>Cargando deudas...</p>;
 
-    // 1. Get Unique Entities for Dropdown
-    const uniqueEntities = [...new Set(debts.map(d => d.entity))].sort();
+    // 1. Get Unique Entities in order of appearance (to match Dashboard colors)
+    const uniqueEntities = debts.reduce((acc, debt) => {
+        if (!acc.find(e => e === debt.entity)) {
+            acc.push(debt.entity);
+        }
+        return acc;
+    }, []);
 
     // 2. Apply Filters
     const filteredDebts = debts.filter(d => {
@@ -215,60 +222,68 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                                 No hay deudas encontradas.
                             </div>
                         ) : (
-                            currentDebts.map(debt => (
-                                <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''}`}>
-                                    <span style={{ fontWeight: '500', color: 'var(--text-main)' }}>{debt.entity}</span>
-                                    <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{debt.loanName}</span>
-                                    <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>
-                                        {new Date(debt.date).toLocaleDateString()}
-                                    </span>
-                                    <span style={{ fontFamily: 'monospace', fontSize: '1rem', color: 'var(--text-main)' }}>
-                                        ${debt.amount.toLocaleString('es-AR')}
-                                    </span>
-                                    <span>
-                                        <span className={`status ${debt.status}`} style={{
-                                            width: '100%',
-                                            display: 'inline-block', // Ensure it respects width
-                                            textAlign: 'center'
-                                        }}>
-                                            {debt.status === 'pending' ? 'Pendiente' : 'Pagado'}
+                            currentDebts.map(debt => {
+                                // Match the Dashboard's index logic
+                                const entityIndex = uniqueEntities.indexOf(debt.entity);
+                                const entityColor = ENTITY_COLORS[entityIndex % ENTITY_COLORS.length];
+                                return (
+                                    <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''}`}>
+                                        <span style={{ fontWeight: '500', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                            <span className="entity-dot" style={{ backgroundColor: entityColor }}></span>
+                                            {debt.entity}
                                         </span>
-                                    </span>
-                                    <span style={{ display: 'flex', gap: '0.5rem' }}>
-                                        <button
-                                            className={`action-btn check ${debt.status}`}
-                                            onClick={() => {
-                                                if (debt.status !== 'paid') {
-                                                    onToggleStatus(debt.id, debt.status);
-                                                }
-                                            }}
-                                            title={debt.status === 'paid' ? 'Pagado (Bloqueado)' : 'Marcar como pagado'}
-                                            disabled={debt.status === 'paid'}
-                                            style={debt.status === 'paid' ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                                        >
-                                            <Check size={16} strokeWidth={2} />
-                                        </button>
-
-                                        {/* Only show Edit if NOT paid */}
-                                        {debt.status !== 'paid' && (
+                                        <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{debt.loanName}</span>
+                                        <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>
+                                            {new Date(debt.date).toLocaleDateString()}
+                                        </span>
+                                        <span style={{ fontFamily: 'monospace', fontSize: '1rem', color: 'var(--text-main)' }}>
+                                            ${debt.amount.toLocaleString('es-AR')}
+                                        </span>
+                                        <span>
+                                            <span className={`status ${debt.status}`} style={{
+                                                width: '100%',
+                                                display: 'inline-block', // Ensure it respects width
+                                                textAlign: 'center'
+                                            }}>
+                                                {debt.status === 'pending' ? 'Pendiente' : 'Pagado'}
+                                            </span>
+                                        </span>
+                                        <span style={{ display: 'flex', gap: '0.5rem' }}>
                                             <button
-                                                className="action-btn edit"
-                                                onClick={() => { setEditingDebt(debt); setModalOpen(true); }}
-                                                title="Editar"
+                                                className={`action-btn check ${debt.status}`}
+                                                onClick={() => {
+                                                    if (debt.status !== 'paid') {
+                                                        onToggleStatus(debt.id, debt.status);
+                                                    }
+                                                }}
+                                                title={debt.status === 'paid' ? 'Pagado (Bloqueado)' : 'Marcar como pagado'}
+                                                disabled={debt.status === 'paid'}
+                                                style={debt.status === 'paid' ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                                             >
-                                                <Pencil size={16} strokeWidth={1.5} />
+                                                <Check size={16} strokeWidth={2} />
                                             </button>
-                                        )}
-                                        <button
-                                            className="action-btn delete"
-                                            onClick={() => setDeleteModal({ isOpen: true, id: debt.id })}
-                                            title="Eliminar"
-                                        >
-                                            <Trash2 size={16} strokeWidth={1.5} />
-                                        </button>
-                                    </span>
-                                </div>
-                            ))
+
+                                            {/* Only show Edit if NOT paid */}
+                                            {debt.status !== 'paid' && (
+                                                <button
+                                                    className="action-btn edit"
+                                                    onClick={() => { setEditingDebt(debt); setModalOpen(true); }}
+                                                    title="Editar"
+                                                >
+                                                    <Pencil size={16} strokeWidth={1.5} />
+                                                </button>
+                                            )}
+                                            <button
+                                                className="action-btn delete"
+                                                onClick={() => setDeleteModal({ isOpen: true, id: debt.id })}
+                                                title="Eliminar"
+                                            >
+                                                <Trash2 size={16} strokeWidth={1.5} />
+                                            </button>
+                                        </span>
+                                    </div>
+                                );
+                            })
                         )}
                     </div>
                 </div>
