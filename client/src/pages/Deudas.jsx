@@ -118,8 +118,8 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
 
     return (
         <div className="fade-in">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <div className="top-actions">
+                <div>
                     <input
                         type="file"
                         id="excel-upload"
@@ -130,7 +130,7 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                     <button
                         className="action-btn"
                         onClick={() => document.getElementById('excel-upload').click()}
-                        style={{ padding: '0.65rem 1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
                         title="Importar desde Excel"
                     >
                         Importar Excel
@@ -138,7 +138,7 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                     <button
                         className="add-btn"
                         onClick={() => { setEditingDebt(null); setModalOpen(true); }}
-                        style={{ padding: '0.65rem 1.25rem', fontSize: '1rem', boxShadow: 'none' }}
+                        style={{ boxShadow: 'none' }}
                     >
                         <PlusCircle size={18} /> Nueva Deuda
                     </button>

@@ -132,9 +132,9 @@ function DebtModal({ isOpen, onClose, onSave, initialData }) {
 
                     {/* Calculator Toggle */}
                     {!initialData && (
-                        <div style={{ marginBottom: '1.25rem', background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ marginBottom: '0.75rem', background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                             <div
-                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', color: 'var(--primary)', fontWeight: '500' }}
+                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', color: 'var(--primary)', fontWeight: '500', fontSize: '0.9rem' }}
                                 onClick={() => setShowCalculator(!showCalculator)}
                             >
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -258,8 +258,8 @@ function DebtModal({ isOpen, onClose, onSave, initialData }) {
 
                     {/* Installment Info */}
                     {formData.amount > 0 && formData.installments_total > 0 && (
-                        <div style={{ marginTop: '0.5rem', marginBottom: '1.5rem', padding: '1rem', background: 'rgba(99, 102, 241, 0.08)', borderRadius: '12px', textAlign: 'center', border: '1px dashed rgba(99, 102, 241, 0.3)' }}>
-                            <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)', display: 'block', marginBottom: '0.5rem' }}>Valor Aprox. por Cuota</span>
+                        <div style={{ marginTop: '0.25rem', marginBottom: '1rem', padding: '0.75rem', background: 'rgba(99, 102, 241, 0.08)', borderRadius: '12px', textAlign: 'center', border: '1px dashed rgba(99, 102, 241, 0.3)' }}>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)', display: 'block', marginBottom: '0.25rem' }}>Valor Aprox. por Cuota</span>
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: '0.25rem' }}>
                                 <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary)' }}>
                                     ${installmentValue.toLocaleString('es-AR', { maximumFractionDigits: 2 })}
