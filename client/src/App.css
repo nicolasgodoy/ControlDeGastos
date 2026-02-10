@@ -942,9 +942,31 @@ select option {
     box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
 }
 
-.bottom-nav a svg {
+.bottom-nav a svg,
+.mobile-logout-btn svg {
     width: 24px;
     height: 24px;
+}
+
+.mobile-logout-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+}
+
+.mobile-logout-btn:hover {
+    color: var(--danger);
+    background: rgba(244, 63, 94, 0.1);
 }
 
 @media (max-width: 768px) {

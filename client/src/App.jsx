@@ -269,6 +269,9 @@ function AppContent() {
                 <NavLink to="/juntadas" className={({ isActive }) => isActive ? 'active' : ''}>
                     <Users size={24} />
                 </NavLink>
+                <button onClick={logout} className="mobile-logout-btn">
+                    <LogOut size={24} />
+                </button>
             </nav>
 
             <Toast
