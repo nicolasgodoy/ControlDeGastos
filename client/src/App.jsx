@@ -244,6 +244,10 @@ function AppContent() {
                     <Wallet size={24} />
                 </NavLink>
 
+                <NavLink to="/deudas" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <CreditCard size={24} />
+                </NavLink>
+
                 {location.pathname === '/gastos' && (
                     <div style={{ position: 'relative', top: '-24px' }}>
                         <button
@@ -259,10 +263,6 @@ function AppContent() {
                         </button>
                     </div>
                 )}
-
-                <NavLink to="/deudas" className={({ isActive }) => isActive ? 'active' : ''}>
-                    <CreditCard size={24} />
-                </NavLink>
                 <NavLink to="/reportes" className={({ isActive }) => isActive ? 'active' : ''}>
                     <ChartIcon size={24} />
                 </NavLink>
