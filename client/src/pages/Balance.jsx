@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Wallet, CreditCard, PieChart, Calendar } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Wallet, CreditCard, PieChart, Calendar, Sparkles, AlertOctagon } from 'lucide-react';
 import { useIncome } from '../hooks/useIncome';
 import { useDebts } from '../hooks/useDebts';
 import { useExpenses } from '../hooks/useExpenses';
@@ -92,9 +92,33 @@ const Balance = () => {
                     }}>
                         {formatCurrency(balance)}
                     </h1>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-dim)', marginTop: '0.5rem' }}>
-                        {balance >= 0 ? '🎉 Superávit' : '⚠️ Déficit'}
-                    </p>
+                    <div style={{
+                        marginTop: '1.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        color: balance >= 0 ? 'var(--success)' : 'var(--danger)',
+                        background: balance >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        padding: '0.5rem 1.25rem',
+                        borderRadius: '20px',
+                        width: 'fit-content',
+                        margin: '1rem auto'
+                    }}>
+                        {balance >= 0 ? (
+                            <>
+                                <Sparkles size={18} />
+                                <span>Superávit</span>
+                            </>
+                        ) : (
+                            <>
+                                <AlertOctagon size={18} />
+                                <span>Déficit Financiero</span>
+                            </>
+                        )}
+                    </div>
                 </div>
 
                 {/* Financial Formula */}
