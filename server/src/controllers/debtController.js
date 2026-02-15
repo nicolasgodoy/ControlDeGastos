@@ -114,6 +114,14 @@ export const addDebt = async (req, res) => {
             if (!d.entity || !d.amount || !d.date) {
                 return res.status(400).json({ message: 'Entity, Amount and Date are required for all items' });
             }
+
+            // Validate: if installments > 1, interest rate is required
+            const totalInstallments = d.installments_total || 0;
+            if (totalInstallments > 1 && (!d.interestRate || d.interestRate <= 0)) {
+                return res.status(400).json({
+                    message: 'Interest rate is required for debts with installments'
+                });
+            }
         }
 
         await fileMutex.lock();
@@ -124,6 +132,17 @@ export const addDebt = async (req, res) => {
         const createdDebts = [];
 
         for (const d of debtsToProcess) {
+            const totalInstallments = d.installments_total || 0;
+            let monthlyPayment = null;
+            let totalInterest = null;
+
+            // Calculate loan details if has interest rate
+            if (d.interestRate && totalInstallments > 1) {
+                const { calculateMonthlyPayment, calculateTotalInterest } = await import('../utils/loanCalculator.js');
+                monthlyPayment = calculateMonthlyPayment(d.amount, d.interestRate, totalInstallments);
+                totalInterest = calculateTotalInterest(d.amount, d.interestRate, totalInstallments);
+            }
+
             const newDebt = {
                 id: uuidv4(),
                 entity: d.entity,
@@ -131,8 +150,14 @@ export const addDebt = async (req, res) => {
                 amount: parseFloat(d.amount),
                 date: d.date,
                 installments_paid: d.installments_paid || 0,
-                installments_total: d.installments_total || 0,
+                installments_total: totalInstallments,
                 status: 'pending',
+                // Interest fields (optional)
+                interestRate: d.interestRate || null,
+                rateType: d.rateType || 'TNA', // Default to TNA
+                amortizationSystem: d.amortizationSystem || 'frances',
+                monthlyPayment: monthlyPayment,
+                totalInterest: totalInterest,
                 createdAt: new Date().toISOString()
             };
             debts.push(newDebt);

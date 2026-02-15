@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Check, Filter, PlusCircle, Pencil, Trash2 } from 'lucide-react';
-import DebtModal from '../components/DebtModal';
 import Toast from '../components/Toast';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { ENTITY_COLORS } from '../constants/colors';
 
 // ENTITY_COLORS imported from ../constants/colors
 
-function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDeleteDebt }) {
+function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
+    const navigate = useNavigate();
     const [filter, setFilter] = useState('all'); // all, pending, paid
-    const [modalOpen, setModalOpen] = useState(false);
-    const [editingDebt, setEditingDebt] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
     const [importModal, setImportModal] = useState({ isOpen: false, file: null });
     const [toast, setToast] = useState({ show: false, message: '' });
@@ -73,27 +72,6 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const handleSaveDebt = async (data) => {
-        let result = { success: true };
-
-        // Handle Single or Schema (Bulk is now handled by the API directly)
-        if (editingDebt && !Array.isArray(data)) {
-            result = await onUpdateDebt(editingDebt.id, data);
-        } else {
-            // Even if it's an array (split installments), we send it directly now
-            result = await onAddDebt(data);
-        }
-
-        if (result.success) {
-            showStatus('success', '¡Éxito!', editingDebt ? 'Deuda actualizada correctamente.' : 'Deuda(s) registrada(s) correctamente.');
-            setModalOpen(false);
-            setEditingDebt(null);
-        } else {
-            console.error(result.error);
-            showStatus('error', 'Error', `Error al guardar: ${result.error}`);
-        }
-    };
-
     const confirmDelete = async () => {
         if (deleteModal.id) {
             const result = await onDeleteDebt(deleteModal.id);
@@ -115,11 +93,16 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
     };
 
     const confirmImport = async (mode) => {
-        const result = await props.importDebts(importModal.file, mode);
+        if (!importDebts) {
+            showStatus('error', 'Error', 'Función de importar no disponible.');
+            return;
+        }
+
+        const result = await importDebts(importModal.file, mode);
         if (result.success) {
-            showStatus('success', '¡Éxito!', `Se importaron ${result.count} deudas correctamente.`);
+            showStatus('success', '¡Éxito!', `Se importaron ${result.count || ''} deudas correctamente.`);
         } else {
-            showStatus('error', 'Error', result.error);
+            showStatus('error', 'Error', result.error || 'Error desconocido al importar.');
         }
         setImportModal({ isOpen: false, file: null });
     };
@@ -145,7 +128,7 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                     </button>
                     <button
                         className="add-btn"
-                        onClick={() => { setEditingDebt(null); setModalOpen(true); }}
+                        onClick={() => navigate('/deudas/nueva')}
                         style={{ boxShadow: 'none' }}
                     >
                         <PlusCircle size={18} /> Nueva Deuda
@@ -268,7 +251,7 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                                             {debt.status !== 'paid' && (
                                                 <button
                                                     className="action-btn edit"
-                                                    onClick={() => { setEditingDebt(debt); setModalOpen(true); }}
+                                                    onClick={() => navigate(`/deudas/editar/${debt.id}`)}
                                                     title="Editar"
                                                 >
                                                     <Pencil size={16} strokeWidth={1.5} />
@@ -327,38 +310,15 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                 )}
             </div>
 
-            {/* Modals */}
-            <DebtModal
-                isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onSave={handleSaveDebt}
-                initialData={editingDebt}
-            />
-
-            <ConfirmationModal
-                isOpen={deleteModal.isOpen}
-                onClose={() => setDeleteModal({ isOpen: false, id: null })}
-                onConfirm={confirmDelete}
-                title="Eliminar Deuda"
-                message="¿Estás seguro de que deseas eliminar esta deuda? Esta acción no se puede deshacer."
-            />
-
-            <Toast
-                show={toast.show}
-                message={toast.message}
-                onClose={() => setToast({ ...toast, show: false })}
-            />
-
             {/* Import Confirmation Modal */}
             {importModal.isOpen && (
                 <div className="modal-overlay" onClick={() => setImportModal({ isOpen: false, file: null })}>
                     <div className="modal glass-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', textAlign: 'center', padding: '2rem' }}>
-                        <h3 style={{ marginBottom: '1rem' }}>Importar Deudas</h3>
-                        <p style={{ color: 'var(--text-dim)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-                            Has seleccionado: <strong>{importModal.file?.name}</strong>.
-                            <br /><br />
-                            ¿Cómo deseas procesar los datos?
+                        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Importar Deudas</h2>
+                        <p style={{ color: 'var(--text-dim)', marginBottom: '1.5rem' }}>
+                            Seleccioná cómo querés importar el archivo Excel:
                         </p>
+
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                             <button
                                 className="add-btn"
@@ -385,6 +345,7 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                     </div>
                 </div>
             )}
+
             {/* Status Modal (Custom Alert) */}
             {statusModal.isOpen && (
                 <div
@@ -433,6 +394,14 @@ function Deudas({ debts, loading, onToggleStatus, onAddDebt, onUpdateDebt, onDel
                     </div>
                 </div>
             )}
+
+            <ConfirmationModal
+                isOpen={deleteModal.isOpen}
+                onClose={() => setDeleteModal({ isOpen: false, id: null })}
+                onConfirm={confirmDelete}
+                title="Eliminar Deuda"
+                message="¿Estás seguro de que deseas eliminar esta deuda? Esta acción no se puede deshacer."
+            />
         </div>
     );
 }

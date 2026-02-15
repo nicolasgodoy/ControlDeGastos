@@ -10,7 +10,9 @@ import {
     Sun,
     Moon,
     Users,
-    LogOut
+    LogOut,
+    TrendingUp,
+    DollarSign
 } from 'lucide-react';
 import { useDebts } from './hooks/useDebts';
 import { useExpenses } from './hooks/useExpenses';
@@ -22,8 +24,11 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
 import Gastos from './pages/Gastos';
 import Deudas from './pages/Deudas';
+import DebtForm from './pages/DebtForm';
 import Reportes from './pages/Reportes';
 import Juntadas from './pages/Juntadas';
+import Ingresos from './pages/Ingresos';
+import Balance from './pages/Balance';
 import Login from './pages/Login';
 import ExpenseModal from './components/ExpenseModal';
 import ConfirmationModal from './components/ConfirmationModal';
@@ -32,7 +37,7 @@ import Toast from './components/Toast';
 // Main App Component
 function AppContent() {
     const { user, logout } = useAuth();
-    const { debts, loading, error, toggleStatus, addDebt, updateDebt, deleteDebt } = useDebts();
+    const { debts, loading, error, toggleStatus, addDebt, updateDebt, deleteDebt, importDebts } = useDebts();
 
     // --- Handlers for Expenses ---
     const [editingExpense, setEditingExpense] = useState(null);
@@ -110,6 +115,8 @@ function AppContent() {
         switch (location.pathname) {
             case '/gastos': return 'Gastos del Mes';
             case '/deudas': return 'Mis Deudas';
+            case '/ingresos': return 'Mis Ingresos';
+            case '/balance': return 'Balance Financiero';
             case '/reportes': return 'Reportes';
             case '/juntadas': return 'Dividir Gastos';
             default: return 'Resumen Mensual';
@@ -167,6 +174,12 @@ function AppContent() {
                     <NavLink to="/deudas" className={({ isActive }) => isActive ? 'active' : ''}>
                         <li><CreditCard size={20} /> Deudas</li>
                     </NavLink>
+                    <NavLink to="/ingresos" className={({ isActive }) => isActive ? 'active' : ''}>
+                        <li><TrendingUp size={20} /> Ingresos</li>
+                    </NavLink>
+                    <NavLink to="/balance" className={({ isActive }) => isActive ? 'active' : ''}>
+                        <li><DollarSign size={20} /> Balance</li>
+                    </NavLink>
                     <NavLink to="/reportes" className={({ isActive }) => isActive ? 'active' : ''}>
                         <li><ChartIcon size={20} /> Reportes</li>
                     </NavLink>
@@ -203,7 +216,11 @@ function AppContent() {
                 <Routes>
                     <Route path="/" element={<Dashboard debts={debts} expenses={expenses} loading={loading} error={error} onToggleStatus={requestPayment} />} />
                     <Route path="/gastos" element={<Gastos expenses={expenses} loading={expensesLoading} onDeleteExpense={requestDeleteExpense} onEditExpense={requestEditExpense} />} />
-                    <Route path="/deudas" element={<Deudas debts={debts} loading={loading} onToggleStatus={requestPayment} onAddDebt={addDebt} onUpdateDebt={updateDebt} onDeleteDebt={deleteDebt} />} />
+                    <Route path="/deudas" element={<Deudas debts={debts} loading={loading} onToggleStatus={requestPayment} onDeleteDebt={deleteDebt} importDebts={importDebts} />} />
+                    <Route path="/deudas/nueva" element={<DebtForm />} />
+                    <Route path="/deudas/editar/:id" element={<DebtForm />} />
+                    <Route path="/ingresos" element={<Ingresos />} />
+                    <Route path="/balance" element={<Balance />} />
                     <Route path="/reportes" element={<Reportes expenses={expenses} debts={debts} loading={loading || expensesLoading} />} />
                     <Route path="/juntadas" element={<Juntadas />} />
                     <Route path="*" element={<Navigate to="/" replace />} />

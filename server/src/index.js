@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import debtRoutes from './routes/debtRoutes.js';
 import expenseRoutes from './routes/expenseRoutes.js';
+import incomeRoutes from './routes/incomeRoutes.js';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 // API Routes
 app.use('/api/debts', debtRoutes);
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/incomes', incomeRoutes);
 
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Server is running' });

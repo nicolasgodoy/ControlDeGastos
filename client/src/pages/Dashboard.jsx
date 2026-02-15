@@ -94,7 +94,7 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
     };
 
     const getDaysBadge = (diffDays) => {
-        if (diffDays < 0) return { text: 'A Pagar', class: 'urgent' };
+        if (diffDays < 0) return { text: 'Vencido', class: 'urgent' };
         if (diffDays === 0) return { text: 'Hoy', class: 'warning' };
         if (diffDays === 1) return { text: 'Mañana', class: 'warning' };
         return { text: `${diffDays} días`, class: 'normal' };
