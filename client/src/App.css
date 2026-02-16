@@ -863,7 +863,8 @@ header h1 {
     .form-group select {
         padding: 0.7rem 0.75rem;
         /* Shorter inputs */
-        font-size: 0.9rem;
+        font-size: 16px;
+        /* Prevents iOS auto-zoom on focus */
     }
 }
 
@@ -1155,5 +1156,12 @@ select option {
         width: auto;
         display: flex;
         align-items: center;
+    }
+
+    /* Global Fix for iOS Auto-zoom on focus - Ensure font-size is at least 16px */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
     }
 }
