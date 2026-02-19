@@ -41,6 +41,8 @@ export function AuthProvider({ children }) {
 
     const loginWithGoogle = () => {
         const provider = new GoogleAuthProvider();
+        provider.addScope('profile');
+        provider.addScope('email');
         return signInWithPopup(auth, provider);
     };
 
