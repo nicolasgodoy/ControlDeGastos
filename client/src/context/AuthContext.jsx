@@ -36,6 +36,7 @@ export function AuthProvider({ children }) {
     };
 
     const logout = () => {
+
         return signOut(auth);
     };
 
