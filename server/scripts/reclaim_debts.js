@@ -1,13 +1,16 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, updateDoc, doc, writeBatch } from "firebase/firestore";
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 const firebaseConfig = {
-    apiKey: "AIzaSyBiT-tF-yAfBJaTT95W5ks1lwt0qvuFNkA",
-    authDomain: "controldegastosmoneyflow.firebaseapp.com",
-    projectId: "controldegastosmoneyflow",
-    storageBucket: "controldegastosmoneyflow.firebasestorage.app",
-    messagingSenderId: "446360723310",
-    appId: "1:446360723310:web:de9a6953af45aec9536b7f"
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);

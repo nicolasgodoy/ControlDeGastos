@@ -3,13 +3,13 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBiT-tF-yAfBJaTT95W5ks1lwt0qvuFNkA",
-    authDomain: "controldegastosmoneyflow.firebaseapp.com",
-    projectId: "controldegastosmoneyflow",
-    storageBucket: "controldegastosmoneyflow.firebasestorage.app",
-    messagingSenderId: "446360723310",
-    appId: "1:446360723310:web:de9a6953af45aec9536b7f",
-    measurementId: "G-JB2E7NKX4T"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
