@@ -1,5 +1,4 @@
-import React from 'react';
-import { AlertCircle, Check, X } from 'lucide-react';
+import { AlertCircle, Check } from 'lucide-react';
 import '../App.css';
 
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
