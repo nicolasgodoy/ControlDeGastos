@@ -86,8 +86,7 @@ function DebtForm() {
 
     const getAvailableRates = () => {
         const entity = formData.entity.toUpperCase().trim();
-        if (bankRates[entity]) return bankRates[entity];
-        return [
+        const baseRates = bankRates[entity] || [
             { value: '80-CFT', label: 'Tasa Baja - 80% CFT' },
             { value: '100-CFT', label: 'Tasa Media-Baja - 100% CFT' },
             { value: '120-CFT', label: 'Tasa Media - 120% CFT' },
@@ -96,6 +95,11 @@ function DebtForm() {
             { value: '145-TNA', label: 'Tarjeta Crédito - 145% TNA' },
             { value: '30-CFT', label: 'Plan Cuotas - 30% CFT' },
             { value: '50-CFT', label: 'Financiación - 50% CFT' }
+        ];
+
+        return [
+            { value: '0-CFT', label: 'Sin Interés - 0%' },
+            ...baseRates
         ];
     };
 
@@ -110,7 +114,7 @@ function DebtForm() {
                     date: existingDebt.date ? existingDebt.date.split('T')[0] : new Date().toISOString().split('T')[0],
                     installments_paid: existingDebt.installments_paid || 0,
                     installments_total: existingDebt.installments_total || 1,
-                    interestRate: existingDebt.interestRate || '',
+                    interestRate: (existingDebt.interestRate !== null && existingDebt.interestRate !== undefined) ? existingDebt.interestRate.toString() : '',
                     rateType: existingDebt.rateType || 'TNA'
                 });
                 setShowAdvanced(existingDebt.installments_total > 1);
@@ -119,7 +123,7 @@ function DebtForm() {
     }, [id, debts]);
 
     useEffect(() => {
-        if (formData.interestRate && formData.amount && formData.installments_total > 1) {
+        if (formData.interestRate !== '' && formData.amount && formData.installments_total > 1) {
             calculateMonthlyPayment();
         } else {
             setCalculatedPayment(null);
@@ -131,17 +135,26 @@ function DebtForm() {
         const annualRate = parseFloat(formData.interestRate);
         const months = parseInt(formData.installments_total);
 
-        if (!principal || !annualRate || !months || months <= 1) {
+        if (!principal || isNaN(annualRate) || !months || months <= 1) {
             setCalculatedPayment(null);
             return;
         }
 
-        const monthlyRate = annualRate / 100 / 12;
-        const payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
-            (Math.pow(1 + monthlyRate, months) - 1);
+        let payment;
+        let totalToPay;
+        let totalInterest;
 
-        const totalToPay = payment * months;
-        const totalInterest = totalToPay - principal;
+        if (annualRate === 0) {
+            payment = principal / months;
+            totalToPay = principal;
+            totalInterest = 0;
+        } else {
+            const monthlyRate = annualRate / 100 / 12;
+            payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
+                (Math.pow(1 + monthlyRate, months) - 1);
+            totalToPay = payment * months;
+            totalInterest = totalToPay - principal;
+        }
 
         setCalculatedPayment({
             monthly: Math.round(payment * 100) / 100,
@@ -161,8 +174,8 @@ function DebtForm() {
         setValidationError('');
         setIsSubmitting(true);
 
-        if (formData.installments_total > 1 && (!formData.interestRate || parseFloat(formData.interestRate) <= 0)) {
-            setValidationError('Para deudas con cuotas, la tasa de interés es obligatoria');
+        if (formData.installments_total > 1 && (formData.interestRate === '')) {
+            setValidationError('Para deudas con cuotas, debés seleccionar una tasa (puede ser 0%)');
             setIsSubmitting(false);
             return;
         }
@@ -171,7 +184,9 @@ function DebtForm() {
         const submitData = {
             ...formData,
             amount: amountNumber,
-            interestRate: formData.interestRate ? parseFloat(formData.interestRate) : null
+            interestRate: formData.interestRate !== '' ? parseFloat(formData.interestRate) : null,
+            monthlyPayment: calculatedPayment ? calculatedPayment.monthly : null,
+            totalToPay: calculatedPayment ? calculatedPayment.total : amountNumber
         };
 
         let result;
@@ -446,7 +461,7 @@ function DebtForm() {
                                     borderRadius: '4px',
                                     marginLeft: 'auto'
                                 }}>
-                                    INTERÉS REQUERIDO
+                                    TASA REQUERIDA
                                 </span>
                             )}
                         </div>
