@@ -165,8 +165,17 @@ function DebtForm() {
 
     const handleInstallmentsChange = (value) => {
         const installments = parseInt(value) || 1;
-        setFormData({ ...formData, installments_total: installments });
-        if (installments > 1 && !showAdvanced) setShowAdvanced(true);
+        const updates = { installments_total: installments };
+
+        if (installments > 1) {
+            if (!showAdvanced) setShowAdvanced(true);
+            // Default to 0% if no rate is selected yet
+            if (formData.interestRate === '') {
+                updates.interestRate = '0';
+                updates.rateType = 'CFT';
+            }
+        }
+        setFormData({ ...formData, ...updates });
     };
 
     const handleSubmit = async (e) => {
@@ -174,32 +183,62 @@ function DebtForm() {
         setValidationError('');
         setIsSubmitting(true);
 
-        if (formData.installments_total > 1 && (formData.interestRate === '')) {
-            setValidationError('Para deudas con cuotas, debés seleccionar una tasa (puede ser 0%)');
-            setIsSubmitting(false);
-            return;
-        }
+        const installments = parseInt(formData.installments_total) || 1;
 
-        const amountNumber = parseFloat(formData.amount);
-        const submitData = {
-            ...formData,
-            amount: amountNumber,
-            interestRate: formData.interestRate !== '' ? parseFloat(formData.interestRate) : null,
-            monthlyPayment: calculatedPayment ? calculatedPayment.monthly : null,
-            totalToPay: calculatedPayment ? calculatedPayment.total : amountNumber
-        };
+        if (installments > 1 && !id) {
+            // BURST MODE: Create N separate documents, one for each installment
+            const docs = [];
+            const baseDateParts = formData.date.split('-');
+            const baseYear = parseInt(baseDateParts[0]);
+            const baseMonth = parseInt(baseDateParts[1]) - 1; // 0-indexed
+            const baseDay = parseInt(baseDateParts[2]);
 
-        let result;
-        if (id) {
-            result = await updateDebt(id, submitData);
+            const monthlyAmount = calculatedPayment ? calculatedPayment.monthly : parseFloat(formData.amount) / installments;
+
+            for (let i = 0; i < installments; i++) {
+                // Calculate date for this installment
+                const installmentDate = new Date(baseYear, baseMonth + i, baseDay);
+                // Ensure if we start on 31st and next month has 30, it stays at end of month
+                if (installmentDate.getDate() !== baseDay && i > 0) {
+                    installmentDate.setDate(0); // Go to last day of previous month
+                }
+
+                docs.push({
+                    ...formData,
+                    loanName: `${formData.loanName} (${i + 1}/${installments})`,
+                    amount: Math.round(monthlyAmount * 100) / 100,
+                    date: installmentDate.toISOString().split('T')[0],
+                    installments_paid: i + 1,
+                    installments_total: installments,
+                    interestRate: formData.interestRate !== '' ? parseFloat(formData.interestRate) : 0,
+                    monthlyPayment: Math.round(monthlyAmount * 100) / 100,
+                    totalToPay: calculatedPayment ? calculatedPayment.total : parseFloat(formData.amount)
+                });
+            }
+
+            const result = await addDebt(docs);
+            if (result.success) {
+                navigate('/deudas');
+            } else {
+                setValidationError(result.error || 'Error al guardar las cuotas');
+            }
         } else {
-            result = await addDebt(submitData);
-        }
+            // SINGLE DOC MODE: Legacy or Edit mode
+            const amountNumber = parseFloat(formData.amount);
+            const submitData = {
+                ...formData,
+                amount: amountNumber,
+                interestRate: formData.interestRate !== '' ? parseFloat(formData.interestRate) : null,
+                monthlyPayment: calculatedPayment ? calculatedPayment.monthly : null,
+                totalToPay: calculatedPayment ? calculatedPayment.total : amountNumber
+            };
 
-        if (result.success) {
-            navigate('/deudas');
-        } else {
-            setValidationError(result.error || 'Error al guardar la deuda');
+            const result = await (id ? updateDebt(id, submitData) : addDebt(submitData));
+            if (result.success) {
+                navigate('/deudas');
+            } else {
+                setValidationError(result.error || 'Error al guardar la deuda');
+            }
         }
         setIsSubmitting(false);
     };
@@ -472,8 +511,12 @@ function DebtForm() {
                                     Tasa / Financiación
                                 </label>
                                 <select
-                                    value={formData.installments_total > 1 ? (formData.interestRate ? `${formData.interestRate}-${formData.rateType}` : '') : 'single'}
+                                    value={formData.installments_total > 1 ? (formData.interestRate !== '' ? `${formData.interestRate}-${formData.rateType}` : '') : 'single'}
                                     onChange={e => {
+                                        if (e.target.value === 'single' || e.target.value === '') {
+                                            setFormData({ ...formData, interestRate: '', rateType: 'TNA' });
+                                            return;
+                                        }
                                         const [rate, type] = e.target.value.split('-');
                                         setFormData({
                                             ...formData,
@@ -495,9 +538,11 @@ function DebtForm() {
                                         height: '45px'
                                     }}
                                 >
-                                    <option value="single" disabled={formData.installments_total > 1}>
-                                        {formData.installments_total <= 1 ? '✓ Pago Único (Sin Interés)' : '-- Seleccioná Tasa --'}
-                                    </option>
+                                    {formData.installments_total <= 1 ? (
+                                        <option value="single">✓ Pago Único (Sin Interés)</option>
+                                    ) : (
+                                        <option value="">-- Seleccioná Tasa --</option>
+                                    )}
                                     {formData.installments_total > 1 && getAvailableRates().map(rate => (
                                         <option key={rate.value} value={rate.value}>
                                             {rate.label}
