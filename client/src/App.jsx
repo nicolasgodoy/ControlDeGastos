@@ -260,13 +260,24 @@ function AppContent() {
                 <NavLink to="/gastos" className={({ isActive }) => isActive ? 'active' : ''}>
                     <Wallet size={24} />
                 </NavLink>
-
                 <NavLink to="/deudas" className={({ isActive }) => isActive ? 'active' : ''}>
                     <CreditCard size={24} />
                 </NavLink>
+                <NavLink to="/ingresos" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <TrendingUp size={24} />
+                </NavLink>
+                <NavLink to="/balance" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <DollarSign size={24} />
+                </NavLink>
 
                 {location.pathname === '/gastos' && (
-                    <div style={{ position: 'relative', top: '-24px' }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: '-28px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 10
+                    }}>
                         <button
                             onClick={() => { setEditingExpense(null); setModalOpen(true); }}
                             style={{

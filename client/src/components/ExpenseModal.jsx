@@ -64,7 +64,9 @@ function ExpenseModal({ isOpen, onClose, onSave, initialData }) {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Descripción</label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <TrendingUp size={16} style={{ transform: 'rotate(180deg)', color: 'var(--danger)' }} /> Descripción
+                        </label>
                         <input
                             type="text"
                             value={formData.description}
@@ -73,39 +75,54 @@ function ExpenseModal({ isOpen, onClose, onSave, initialData }) {
                             required
                         />
                     </div>
-                    <div className="form-group">
-                        <label>Monto ($)</label>
-                        <input
-                            type="number"
-                            value={formData.amount}
-                            onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                            placeholder="0"
-                            required
-                        />
+
+                    <div className="form-group" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1rem' }}>
+                        <div>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <DollarSign size={16} /> Monto ($)
+                            </label>
+                            <div className="input-with-icon">
+                                <span>$</span>
+                                <input
+                                    type="number"
+                                    value={formData.amount}
+                                    onChange={e => setFormData({ ...formData, amount: e.target.value })}
+                                    placeholder="0"
+                                    required
+                                    style={{ fontWeight: '600', fontSize: '1.1rem' }}
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <Calendar size={16} /> Fecha
+                            </label>
+                            <input
+                                type="date"
+                                value={formData.date}
+                                onChange={e => setFormData({ ...formData, date: e.target.value })}
+                            />
+                        </div>
                     </div>
+
                     <div className="form-group">
-                        <label>Categoría</label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Tag size={16} /> Categoría
+                        </label>
                         <select
                             value={formData.category}
                             onChange={e => setFormData({ ...formData, category: e.target.value })}
-                            style={{ appearance: 'none' }}
                         >
                             {categories.map(cat => (
-                                <option key={cat.value} value={cat.value} style={{ background: '#18181b', color: 'var(--text-main)' }}>
+                                <option key={cat.value} value={cat.value}>
                                     {cat.label}
                                 </option>
                             ))}
                         </select>
                     </div>
-                    <div className="form-group">
-                        <label>Fecha</label>
-                        <input
-                            type="date"
-                            value={formData.date}
-                            onChange={e => setFormData({ ...formData, date: e.target.value })}
-                        />
-                    </div>
-                    <button type="submit" className="submit-btn">
+
+                    <button type="submit" className="submit-btn" style={{ marginTop: '1rem' }}>
                         {initialData ? 'Guardar Cambios' : 'Guardar Gasto'}
                     </button>
                 </form>

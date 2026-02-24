@@ -874,6 +874,24 @@ header h1 {
     border-color: var(--primary);
 }
 
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon span {
+    position: absolute;
+    left: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+.input-with-icon input {
+    padding-left: 2.5rem !important;
+}
+
 /* Fix for Select Options in Dark Mode - Global */
 select option {
     background-color: #18181b;
@@ -916,7 +934,7 @@ select option {
     background: rgba(20, 20, 25, 0.95);
     backdrop-filter: blur(16px);
     border-top: 1px solid var(--glass-border);
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 2px;
     z-index: 1000;
     justify-content: space-around;
     align-items: center;
@@ -930,11 +948,11 @@ select option {
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    padding: 0.5rem;
+    padding: 0.35rem;
     border-radius: 50%;
     transition: all 0.3s ease;
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
 }
 
 .bottom-nav a.active {
@@ -957,11 +975,11 @@ select option {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
+    padding: 0.35rem;
     border-radius: 50%;
     transition: all 0.3s ease;
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     cursor: pointer;
 }
 

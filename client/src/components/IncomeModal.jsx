@@ -88,8 +88,8 @@ const IncomeModal = ({ isOpen, onClose, onSave, initialData = null }) => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>
-                            Fuente de Ingreso
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <TrendingUp size={16} /> Fuente de Ingreso
                         </label>
                         <input
                             type="text"
@@ -115,11 +115,13 @@ const IncomeModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                         )}
                     </div>
 
-                    <div className="form-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="form-group" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1rem' }}>
                         <div>
-                            <label>Monto ($)</label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <DollarSign size={16} /> Monto ($)
+                            </label>
                             <div className="input-with-icon">
-                                <span style={{ color: 'var(--text-dim)' }}>$</span>
+                                <span>$</span>
                                 <input
                                     type="number"
                                     name="amount"
@@ -149,7 +151,9 @@ const IncomeModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                         </div>
 
                         <div>
-                            <label>Fecha</label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <Calendar size={16} /> Fecha
+                            </label>
                             <input
                                 type="date"
                                 name="date"
@@ -174,7 +178,9 @@ const IncomeModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                     </div>
 
                     <div className="form-group">
-                        <label>Categoría</label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Tag size={16} /> Categoría
+                        </label>
                         <select
                             name="category"
                             value={formData.category}
@@ -188,15 +194,16 @@ const IncomeModal = ({ isOpen, onClose, onSave, initialData = null }) => {
 
                     <div style={{
                         marginBottom: '1.5rem',
-                        padding: '0.75rem',
-                        background: 'rgba(99, 102, 241, 0.05)',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(99, 102, 241, 0.1)'
+                        padding: '1rem',
+                        background: formData.recurring ? 'rgba(99, 102, 241, 0.1)' : 'rgba(128, 128, 128, 0.05)',
+                        borderRadius: '12px',
+                        border: formData.recurring ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
+                        transition: 'all 0.3s ease'
                     }}>
                         <label style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.75rem',
+                            gap: '1rem',
                             cursor: 'pointer',
                             margin: 0
                         }}>
@@ -206,20 +213,21 @@ const IncomeModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                                 checked={formData.recurring}
                                 onChange={handleChange}
                                 style={{
-                                    width: '18px',
-                                    height: '18px',
-                                    cursor: 'pointer'
+                                    width: '20px',
+                                    height: '20px',
+                                    cursor: 'pointer',
+                                    accentColor: 'var(--primary)'
                                 }}
                             />
                             <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                                    <Repeat size={16} color="var(--primary)" />
-                                    <span style={{ fontWeight: '500', color: 'var(--text-main)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.1rem' }}>
+                                    <Repeat size={16} style={{ color: formData.recurring ? 'var(--primary)' : 'var(--text-dim)' }} />
+                                    <span style={{ fontWeight: '600', color: formData.recurring ? 'var(--text-main)' : 'var(--text-dim)' }}>
                                         Ingreso recurrente
                                     </span>
                                 </div>
                                 <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                                    Se repite mensualmente
+                                    Se registrará automáticamente cada mes
                                 </span>
                             </div>
                         </label>
