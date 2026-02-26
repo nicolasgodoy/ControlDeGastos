@@ -121,7 +121,7 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                     <button
                         className="action-btn"
                         onClick={() => document.getElementById('excel-upload').click()}
-                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                        style={{ background: 'var(--bg-subtle)', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }}
                         title="Importar desde Excel"
                     >
                         Importar Excel
@@ -129,7 +129,7 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                     <button
                         className="add-btn"
                         onClick={() => navigate('/deudas/nueva')}
-                        style={{ boxShadow: 'none' }}
+                        style={{ boxShadow: 'var(--shadow-sm)' }}
                     >
                         <PlusCircle size={18} /> Nueva Deuda
                     </button>
@@ -137,7 +137,7 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
             </div>
 
             {/* Filter Bar */}
-            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', background: 'var(--card-bg)', padding: '1rem', borderRadius: '1rem', border: '1px solid var(--glass-border)' }}>
+            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', background: 'var(--card-bg)', padding: '1rem', borderRadius: '1rem', border: '1px solid var(--glass-border)', boxShadow: 'var(--shadow-sm)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-dim)', fontSize: '0.9rem' }}>
                     <Filter size={18} />
                     <span>Filtros:</span>
@@ -174,7 +174,7 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                     style={{
                         padding: '0.5rem 1rem',
                         borderRadius: '0.75rem',
-                        background: 'rgba(255,255,255,0.05)',
+                        background: 'var(--bg-subtle)',
                         border: '1px solid var(--glass-border)',
                         color: 'var(--text-main)',
                         fontSize: '0.9rem',
@@ -183,14 +183,14 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                         maxWidth: '200px'
                     }}
                 >
-                    <option value="all">Todas las Entidades</option>
+                    <option value="all" style={{ background: 'var(--card-bg)' }}>Todas las Entidades</option>
                     {uniqueEntities.map(entity => (
-                        <option key={entity} value={entity}>{entity}</option>
+                        <option key={entity} value={entity} style={{ background: 'var(--card-bg)' }}>{entity}</option>
                     ))}
                 </select>
             </div>
 
-            <div className="glass-card">
+            <div className="glass-card" style={{ boxShadow: 'var(--shadow-md)' }}>
                 <div className="debts-table">
                     <div className="table-header deudas-grid">
                         <span>Entidad</span>
@@ -279,12 +279,13 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                             onClick={() => paginate(currentPage - 1)}
                             disabled={currentPage === 1}
                             style={{
-                                background: 'rgba(255,255,255,0.05)',
-                                border: 'none',
+                                background: 'var(--bg-subtle)',
+                                border: `1px solid var(--glass-border)`,
                                 padding: '0.5rem 1rem',
                                 borderRadius: '0.5rem',
                                 color: currentPage === 1 ? 'var(--text-dim)' : 'var(--text-main)',
-                                cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+                                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                                fontSize: '0.9rem'
                             }}
                         >
                             Anterior
@@ -296,12 +297,13 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                             onClick={() => paginate(currentPage + 1)}
                             disabled={currentPage === totalPages}
                             style={{
-                                background: 'rgba(255,255,255,0.05)',
-                                border: 'none',
+                                background: 'var(--bg-subtle)',
+                                border: `1px solid var(--glass-border)`,
                                 padding: '0.5rem 1rem',
                                 borderRadius: '0.5rem',
                                 color: currentPage === totalPages ? 'var(--text-dim)' : 'var(--text-main)',
-                                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                                fontSize: '0.9rem'
                             }}
                         >
                             Siguiente
@@ -312,8 +314,8 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
 
             {/* Import Confirmation Modal */}
             {importModal.isOpen && (
-                <div className="modal-overlay" onClick={() => setImportModal({ isOpen: false, file: null })}>
-                    <div className="modal glass-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', textAlign: 'center', padding: '2rem' }}>
+                <div className="modal-overlay" style={{ background: 'var(--overlay-bg)' }} onClick={() => setImportModal({ isOpen: false, file: null })}>
+                    <div className="modal glass-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', textAlign: 'center', padding: '2rem', boxShadow: 'var(--shadow-md)' }}>
                         <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Importar Deudas</h2>
                         <p style={{ color: 'var(--text-dim)', marginBottom: '1.5rem' }}>
                             Seleccioná cómo querés importar el archivo Excel:
@@ -323,14 +325,14 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                             <button
                                 className="add-btn"
                                 onClick={() => confirmImport('append')}
-                                style={{ width: '100%', background: 'var(--primary)' }}
+                                style={{ width: '100%', background: 'var(--primary-solid)', color: 'white' }}
                             >
                                 Sumar a las actuales
                             </button>
                             <button
                                 className="action-btn"
                                 onClick={() => confirmImport('replace')}
-                                style={{ width: '100%', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                                style={{ width: '100%', color: 'var(--danger)', border: '1px solid var(--danger)', background: 'transparent' }}
                             >
                                 Reemplazar todas
                             </button>
@@ -350,7 +352,7 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
             {statusModal.isOpen && (
                 <div
                     className="modal-overlay"
-                    style={{ zIndex: 1000 }}
+                    style={{ zIndex: 1000, background: 'var(--overlay-bg)' }}
                     onClick={() => statusModal.type === 'error' && setStatusModal({ ...statusModal, isOpen: false })}
                 >
                     <div
@@ -361,21 +363,23 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                             maxWidth: '400px',
                             width: '90%',
                             textAlign: 'center',
-                            border: statusModal.type === 'error' ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(16, 185, 129, 0.3)',
-                            background: 'rgba(20, 20, 25, 0.95)'
+                            border: statusModal.type === 'error' ? '1px solid var(--danger)' : '1px solid var(--success)',
+                            background: 'var(--card-bg)',
+                            boxShadow: 'var(--shadow-md)',
+                            backdropFilter: 'blur(10px)'
                         }}
                     >
                         <div style={{
                             width: '60px', height: '60px', borderRadius: '50%', margin: '0 auto 1rem',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            background: statusModal.type === 'error' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                            color: statusModal.type === 'error' ? '#ef4444' : '#10b981',
+                            background: statusModal.type === 'error' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                            color: statusModal.type === 'error' ? 'var(--danger)' : 'var(--success)',
                             fontSize: '1.75rem'
                         }}>
                             {statusModal.type === 'error' ? '!' : '✓'}
                         </div>
 
-                        <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.25rem' }}>{statusModal.title}</h3>
+                        <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.25rem', color: 'var(--text-main)' }}>{statusModal.title}</h3>
                         <p style={{ color: 'var(--text-dim)', margin: '0 0 1.5rem', lineHeight: '1.5' }}>
                             {statusModal.message}
                         </p>
@@ -383,7 +387,7 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                         <button
                             onClick={() => setStatusModal({ ...statusModal, isOpen: false })}
                             style={{
-                                background: statusModal.type === 'error' ? '#ef4444' : 'var(--primary)',
+                                background: statusModal.type === 'error' ? 'var(--danger)' : 'var(--primary-solid)',
                                 color: 'white', border: 'none', padding: '0.75rem 2rem', borderRadius: '8px',
                                 fontSize: '1rem', fontWeight: '500', cursor: 'pointer',
                                 width: '100%'

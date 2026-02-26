@@ -76,9 +76,10 @@ const Balance = () => {
                 marginBottom: '2rem',
                 padding: '2rem',
                 background: balance >= 0 ?
-                    'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)' :
-                    'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%)',
-                border: balance >= 0 ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(239, 68, 68, 0.2)'
+                    'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%)' :
+                    'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.03) 100%)',
+                border: balance >= 0 ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(239, 68, 68, 0.15)',
+                boxShadow: 'var(--shadow-md)'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>
@@ -127,8 +128,9 @@ const Balance = () => {
                     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                     gap: '1rem',
                     padding: '1.5rem',
-                    background: 'rgba(0,0,0,0.1)',
-                    borderRadius: '12px'
+                    background: 'var(--bg-subtle)',
+                    borderRadius: '12px',
+                    border: '1px solid var(--glass-border)'
                 }}>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
@@ -180,7 +182,7 @@ const Balance = () => {
                                 {committedPercentage.toFixed(1)}%
                             </span>
                         </div>
-                        <div style={{ height: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '6px', overflow: 'hidden' }}>
+                        <div style={{ height: '12px', background: 'var(--bg-subtle)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
                             <div style={{
                                 height: '100%',
                                 width: `${Math.min(committedPercentage, 100)}%`,

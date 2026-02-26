@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, TrendingUp, DollarSign, Calendar, Tag } from 'lucide-react';
 
 function ExpenseModal({ isOpen, onClose, onSave, initialData }) {
     const [formData, setFormData] = useState({

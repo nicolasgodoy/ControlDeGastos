@@ -12,31 +12,56 @@
     /* Zinc 400 */
 
     --primary: linear-gradient(135deg, #f16363 0%, #e9700c 100%);
-    /* Indigo 500 - Valid accent */
+    --primary-solid: #f16363;
     --primary-hover: #4f46e5;
-    /* Indigo 600 */
 
+    /* Functional */
     --success: #10b981;
     --danger: #f43f5e;
     --warning: #f59e0b;
     --info: #3b82f6;
+
+    /* Semantic Subtles */
+    --bg-subtle: rgba(255, 255, 255, 0.05);
+    --bg-hover: rgba(255, 255, 255, 0.08);
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="light"] {
-    --bg-dark: #ffffff;
-    /* White */
-    --card-bg: #f4f4f5;
-    /* Zinc 100 - Very light gray */
-    --glass-border: rgba(0, 0, 0, 0.06);
+    --bg-dark: #f8fafc;
+    /* Slate 50 */
+    --card-bg: #ffffff;
+    /* White Card */
+    --glass-border: rgba(0, 0, 0, 0.08);
 
-    --text-main: #09090b;
-    /* Zinc 950 */
-    --text-dim: #52525b;
-    /* Zinc 600 */
+    --text-main: #0f172a;
+    /* Slate 900 */
+    --text-dim: #64748b;
+    /* Slate 500 */
 
-    --primary: #4f46e5;
-    /* Indigo 600 - Darker for contrast */
-    --primary-hover: #4338ca;
+    --primary: #f05252;
+    /* Solid color for light mode brand */
+    --primary-solid: #f05252;
+    --primary-hover: #e02424;
+
+    /* Functional (Adjusted for white bg) */
+    --success: #059669;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --info: #2563eb;
+
+    /* Semantic Subtles */
+    --bg-subtle: rgba(0, 0, 0, 0.03);
+    --bg-hover: rgba(0, 0, 0, 0.06);
+    --overlay-bg: rgba(15, 23, 42, 0.4);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
 }
 
 body {
@@ -496,7 +521,7 @@ header h1 {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--overlay-bg);
     display: flex;
     align-items: center;
     justify-content: center;

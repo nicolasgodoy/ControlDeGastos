@@ -253,8 +253,8 @@ const Ingresos = () => {
                 }
 
                 .icon-btn {
-                    background: rgba(255, 255, 255, 0.05);
-                    border: none;
+                    background: var(--bg-subtle);
+                    border: 1px solid var(--glass-border);
                     padding: 0.5rem;
                     border-radius: 6px;
                     cursor: pointer;
@@ -263,7 +263,7 @@ const Ingresos = () => {
                 }
 
                 .icon-btn:hover {
-                    background: rgba(255, 255, 255, 0.1);
+                    background: var(--bg-hover);
                     color: var(--text-main);
                 }
 

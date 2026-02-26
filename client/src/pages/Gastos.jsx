@@ -19,7 +19,7 @@ function Gastos({ expenses, loading, onDeleteExpense, onEditExpense }) {
             ) : (
                 <div className="glass-card">
                     <div className="table-container">
-                        <div style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.85rem', color: 'var(--text-dim)' }}>
+                        <div style={{ padding: '1rem', borderBottom: '1px solid var(--glass-border)', fontSize: '0.85rem', color: 'var(--text-dim)' }}>
                             Total: {expenses.length}
                         </div>
                         <div className="debts-table">

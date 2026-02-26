@@ -209,7 +209,7 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                                                 color: "var(--text-main)"
                                             }}
                                             itemStyle={{ color: "var(--text-main)" }}
-                                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                            cursor={{ fill: 'var(--bg-subtle)' }}
                                         />
                                         <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={32} animationDuration={1000}>
                                             {categoryData.map((entry, index) => (
