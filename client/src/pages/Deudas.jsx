@@ -223,10 +223,9 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                                         <span style={{ fontFamily: 'monospace', fontSize: '1rem', color: 'var(--text-main)' }}>
                                             ${debt.amount.toLocaleString('es-AR')}
                                         </span>
-                                        <span>
+                                        <span style={{ display: 'flex', justifyContent: 'center' }}>
                                             <span className={`status ${debt.status}`} style={{
                                                 width: '100%',
-                                                display: 'inline-block', // Ensure it respects width
                                                 textAlign: 'center'
                                             }}>
                                                 {debt.status === 'pending' ? 'Pendiente' : 'Pagado'}

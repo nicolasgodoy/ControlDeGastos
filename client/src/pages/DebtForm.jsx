@@ -246,12 +246,12 @@ function DebtForm() {
     return (
         <div className="section fade-in">
             {/* Header Section like Ingresos */}
-            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div className="section-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <button
                         onClick={() => navigate('/deudas')}
                         className="action-btn"
-                        style={{ background: 'rgba(255,255,255,0.05)', border: 'none', padding: '0.5rem' }}
+                        style={{ padding: '0.5rem' }}
                     >
                         <ArrowLeft size={20} />
                     </button>
@@ -274,7 +274,7 @@ function DebtForm() {
                             padding: '0.75rem 1.5rem',
                             fontSize: '0.9rem',
                             background: 'transparent',
-                            border: '1px solid rgba(255,255,255,0.1)'
+                            border: '1px solid var(--glass-border)'
                         }}
                     >
                         Cancelar
@@ -346,11 +346,6 @@ function DebtForm() {
                                     autoComplete="off"
                                     style={{
                                         width: '100%',
-                                        padding: '0.75rem',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '8px',
-                                        color: 'white',
                                         fontWeight: '600',
                                         fontSize: '1rem',
                                         textTransform: 'uppercase'
@@ -378,12 +373,7 @@ function DebtForm() {
                                     placeholder="Ej: Préstamo Personal, Tarjeta..."
                                     required
                                     style={{
-                                        width: '100%',
-                                        padding: '0.75rem',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '8px',
-                                        color: 'white'
+                                        width: '100%'
                                     }}
                                 />
                             </div>
@@ -399,12 +389,7 @@ function DebtForm() {
                                         required
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem 0.75rem 0.75rem 2.5rem',
-                                            background: 'rgba(255,255,255,0.05)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '8px',
-                                            color: 'white',
-                                            colorScheme: 'dark'
+                                            paddingLeft: '2.5rem'
                                         }}
                                     />
                                 </div>
@@ -433,11 +418,9 @@ function DebtForm() {
                                         step="0.01"
                                         style={{
                                             width: '100%',
-                                            padding: '0.75rem 0.75rem 0.75rem 2rem',
+                                            paddingLeft: '2rem',
                                             background: 'rgba(16, 185, 129, 0.05)',
                                             border: '1px solid rgba(16, 185, 129, 0.2)',
-                                            borderRadius: '8px',
-                                            color: 'white',
                                             fontWeight: '600',
                                             fontSize: '1.2rem'
                                         }}
@@ -455,11 +438,7 @@ function DebtForm() {
                                         min="0"
                                         style={{
                                             width: '100%',
-                                            padding: '0.6rem',
-                                            background: 'rgba(255,255,255,0.05)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '8px',
-                                            color: 'white'
+                                            padding: '0.6rem'
                                         }}
                                     />
                                 </div>
@@ -474,10 +453,6 @@ function DebtForm() {
                                         style={{
                                             width: '100%',
                                             padding: '0.6rem',
-                                            background: 'rgba(255,255,255,0.05)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '8px',
-                                            color: 'white',
                                             fontWeight: 'bold'
                                         }}
                                     />
@@ -527,13 +502,8 @@ function DebtForm() {
                                     disabled={formData.installments_total <= 1}
                                     style={{
                                         width: '100%',
-                                        padding: '0.75rem',
                                         fontSize: '0.9rem',
                                         fontWeight: '500',
-                                        background: formData.installments_total > 1 ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                        borderRadius: '8px',
-                                        color: formData.installments_total > 1 ? 'var(--text-main)' : 'var(--text-dim)',
                                         cursor: formData.installments_total > 1 ? 'pointer' : 'not-allowed',
                                         height: '45px'
                                     }}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { AlertCircle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CATEGORY_COLORS, ENTITY_COLORS } from '../constants/colors';
 
@@ -48,6 +48,13 @@ const getEntityIcon = (entityName, category) => {
 // --- Colors imported from ../constants/colors ---
 
 function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     const totalDebt = debts.reduce((acc, debt) => acc + debt.amount, 0);
     const pendingAmount = debts.filter(d => d.status === 'pending').reduce((a, b) => a + b.amount, 0);
     const paidAmount = debts.filter(d => d.status === 'paid').reduce((a, b) => a + b.amount, 0);
@@ -95,9 +102,13 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
 
     const getDaysBadge = (diffDays) => {
         if (diffDays < 0) return { text: 'Vencido', class: 'urgent' };
-        if (diffDays === 0) return { text: 'Hoy', class: 'warning' };
-        if (diffDays === 1) return { text: 'Mañana', class: 'warning' };
-        return { text: `${diffDays} días`, class: 'normal' };
+        if (diffDays === 0) return { text: 'Hoy', class: 'urgent' };
+        if (diffDays === 1) return { text: 'Mañana', class: 'urgent' };
+        if (diffDays <= 3) return { text: `${diffDays} días`, class: 'urgent-soft' };
+        if (diffDays <= 5) return { text: `${diffDays} días`, class: 'warning' };
+        if (diffDays <= 10) return { text: `${diffDays} días`, class: 'attention' };
+        if (diffDays <= 20) return { text: `${diffDays} días`, class: 'normal' };
+        return { text: `${diffDays} días`, class: 'safe' };
     };
 
     return (
@@ -170,13 +181,13 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                 </div>
 
                 {/* Charts */}
-                <div className="charts-row">
+                <div className="charts-row" style={{ minWidth: 0 }}>
                     {/* Category Chart (Adapted) */}
-                    <div className="chart-card">
-                        <div className="chart-header">
+                    <div className="chart-card" style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                        <div className="chart-header" style={{ flexShrink: 0 }}>
                             <h3>Gastos Personales del dia a dia</h3>
                         </div>
-                        <div style={{ height: '250px', width: '100%' }}>
+                        <div style={{ height: '250px', width: '100%', flexGrow: 1, position: 'relative', minHeight: 0 }}>
                             {categoryData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart
@@ -231,11 +242,11 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                     </div>
 
                     {/* Entity Donut Chart (Adapted) */}
-                    <div className="chart-card">
-                        <div className="chart-header">
+                    <div className="chart-card" style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                        <div className="chart-header" style={{ flexShrink: 0 }}>
                             <h3>Gastos Fijos (Prestamos, Servicios, Tarjetas, etc.)</h3>
                         </div>
-                        <div style={{ height: '250px', width: '100%' }}>
+                        <div style={{ height: '250px', width: '100%', flexGrow: 1, position: 'relative', minHeight: 0 }}>
                             {entityData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
@@ -268,16 +279,17 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                                             itemStyle={{ color: "var(--text-main)" }}
                                         />
                                         <Legend
-                                            layout="vertical"
-                                            align="right"
-                                            verticalAlign="middle"
+                                            layout={isMobile ? "horizontal" : "vertical"}
+                                            align={isMobile ? "center" : "right"}
+                                            verticalAlign={isMobile ? "bottom" : "middle"}
                                             iconType="circle"
                                             iconSize={8}
                                             formatter={(value) => (
-                                                <span style={{ color: "var(--text-main)", fontSize: "12px" }}>
+                                                <span style={{ color: "var(--text-main)", fontSize: isMobile ? "11px" : "12px", marginRight: isMobile ? '10px' : '0' }}>
                                                     {value}
                                                 </span>
                                             )}
+                                            wrapperStyle={isMobile ? { paddingTop: '15px' } : { paddingLeft: '10px' }}
                                         />
                                     </PieChart>
                                 </ResponsiveContainer>
@@ -334,7 +346,14 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                                             ${debt.amount.toLocaleString('es-AR')}
                                         </span>
                                         <div className={`status-badge ${badge.class}`}>
-                                            {badge.text}
+                                            {badge.text.includes(' ') ? (
+                                                <>
+                                                    <span className="badge-val">{badge.text.split(' ')[0]}</span>
+                                                    <span className="badge-lbl">DÍAS</span>
+                                                </>
+                                            ) : (
+                                                <span className="badge-val" style={{ fontSize: '0.7rem' }}>{badge.text}</span>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

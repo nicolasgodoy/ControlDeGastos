@@ -242,7 +242,7 @@ function Juntadas() {
                                 placeholder="Nombre..."
                                 value={newParticipant}
                                 onChange={e => setNewParticipant(e.target.value)}
-                                style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }}
+                                style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', background: 'var(--bg-subtle)', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }}
                             />
                             <button type="submit" className="add-btn" style={{ marginTop: 0, padding: '0.75rem' }}>
                                 <UserPlus size={20} />
@@ -282,7 +282,7 @@ function Juntadas() {
                                                 width: '100%',
                                                 padding: '0.75rem',
                                                 borderRadius: '0.5rem',
-                                                background: 'rgba(255,255,255,0.05)',
+                                                background: 'var(--bg-subtle)',
                                                 border: '1px solid var(--glass-border)',
                                                 color: 'var(--text-main)',
                                                 appearance: 'none'
@@ -304,7 +304,7 @@ function Juntadas() {
                                             placeholder="$0"
                                             value={amount}
                                             onChange={e => setAmount(e.target.value)}
-                                            style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }}
+                                            style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', background: 'var(--bg-subtle)', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }}
                                             required
                                         />
                                     </div>
@@ -317,7 +317,7 @@ function Juntadas() {
                                         placeholder="Ej: Asado, Bebidas, Taxi..."
                                         value={description}
                                         onChange={e => setDescription(e.target.value)}
-                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }}
+                                        style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', background: 'var(--bg-subtle)', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }}
                                         required
                                     />
                                 </div>
@@ -351,7 +351,7 @@ function Juntadas() {
                                                         cursor: 'pointer',
                                                         padding: '0.5rem',
                                                         borderRadius: '0.5rem',
-                                                        background: isSelected ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                                                        background: isSelected ? 'var(--primary)' : 'var(--bg-subtle)',
                                                         boxShadow: isSelected ? '0 2px 8px rgba(99, 102, 241, 0.4)' : 'none',
                                                         border: '1px solid transparent',
                                                         display: 'flex',

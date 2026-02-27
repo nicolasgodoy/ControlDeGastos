@@ -154,7 +154,6 @@ function AppContent() {
                         color: 'white',
                         fontWeight: '800',
                         fontSize: '1.5rem',
-                        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
                         flexShrink: 0
                     }}>
                         M

@@ -1,9 +1,17 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Legend } from 'recharts';
 import { TrendingDown, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight, DollarSign, BarChart2, PieChart as PieChartIcon, Activity, Filter } from 'lucide-react';
 import { CATEGORY_COLORS, getCategoryColor } from '../constants/colors';
 
 function Reportes({ expenses, debts, loading }) {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     // State for filtering
     const [selectedPeriod, setSelectedPeriod] = useState(() => {
         const now = new Date();
@@ -209,35 +217,45 @@ function Reportes({ expenses, debts, loading }) {
             </section>
 
             {/* Main Chart Section */}
-            <div className="glass-card" style={{ height: '400px' }}>
-                <h3 style={{ marginBottom: '1.5rem' }}>Evolución de Gastos vs Deudas</h3>
+            <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: '400px', minWidth: 0 }}>
+                <h3 style={{ marginBottom: '1.5rem', flexShrink: 0 }}>Evolución de Gastos vs Deudas</h3>
                 {monthlyData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={monthlyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.8} />
-                                    <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
-                                </linearGradient>
-                                <linearGradient id="colorDebt" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#dc2626" stopOpacity={0.8} />
-                                    <stop offset="95%" stopColor="#dc2626" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <XAxis dataKey="name" stroke="var(--text-dim)" fontSize={12} />
-                            <YAxis stroke="var(--text-dim)" fontSize={12} tickFormatter={(val) => `$${val.toLocaleString()}`} />
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.1)" />
-                            <RechartsTooltip
-                                contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }}
-                                itemStyle={{ color: 'var(--text-main)' }}
-                            />
-                            <Area type="monotone" dataKey="spending" name="Gastos" stroke="#0ea5e9" strokeWidth={2} fillOpacity={1} fill="url(#colorSpending)" />
-                            <Area type="monotone" dataKey="debt" name="Deudas" stroke="#dc2626" strokeWidth={2} fillOpacity={1} fill="url(#colorDebt)" />
-                            <Legend verticalAlign="top" height={36} />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                    <div style={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={monthlyData} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
+                                <defs>
+                                    <linearGradient id="colorSpending" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="colorDebt" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#dc2626" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="#dc2626" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis
+                                    dataKey="name"
+                                    stroke="var(--text-dim)"
+                                    fontSize={10}
+                                    tick={{ fill: 'var(--text-dim)' }}
+                                    angle={isMobile ? -45 : 0}
+                                    textAnchor={isMobile ? "end" : "middle"}
+                                    height={isMobile ? 60 : 30}
+                                />
+                                <YAxis stroke="var(--text-dim)" fontSize={12} tickFormatter={(val) => `$${val.toLocaleString()}`} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.1)" />
+                                <RechartsTooltip
+                                    contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }}
+                                    itemStyle={{ color: 'var(--text-main)' }}
+                                />
+                                <Area type="monotone" dataKey="spending" name="Gastos" stroke="#0ea5e9" strokeWidth={2} fillOpacity={1} fill="url(#colorSpending)" />
+                                <Area type="monotone" dataKey="debt" name="Deudas" stroke="#dc2626" strokeWidth={2} fillOpacity={1} fill="url(#colorDebt)" />
+                                <Legend verticalAlign="top" height={36} />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
                 ) : (
-                    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)' }}>
+                    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)', flexGrow: 1 }}>
                         <Activity size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
                         <p>No hay movimientos registrados</p>
                     </div>
@@ -245,61 +263,78 @@ function Reportes({ expenses, debts, loading }) {
             </div>
 
             {/* Secondary Charts Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
-                <div className="glass-card" style={{ height: '350px' }}>
-                    <h3 style={{ marginBottom: '1rem' }}>Gastos por Categoría</h3>
+            <div className="secondary-charts-grid" style={{ display: 'grid', gap: '1.5rem', minWidth: 0 }}>
+                <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: '350px', minWidth: 0 }}>
+                    <h3 style={{ marginBottom: '1rem', flexShrink: 0 }}>Gastos por Categoría</h3>
                     {categoryData.length > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={categoryData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={100}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                    animationDuration={1000}
-                                >
-                                    {categoryData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
-                                    ))}
-                                </Pie>
-                                <RechartsTooltip
-                                    formatter={(val) => [`$${val.toLocaleString()}`, "Monto"]}
-                                    contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px' }}
-                                />
-                                <Legend layout="vertical" align="right" verticalAlign="middle" />
-                            </PieChart>
-                        </ResponsiveContainer>
+                        <div style={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={categoryData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={100}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                        animationDuration={1000}
+                                    >
+                                        {categoryData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                                        ))}
+                                    </Pie>
+                                    <RechartsTooltip
+                                        formatter={(val) => [`$${val.toLocaleString()}`, "Monto"]}
+                                        contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px' }}
+                                    />
+                                    <Legend
+                                        layout={isMobile ? "horizontal" : "vertical"}
+                                        align={isMobile ? "center" : "right"}
+                                        verticalAlign={isMobile ? "bottom" : "middle"}
+                                        wrapperStyle={isMobile ? { paddingTop: '20px', fontSize: '12px' } : { fontSize: '13px' }}
+                                    />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
                     ) : (
-                        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)' }}>
+                        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)', flexGrow: 1 }}>
                             <PieChartIcon size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
                             <p>No hay gastos para este periodo</p>
                         </div>
                     )}
                 </div>
 
-                <div className="glass-card" style={{ height: '350px' }}>
-                    <h3 style={{ marginBottom: '1rem' }}>Comparativa Mensual</h3>
+                <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: '350px', minWidth: 0 }}>
+                    <h3 style={{ marginBottom: '1rem', flexShrink: 0 }}>Comparativa Mensual</h3>
                     {monthlyData.length > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.1)" />
-                                <XAxis dataKey="name" stroke="var(--text-dim)" fontSize={12} />
-                                <YAxis stroke="var(--text-dim)" fontSize={12} tickFormatter={(val) => `$${val.toLocaleString()}`} />
-                                <RechartsTooltip
-                                    cursor={{ fill: 'rgba(128,128,128,0.05)' }}
-                                    formatter={(val) => [`$${val.toLocaleString()}`, "Monto"]}
-                                    contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px' }}
-                                />
-                                <Legend verticalAlign="top" height={36} />
-                                <Bar dataKey="spending" name="Gastos" fill="#0ea5e9" radius={[4, 4, 0, 0]} barSize={20} />
-                                <Bar dataKey="debt" name="Deudas" fill="#dc2626" radius={[4, 4, 0, 0]} barSize={20} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        <div style={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.1)" />
+                                    <XAxis
+                                        dataKey="name"
+                                        stroke="var(--text-dim)"
+                                        fontSize={10}
+                                        tick={{ fill: 'var(--text-dim)' }}
+                                        angle={isMobile ? -45 : 0}
+                                        textAnchor={isMobile ? "end" : "middle"}
+                                        height={isMobile ? 60 : 30}
+                                    />
+                                    <YAxis stroke="var(--text-dim)" fontSize={12} tickFormatter={(val) => `$${val.toLocaleString()}`} />
+                                    <RechartsTooltip
+                                        cursor={{ fill: 'rgba(128,128,128,0.05)' }}
+                                        formatter={(val) => [`$${val.toLocaleString()}`, "Monto"]}
+                                        contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px' }}
+                                    />
+                                    <Legend verticalAlign="top" height={36} />
+                                    <Bar dataKey="spending" name="Gastos" fill="#0ea5e9" radius={[4, 4, 0, 0]} barSize={20} />
+                                    <Bar dataKey="debt" name="Deudas" fill="#dc2626" radius={[4, 4, 0, 0]} barSize={20} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
                     ) : (
-                        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)' }}>
+                        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)', flexGrow: 1 }}>
                             <BarChart2 size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
                             <p>Insuficientes datos mensuales</p>
                         </div>

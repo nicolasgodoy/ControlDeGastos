@@ -127,7 +127,7 @@ const Login = () => {
                                     width: '100%',
                                     padding: '0.75rem 1rem 0.75rem 2.8rem',
                                     borderRadius: '0.75rem',
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: 'var(--bg-subtle)',
                                     border: '1px solid var(--glass-border)',
                                     color: 'var(--text-main)'
                                 }}
@@ -149,7 +149,7 @@ const Login = () => {
                                     width: '100%',
                                     padding: '0.75rem 1rem 0.75rem 2.8rem',
                                     borderRadius: '0.75rem',
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: 'var(--bg-subtle)',
                                     border: '1px solid var(--glass-border)',
                                     color: 'var(--text-main)'
                                 }}

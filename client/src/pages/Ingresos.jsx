@@ -87,7 +87,7 @@ const Ingresos = () => {
 
     return (
         <div className="section">
-            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div className="section-header">
                 <div>
                     <h2 style={{ margin: 0, marginBottom: '0.5rem' }}>Mis Ingresos</h2>
                     <p style={{ color: 'var(--text-dim)', margin: 0 }}>

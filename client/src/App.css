@@ -36,7 +36,7 @@
     /* Slate 50 */
     --card-bg: #ffffff;
     /* White Card */
-    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-border: rgba(15, 23, 42, 0.12);
 
     --text-main: #0f172a;
     /* Slate 900 */
@@ -55,13 +55,14 @@
     --info: #2563eb;
 
     /* Semantic Subtles */
-    --bg-subtle: rgba(0, 0, 0, 0.03);
-    --bg-hover: rgba(0, 0, 0, 0.06);
+    --bg-subtle: rgba(15, 23, 42, 0.05);
+    /* Slate 900 with 5% opacity */
+    --bg-hover: rgba(15, 23, 42, 0.08);
     --overlay-bg: rgba(15, 23, 42, 0.4);
 
     /* Shadows */
-    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 body {
@@ -269,6 +270,7 @@ body {
 }
 
 /* Custom Scrollbar */
+
 .payments-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -298,8 +300,23 @@ body {
     transition: background 0.2s;
 }
 
+.payment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 0.6rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    background: rgba(128, 128, 128, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .payment-item:hover {
     background: rgba(128, 128, 128, 0.08);
+    transform: translateX(4px);
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
 }
 
 .payment-left {
@@ -336,31 +353,154 @@ body {
 }
 
 .payment-amount {
-    font-weight: 600;
+    font-size: 1.15rem;
+    font-weight: 800;
     color: var(--text-main);
+    letter-spacing: -0.02em;
 }
 
 .status-badge {
-    font-size: 0.65rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 9999px;
-    font-weight: 600;
-    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    height: 52px;
+    padding: 0;
+    line-height: 1.1;
+    transition: all 0.3s ease;
 }
 
+.status-badge .badge-val {
+    font-size: 1.5rem;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.04em;
+}
+
+.status-badge .badge-lbl {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* Theme overrides removed for minimalist text design */
+
 .status-badge.urgent {
-    background: var(--danger);
-    color: white;
+    color: #ff3366;
+    animation: urgent-text-pulse 2s infinite ease-in-out;
+}
+
+@keyframes urgent-text-pulse {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 2px rgba(255, 51, 102, 0.5));
+        transform: scale(1);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 8px rgba(255, 51, 102, 0.8));
+        transform: scale(1.1);
+    }
+}
+
+/* Clean Urgent-Pulse Keyframes */
+
+.status-badge.urgent-soft {
+    color: #ff5f6d;
 }
 
 .status-badge.warning {
-    background: var(--warning);
-    color: #451a03;
+    color: #fca311;
+}
+
+.status-badge.attention {
+    color: #fb8500;
 }
 
 .status-badge.normal {
-    background: rgba(128, 128, 128, 0.1);
+    color: #4cc9f0;
+}
+
+.status-badge.safe {
+    color: #4ade80;
+}
+
+.status-badge svg {
+    filter: drop-shadow(0 0 5px currentColor);
+}
+
+.status-badge:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+/* Theme adaptation for badges - Light Mode Compatibility */
+[data-theme="light"] .status-badge {
+    background: rgba(255, 255, 255, 0.8);
+    border-width: 2px;
+}
+
+[data-theme="light"] .status-badge.urgent {
+    background: #fee2e2;
+}
+
+[data-theme="light"] .status-badge.urgent-soft {
+    background: #fee2e2;
+}
+
+[data-theme="light"] .status-badge.warning {
+    background: #fef3c7;
+}
+
+[data-theme="light"] .status-badge.attention {
+    background: #ffedd5;
+}
+
+[data-theme="light"] .status-badge.normal {
+    background: #dbeafe;
+}
+
+[data-theme="light"] .status-badge.safe {
+    background: #d1fae5;
+}
+
+/* Base Form Styling */
+input,
+select,
+textarea {
+    background: var(--bg-subtle);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-family: inherit;
+    transition: all 0.2s;
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary-solid);
+    box-shadow: 0 0 0 3px rgba(241, 99, 99, 0.15);
+    background: var(--bg-hover);
+}
+
+input::placeholder {
     color: var(--text-dim);
+    opacity: 0.5;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
 }
 
 /* --- App Layout Fixes --- */
@@ -1013,6 +1153,13 @@ select option {
     background: rgba(244, 63, 94, 0.1);
 }
 
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column;
@@ -1034,12 +1181,41 @@ select option {
 
     /* Adjust header for mobile */
     header {
-        margin-top: 0.5rem;
+        margin-top: 0.25rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1.25rem;
+    }
+
+    .section-header>div:last-child {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .section-header h2 {
+        font-size: 1.25rem !important;
     }
 
     /* ... existing table styles ... */
     .top-cards {
         grid-template-columns: 1fr;
+    }
+
+    .secondary-charts-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .charts-row {
+        flex-direction: column;
     }
 
     /* Transform Tables to Cards */
@@ -1207,4 +1383,8 @@ select option {
     textarea {
         font-size: 16px !important;
     }
+}
+
+.secondary-charts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
