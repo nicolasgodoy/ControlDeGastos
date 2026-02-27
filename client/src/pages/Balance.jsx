@@ -62,7 +62,7 @@ const Balance = () => {
 
     return (
         <div className="section">
-            <div className="section-header" style={{ marginBottom: '1rem' }}>
+            <div className="top-actions" style={{ marginBottom: '1rem' }}>
                 <div>
                     <h2 style={{ margin: 0, marginBottom: '0.5rem', textTransform: 'capitalize' }}>
                         Balance de {currentMonthName}

@@ -188,9 +188,6 @@ function AppContent() {
                 </ul>
 
                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <button className="add-btn" onClick={() => { setEditingExpense(null); setModalOpen(true); }} style={{ boxShadow: 'none' }}>
-                        <PlusCircle size={20} /> Nuevo Gasto
-                    </button>
                     <button className="action-btn" onClick={logout} style={{ border: 'none', background: 'rgba(255,255,255,0.05)', color: 'var(--text-dim)' }}>
                         <LogOut size={20} /> Cerrar Sesión
                     </button>
@@ -214,7 +211,7 @@ function AppContent() {
 
                 <Routes>
                     <Route path="/" element={<Dashboard debts={debts} expenses={expenses} loading={loading} error={error} onToggleStatus={requestPayment} />} />
-                    <Route path="/gastos" element={<Gastos expenses={expenses} loading={expensesLoading} onDeleteExpense={requestDeleteExpense} onEditExpense={requestEditExpense} />} />
+                    <Route path="/gastos" element={<Gastos expenses={expenses} loading={expensesLoading} onDeleteExpense={requestDeleteExpense} onEditExpense={requestEditExpense} onAddExpense={() => { setEditingExpense(null); setModalOpen(true); }} />} />
                     <Route path="/deudas" element={<Deudas debts={debts} loading={loading} onToggleStatus={requestPayment} onDeleteDebt={deleteDebt} importDebts={importDebts} />} />
                     <Route path="/deudas/nueva" element={<DebtForm />} />
                     <Route path="/deudas/editar/:id" element={<DebtForm />} />
@@ -269,27 +266,7 @@ function AppContent() {
                     <DollarSign size={24} />
                 </NavLink>
 
-                {location.pathname === '/gastos' && (
-                    <div style={{
-                        position: 'absolute',
-                        top: '-28px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        zIndex: 10
-                    }}>
-                        <button
-                            onClick={() => { setEditingExpense(null); setModalOpen(true); }}
-                            style={{
-                                width: '56px', height: '56px', borderRadius: '50%',
-                                background: 'var(--primary)', border: '4px solid #141419',
-                                color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.5)', cursor: 'pointer'
-                            }}
-                        >
-                            <PlusCircle size={28} />
-                        </button>
-                    </div>
-                )}
+                {/* Nuevo Gasto button removed from bottom nav */}
                 <NavLink to="/reportes" className={({ isActive }) => isActive ? 'active' : ''}>
                     <ChartIcon size={24} />
                 </NavLink>

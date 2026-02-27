@@ -1,16 +1,26 @@
 import React from 'react';
-import { Pencil, Trash2, X } from 'lucide-react';
+import { Pencil, Trash2, X, PlusCircle } from 'lucide-react';
 import { getCategoryColor } from '../constants/colors';
 
 // Colors refactored to use centralized getCategoryColor helper
 
-function Gastos({ expenses, loading, onDeleteExpense, onEditExpense }) {
+function Gastos({ expenses, loading, onDeleteExpense, onEditExpense, onAddExpense }) {
 
     if (loading) return <p>Cargando gastos...</p>;
 
     return (
         <div className="fade-in">
-            <h2 style={{ marginBottom: '1.5rem', fontWeight: '700' }}>Registro de Gastos</h2>
+            <div className="top-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2 style={{ margin: 0, fontWeight: '700' }}>Registro de Gastos</h2>
+                <button
+                    className="add-btn"
+                    onClick={onAddExpense}
+                    style={{ margin: 0 }}
+                >
+                    <PlusCircle size={18} />
+                    <span>Nuevo Gasto</span>
+                </button>
+            </div>
 
             {expenses.length === 0 ? (
                 <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-dim)' }}>

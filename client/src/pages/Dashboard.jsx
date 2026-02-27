@@ -220,6 +220,7 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                                                 color: "var(--text-main)"
                                             }}
                                             itemStyle={{ color: "var(--text-main)" }}
+                                            labelStyle={{ color: "var(--text-main)", fontWeight: 'bold' }}
                                             cursor={{ fill: 'var(--bg-subtle)' }}
                                         />
                                         <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={32} animationDuration={1000}>

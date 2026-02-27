@@ -247,6 +247,7 @@ function Reportes({ expenses, debts, loading }) {
                                 <RechartsTooltip
                                     contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', color: 'var(--text-main)', borderRadius: '8px' }}
                                     itemStyle={{ color: 'var(--text-main)' }}
+                                    labelStyle={{ color: 'var(--text-main)', fontWeight: 'bold', marginBottom: '4px' }}
                                 />
                                 <Area type="monotone" dataKey="spending" name="Gastos" stroke="#0ea5e9" strokeWidth={2} fillOpacity={1} fill="url(#colorSpending)" />
                                 <Area type="monotone" dataKey="debt" name="Deudas" stroke="#dc2626" strokeWidth={2} fillOpacity={1} fill="url(#colorDebt)" />
@@ -286,7 +287,9 @@ function Reportes({ expenses, debts, loading }) {
                                     </Pie>
                                     <RechartsTooltip
                                         formatter={(val) => [`$${val.toLocaleString()}`, "Monto"]}
-                                        contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px' }}
+                                        contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px', color: 'var(--text-main)' }}
+                                        itemStyle={{ color: 'var(--text-main)' }}
+                                        labelStyle={{ color: 'var(--text-main)', fontWeight: 'bold' }}
                                     />
                                     <Legend
                                         layout={isMobile ? "horizontal" : "vertical"}
@@ -325,7 +328,9 @@ function Reportes({ expenses, debts, loading }) {
                                     <RechartsTooltip
                                         cursor={{ fill: 'rgba(128,128,128,0.05)' }}
                                         formatter={(val) => [`$${val.toLocaleString()}`, "Monto"]}
-                                        contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px' }}
+                                        contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px', color: 'var(--text-main)' }}
+                                        itemStyle={{ color: 'var(--text-main)' }}
+                                        labelStyle={{ color: 'var(--text-main)', fontWeight: 'bold' }}
                                     />
                                     <Legend verticalAlign="top" height={36} />
                                     <Bar dataKey="spending" name="Gastos" fill="#0ea5e9" radius={[4, 4, 0, 0]} barSize={20} />

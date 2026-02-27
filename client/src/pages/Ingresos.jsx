@@ -87,7 +87,7 @@ const Ingresos = () => {
 
     return (
         <div className="section">
-            <div className="section-header">
+            <div className="top-actions">
                 <div>
                     <h2 style={{ margin: 0, marginBottom: '0.5rem' }}>Mis Ingresos</h2>
                     <p style={{ color: 'var(--text-dim)', margin: 0 }}>
