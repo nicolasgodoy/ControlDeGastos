@@ -110,7 +110,16 @@ export const useDebts = () => {
             if (!debt) return;
 
             const newStatus = debt.status === 'paid' ? 'pending' : 'paid';
-            await updateDoc(doc(db, 'debts', debtId), { status: newStatus });
+            const updateData = { status: newStatus };
+
+            // Save the date when debt is marked as paid (for monthly dashboard filtering)
+            if (newStatus === 'paid') {
+                updateData.paidAt = new Date().toISOString();
+            } else {
+                updateData.paidAt = null; // Clear it when reverting to pending
+            }
+
+            await updateDoc(doc(db, 'debts', debtId), updateData);
         } catch (err) {
             console.error('Failed to update status:', err);
         }

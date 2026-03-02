@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Wallet, CreditCard, PieChart, Calendar, Sparkles, AlertOctagon } from 'lucide-react';
 import { useIncome } from '../hooks/useIncome';
 import { useDebts } from '../hooks/useDebts';
@@ -9,27 +9,51 @@ const Balance = () => {
     const { debts } = useDebts();
     const { expenses } = useExpenses();
 
-    // Get current month for filtering
-    const currentMonth = new Date().toISOString().slice(0, 7);
-    const currentMonthName = new Date().toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
-    const lastDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0];
+    // --- Month selector ---
+    const todayISO = new Date().toISOString().slice(0, 7); // e.g. "2026-03"
+    const [selectedMonth, setSelectedMonth] = useState(todayISO);
 
-    // Calculate totals
-    const monthlyIncomes = incomes.filter(income => income.date?.startsWith(currentMonth));
+    // Build last 12 months as options
+    const monthOptions = [];
+    for (let i = 0; i < 12; i++) {
+        const d = new Date();
+        d.setDate(1);
+        d.setMonth(d.getMonth() - i);
+        const value = d.toISOString().slice(0, 7);
+        const label = d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+        monthOptions.push({ value, label });
+    }
+
+    const selectedMonthName = monthOptions.find(o => o.value === selectedMonth)?.label || selectedMonth;
+
+    // --- Filter by selectedMonth ---
+    const monthlyIncomes = incomes.filter(income => income.date?.startsWith(selectedMonth));
     const totalIncome = monthlyIncomes.reduce((sum, income) => sum + parseFloat(income.amount), 0);
 
-    const monthlyExpenses = expenses.filter(exp => exp.date?.startsWith(currentMonth));
+    const monthlyExpenses = expenses.filter(exp => exp.date?.startsWith(selectedMonth));
     const totalExpenses = monthlyExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
 
-    // Monthly debts: All due THIS MONTH (paid/pending) + Overdue Pending ones
+    // Monthly debts: due in selected month + overdue pending (only for current month view)
+    // Exclude debts that were imported via Excel as 'paid' (no paidAt field) — they are
+    // historical records and should not affect the current month's budget totals.
     const monthlyDebts = debts.filter(d => {
-        const isThisMonth = d.date?.startsWith(currentMonth);
-        const isOverduePending = d.status === 'pending' && d.date < currentMonth;
-        return isThisMonth || isOverduePending;
+        // Skip Excel-imported paid debts (they have no paidAt — user never clicked pay)
+        if (d.status === 'paid' && !d.paidAt) return false;
+
+        const isSelectedMonth = d.date?.startsWith(selectedMonth);
+        // Overdue pending only shown when viewing the current month
+        const isOverduePending = selectedMonth === todayISO && d.status === 'pending' && d.date < selectedMonth;
+        return isSelectedMonth || isOverduePending;
     });
     const totalDebts = monthlyDebts.reduce((sum, debt) => sum + parseFloat(debt.amount), 0);
 
-    const paidMonthlyDebts = monthlyDebts.filter(d => d.status === 'paid');
+    // "Pagadas": ONLY debts that the user manually marked as paid in the app this month.
+    // Debts imported from Excel as 'paid' do NOT have a paidAt field → excluded.
+    const paidMonthlyDebts = monthlyDebts.filter(d =>
+        d.status === 'paid' &&
+        d.paidAt &&
+        d.paidAt.startsWith(selectedMonth)
+    );
     const pendingMonthlyDebts = monthlyDebts.filter(d => d.status === 'pending');
 
     // Also track ALL pending debts for reference
@@ -37,9 +61,8 @@ const Balance = () => {
     const totalAllPendingDebts = allPendingDebts.reduce((sum, debt) => sum + parseFloat(debt.amount), 0);
 
     // Calculate interest paid (for debts with interest data)
-    const totalInterestPaid = monthlyDebts.reduce((sum, debt) => {
+    const totalInterestPaid = paidMonthlyDebts.reduce((sum, debt) => {
         if (debt.monthlyPayment && debt.amount) {
-            // Interest = monthly payment - (total amount / installments)
             const capitalPortion = debt.amount / (debt.installments_total || 1);
             const interestPortion = debt.monthlyPayment - capitalPortion;
             return sum + Math.max(0, interestPortion);
@@ -47,7 +70,7 @@ const Balance = () => {
         return sum;
     }, 0);
 
-    // Calculate balance (ONLY with debts due this month)
+    // Calculate balance
     const balance = totalIncome - totalDebts - totalExpenses;
     const balancePercentage = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
     const committedPercentage = 100 - balancePercentage;
@@ -62,14 +85,38 @@ const Balance = () => {
 
     return (
         <div className="section">
-            <div className="top-actions" style={{ marginBottom: '1rem' }}>
+            <div className="top-actions" style={{ marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h2 style={{ margin: 0, marginBottom: '0.5rem', textTransform: 'capitalize' }}>
-                        Balance de {currentMonthName}
+                        Balance de {selectedMonthName}
                     </h2>
                     <p style={{ color: 'var(--text-dim)', margin: 0 }}>
                         Resumen completo de tu situación financiera del mes
                     </p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Calendar size={18} color="var(--text-dim)" />
+                    <select
+                        value={selectedMonth}
+                        onChange={e => setSelectedMonth(e.target.value)}
+                        style={{
+                            padding: '0.5rem 1rem',
+                            borderRadius: '0.75rem',
+                            background: 'var(--bg-subtle)',
+                            border: '1px solid var(--glass-border)',
+                            color: 'var(--text-main)',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            cursor: 'pointer',
+                            textTransform: 'capitalize'
+                        }}
+                    >
+                        {monthOptions.map(opt => (
+                            <option key={opt.value} value={opt.value} style={{ background: 'var(--card-bg)', textTransform: 'capitalize' }}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
             </div>
 

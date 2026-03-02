@@ -55,23 +55,36 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+    // Current month boundaries
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    // Filter expenses to current month only
+    const currentMonthExpenses = expenses
+        ? expenses.filter(exp => {
+            const d = new Date(exp.date);
+            return d >= currentMonthStart && d <= currentMonthEnd;
+        })
+        : [];
+
     const totalDebt = debts.reduce((acc, debt) => acc + debt.amount, 0);
     const pendingAmount = debts.filter(d => d.status === 'pending').reduce((a, b) => a + b.amount, 0);
+
     const paidAmount = debts.filter(d => d.status === 'paid').reduce((a, b) => a + b.amount, 0);
-    const totalExpenses = expenses ? expenses.reduce((acc, curr) => acc + curr.amount, 0) : 0;
+
+    const totalExpenses = currentMonthExpenses.reduce((acc, curr) => acc + curr.amount, 0);
 
     const pendingDebts = debts
         .filter(d => d.status === 'pending')
         .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Data for Horizontal Bar Chart
+    // Data for Horizontal Bar Chart (current month only)
     const categoryDataMap = {};
-    if (expenses) {
-        expenses.forEach(exp => {
-            const catKey = exp.category.toLowerCase();
-            categoryDataMap[catKey] = (categoryDataMap[catKey] || 0) + exp.amount;
-        });
-    }
+    currentMonthExpenses.forEach(exp => {
+        const catKey = exp.category.toLowerCase();
+        categoryDataMap[catKey] = (categoryDataMap[catKey] || 0) + exp.amount;
+    });
     const categoryData = Object.keys(categoryDataMap).map(key => ({
         name: key.charAt(0).toUpperCase() + key.slice(1),
         value: categoryDataMap[key],

@@ -1,10 +1,35 @@
-import React from 'react';
-import { Pencil, Trash2, X, PlusCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Pencil, Trash2, X, PlusCircle, Filter, Calendar } from 'lucide-react';
 import { getCategoryColor } from '../constants/colors';
 
-// Colors refactored to use centralized getCategoryColor helper
-
 function Gastos({ expenses, loading, onDeleteExpense, onEditExpense, onAddExpense }) {
+    // --- Month selector ---
+    const todayISO = new Date().toISOString().slice(0, 7); // e.g. "2026-03"
+    const [selectedMonth, setSelectedMonth] = useState(todayISO);
+    const [categoryFilter, setCategoryFilter] = useState('all');
+
+    // Build last 12 months as options
+    const monthOptions = [];
+    for (let i = 0; i < 12; i++) {
+        const d = new Date();
+        d.setDate(1);
+        d.setMonth(d.getMonth() - i);
+        const value = d.toISOString().slice(0, 7);
+        const label = d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+        monthOptions.push({ value, label });
+    }
+
+    // Get unique categories from all expenses
+    const uniqueCategories = [...new Set(expenses.map(e => e.category))].sort();
+
+    // Filter expenses
+    const filteredExpenses = expenses.filter(exp => {
+        const matchesMonth = exp.date?.startsWith(selectedMonth);
+        const matchesCategory = categoryFilter === 'all' || exp.category === categoryFilter;
+        return matchesMonth && matchesCategory;
+    });
+
+    const totalFiltered = filteredExpenses.reduce((acc, e) => acc + e.amount, 0);
 
     if (loading) return <p>Cargando gastos...</p>;
 
@@ -22,15 +47,89 @@ function Gastos({ expenses, loading, onDeleteExpense, onEditExpense, onAddExpens
                 </button>
             </div>
 
-            {expenses.length === 0 ? (
+            {/* Filter Bar */}
+            <div style={{
+                marginBottom: '1.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '1rem',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                background: 'var(--card-bg)',
+                padding: '1rem',
+                borderRadius: '1rem',
+                border: '1px solid var(--glass-border)',
+                boxShadow: 'var(--shadow-sm)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-dim)', fontSize: '0.9rem' }}>
+                    <Filter size={18} />
+                    <span>Filtros:</span>
+                </div>
+
+                {/* Month selector */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Calendar size={16} color="var(--text-dim)" />
+                    <select
+                        value={selectedMonth}
+                        onChange={e => setSelectedMonth(e.target.value)}
+                        style={{
+                            padding: '0.5rem 1rem',
+                            borderRadius: '0.75rem',
+                            background: 'var(--bg-subtle)',
+                            border: '1px solid var(--glass-border)',
+                            color: 'var(--text-main)',
+                            fontSize: '0.9rem',
+                            outline: 'none',
+                            cursor: 'pointer',
+                            textTransform: 'capitalize'
+                        }}
+                    >
+                        {monthOptions.map(opt => (
+                            <option key={opt.value} value={opt.value} style={{ background: 'var(--card-bg)', textTransform: 'capitalize' }}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div style={{ width: '1px', height: '24px', background: 'var(--glass-border)', margin: '0 0.25rem' }}></div>
+
+                {/* Category filter */}
+                <select
+                    value={categoryFilter}
+                    onChange={e => setCategoryFilter(e.target.value)}
+                    style={{
+                        padding: '0.5rem 1rem',
+                        borderRadius: '0.75rem',
+                        background: 'var(--bg-subtle)',
+                        border: '1px solid var(--glass-border)',
+                        color: 'var(--text-main)',
+                        fontSize: '0.9rem',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        maxWidth: '200px',
+                        textTransform: 'capitalize'
+                    }}
+                >
+                    <option value="all" style={{ background: 'var(--card-bg)' }}>Todas las Categorías</option>
+                    {uniqueCategories.map(cat => (
+                        <option key={cat} value={cat} style={{ background: 'var(--card-bg)', textTransform: 'capitalize' }}>
+                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            {filteredExpenses.length === 0 ? (
                 <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-dim)' }}>
-                    No hay gastos registrados.
+                    No hay gastos registrados para este período.
                 </div>
             ) : (
                 <div className="glass-card">
                     <div className="table-container">
-                        <div style={{ padding: '1rem', borderBottom: '1px solid var(--glass-border)', fontSize: '0.85rem', color: 'var(--text-dim)' }}>
-                            Total: {expenses.length}
+                        <div style={{ padding: '1rem', borderBottom: '1px solid var(--glass-border)', fontSize: '0.85rem', color: 'var(--text-dim)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span><strong style={{ color: 'var(--text-main)' }}>{filteredExpenses.length}</strong> gasto{filteredExpenses.length !== 1 ? 's' : ''}</span>
+                            <span>Total: <strong style={{ color: 'var(--text-main)', fontFamily: 'monospace' }}>${totalFiltered.toLocaleString('es-AR')}</strong></span>
                         </div>
                         <div className="debts-table">
                             <div className="table-header gastos-grid" style={{ gridTemplateColumns: '2fr 1.5fr 1fr 1fr 80px' }}>
@@ -41,7 +140,7 @@ function Gastos({ expenses, loading, onDeleteExpense, onEditExpense, onAddExpens
                                 <span>Acción</span>
                             </div>
                             <div className="table-body">
-                                {expenses.map(expense => {
+                                {filteredExpenses.map(expense => {
                                     const categoryColor = getCategoryColor(expense.category);
                                     return (
                                         <div key={expense.id} className="table-row gastos-grid" style={{ gridTemplateColumns: '2fr 1.5fr 1fr 1fr 80px' }}>
