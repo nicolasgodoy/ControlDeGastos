@@ -4,24 +4,23 @@ import { useState, useEffect, useRef } from 'react';
 const easeOutExpo = (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
 
 /**
- * Animates a numeric value from its previous value to `target`.
+ * Animates a numeric value from 0 (or previous value) to `target`.
  * Uses requestAnimationFrame for zero-overhead animation.
  * @param {number} target  - The final value to count up to
  * @param {number} duration - Animation duration in ms (default 900)
- * @param {boolean} enabled - Whether to animate (default true)
+ * @param {boolean} enabled - Whether to animate (triggers when IntersectionObserver fires)
  */
 export const useCountUp = (target, duration = 900, enabled = true) => {
-    const [display, setDisplay] = useState(target);
+    // Start at 0, not target — so animation always plays when enabled fires
+    const [display, setDisplay] = useState(0);
     const rafRef = useRef(null);
     const startTimeRef = useRef(null);
-    const prevValueRef = useRef(target); // track previous value for delta animation
+    // Start from 0 always on mount — fixes Dashboard (pre-loaded props) not animating
+    const prevValueRef = useRef(0);
 
     useEffect(() => {
-        // If animations disabled, just snap to value
-        if (!enabled) {
-            setDisplay(target);
-            return;
-        }
+        // If not visible yet, do nothing — keep showing 0 until IntersectionObserver fires
+        if (!enabled) return;
 
         const startValue = prevValueRef.current;
         startTimeRef.current = null;
@@ -41,7 +40,7 @@ export const useCountUp = (target, duration = 900, enabled = true) => {
             if (progress < 1) {
                 rafRef.current = requestAnimationFrame(animate);
             } else {
-                prevValueRef.current = target; // update baseline for next animation
+                prevValueRef.current = target; // update baseline for next re-animation
             }
         };
 
