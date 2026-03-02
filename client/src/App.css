@@ -438,34 +438,34 @@ body {
     filter: brightness(1.2);
 }
 
-/* Theme adaptation for badges - Light Mode Compatibility */
+/* Light mode: badges are text-only, no square background */
 [data-theme="light"] .status-badge {
-    background: rgba(255, 255, 255, 0.8);
-    border-width: 2px;
+    background: transparent;
+    border-width: 0;
 }
 
 [data-theme="light"] .status-badge.urgent {
-    background: #fee2e2;
+    color: #e11d48;
 }
 
 [data-theme="light"] .status-badge.urgent-soft {
-    background: #fee2e2;
+    color: #f43f5e;
 }
 
 [data-theme="light"] .status-badge.warning {
-    background: #fef3c7;
+    color: #d97706;
 }
 
 [data-theme="light"] .status-badge.attention {
-    background: #ffedd5;
+    color: #ea580c;
 }
 
 [data-theme="light"] .status-badge.normal {
-    background: #dbeafe;
+    color: #2563eb;
 }
 
 [data-theme="light"] .status-badge.safe {
-    background: #d1fae5;
+    color: #059669;
 }
 
 /* Base Form Styling */

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building, Calendar } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CATEGORY_COLORS, ENTITY_COLORS } from '../constants/colors';
 
@@ -55,31 +55,38 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-    // Current month boundaries
-    const now = new Date();
-    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    // Filter expenses to current month only
+    // --- Month selector ---
+    const todayISO = new Date().toISOString().slice(0, 7);
+    const [selectedMonth, setSelectedMonth] = useState(todayISO);
+
+    const monthOptions = [];
+    for (let i = 0; i < 12; i++) {
+        const d = new Date();
+        d.setDate(1);
+        d.setMonth(d.getMonth() - i);
+        monthOptions.push({
+            value: d.toISOString().slice(0, 7),
+            label: d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' })
+        });
+    }
+    const selectedMonthLabel = monthOptions.find(o => o.value === selectedMonth)?.label || selectedMonth;
+
+    // Filter expenses to selected month
     const currentMonthExpenses = expenses
-        ? expenses.filter(exp => {
-            const d = new Date(exp.date);
-            return d >= currentMonthStart && d <= currentMonthEnd;
-        })
+        ? expenses.filter(exp => exp.date?.startsWith(selectedMonth))
         : [];
 
     const totalDebt = debts.reduce((acc, debt) => acc + debt.amount, 0);
     const pendingAmount = debts.filter(d => d.status === 'pending').reduce((a, b) => a + b.amount, 0);
-
     const paidAmount = debts.filter(d => d.status === 'paid').reduce((a, b) => a + b.amount, 0);
-
     const totalExpenses = currentMonthExpenses.reduce((acc, curr) => acc + curr.amount, 0);
 
     const pendingDebts = debts
         .filter(d => d.status === 'pending')
         .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Data for Horizontal Bar Chart (current month only)
+    // Data for Horizontal Bar Chart (selected month only)
     const categoryDataMap = {};
     currentMonthExpenses.forEach(exp => {
         const catKey = exp.category.toLowerCase();
@@ -88,7 +95,7 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
     const categoryData = Object.keys(categoryDataMap).map(key => ({
         name: key.charAt(0).toUpperCase() + key.slice(1),
         value: categoryDataMap[key],
-        category: key // for color mapping
+        category: key
     })).sort((a, b) => b.value - a.value);
 
     // Data for Donut Chart
@@ -132,6 +139,45 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                     <span>Error cargando datos: {error}</span>
                 </div>
             )}
+
+            {/* Month selector bar */}
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                marginBottom: '0.5rem',
+                padding: '0.75rem 1rem',
+                background: 'var(--card-bg)',
+                borderRadius: '1rem',
+                border: '1px solid var(--glass-border)',
+                boxShadow: 'var(--shadow-sm)',
+                width: 'fit-content'
+            }}>
+                <Calendar size={16} color="var(--text-dim)" />
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>Viendo:</span>
+                <select
+                    value={selectedMonth}
+                    onChange={e => setSelectedMonth(e.target.value)}
+                    style={{
+                        padding: '0.3rem 0.75rem',
+                        borderRadius: '0.6rem',
+                        background: 'var(--bg-subtle)',
+                        border: '1px solid var(--glass-border)',
+                        color: 'var(--text-main)',
+                        fontSize: '0.85rem',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        textTransform: 'capitalize',
+                        fontWeight: '600'
+                    }}
+                >
+                    {monthOptions.map(opt => (
+                        <option key={opt.value} value={opt.value} style={{ background: 'var(--card-bg)', textTransform: 'capitalize' }}>
+                            {opt.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
             <section className="dashboard-grid">
                 {/* Metric Cards */}
