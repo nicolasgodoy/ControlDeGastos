@@ -3,6 +3,7 @@ import { DollarSign, TrendingUp, TrendingDown, Wallet, CreditCard, PieChart, Cal
 import { useIncome } from '../hooks/useIncome';
 import { useDebts } from '../hooks/useDebts';
 import { useExpenses } from '../hooks/useExpenses';
+import AnimatedNumber from '../components/AnimatedNumber';
 
 const Balance = () => {
     const { incomes } = useIncome();
@@ -140,7 +141,7 @@ const Balance = () => {
                         margin: 0,
                         color: balance >= 0 ? 'var(--success)' : 'var(--danger)'
                     }}>
-                        {formatCurrency(balance)}
+                        <AnimatedNumber value={balance} prefix="$" decimals={2} duration={1000} />
                     </h1>
                     <div style={{
                         marginTop: '1rem',
@@ -187,7 +188,7 @@ const Balance = () => {
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>INGRESOS</span>
                         </div>
                         <p style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--success)', margin: 0 }}>
-                            {formatCurrency(totalIncome)}
+                            <AnimatedNumber value={totalIncome} prefix="$" decimals={2} />
                         </p>
                     </div>
 
@@ -201,7 +202,7 @@ const Balance = () => {
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>DEUDAS</span>
                         </div>
                         <p style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--warning)', margin: 0 }}>
-                            {formatCurrency(totalDebts)}
+                            <AnimatedNumber value={totalDebts} prefix="$" decimals={2} />
                         </p>
                     </div>
 
@@ -215,7 +216,7 @@ const Balance = () => {
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>GASTOS</span>
                         </div>
                         <p style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--primary)', margin: 0 }}>
-                            {formatCurrency(totalExpenses)}
+                            <AnimatedNumber value={totalExpenses} prefix="$" decimals={2} />
                         </p>
                     </div>
                 </div>

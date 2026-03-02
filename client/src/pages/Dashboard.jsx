@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building, Calendar } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CATEGORY_COLORS, ENTITY_COLORS } from '../constants/colors';
+import AnimatedNumber from '../components/AnimatedNumber';
 
 // --- Icon Mapping Wrapper to match User's "getCategoryById" logic ---
 const getCategoryIcon = (cat) => {
@@ -187,7 +188,9 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                         <div className="metric-content">
                             <div className="metric-info">
                                 <h4>Total Gastos</h4>
-                                <p className="value">${totalExpenses.toLocaleString('es-AR')}</p>
+                                <p className="value">
+                                    <AnimatedNumber value={totalExpenses} prefix="$" />
+                                </p>
                                 <p className="subtitle">Este mes</p>
                             </div>
                             <div className="icon-box">
@@ -201,7 +204,9 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                         <div className="metric-content">
                             <div className="metric-info">
                                 <h4>Deudas Pagadas</h4>
-                                <p className="value">${paidAmount.toLocaleString('es-AR')}</p>
+                                <p className="value">
+                                    <AnimatedNumber value={paidAmount} prefix="$" />
+                                </p>
                                 <p className="subtitle">Total amortizado</p>
                             </div>
                             <div className="icon-box">
@@ -215,7 +220,9 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                         <div className="metric-content">
                             <div className="metric-info">
                                 <h4>Total Deudas</h4>
-                                <p className="value">${totalDebt.toLocaleString('es-AR')}</p>
+                                <p className="value">
+                                    <AnimatedNumber value={totalDebt} prefix="$" />
+                                </p>
                                 <p className="subtitle">Global (Pagado + Pendiente)</p>
                             </div>
                             <div className="icon-box">
@@ -229,7 +236,9 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                         <div className="metric-content">
                             <div className="metric-info">
                                 <h4>Por Pagar</h4>
-                                <p className="value">${pendingAmount.toLocaleString('es-AR')}</p>
+                                <p className="value">
+                                    <AnimatedNumber value={pendingAmount} prefix="$" />
+                                </p>
                                 <p className="subtitle">Próximos vencimientos</p>
                             </div>
                             <div className="icon-box">

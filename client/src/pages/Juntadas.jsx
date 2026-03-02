@@ -218,7 +218,7 @@ function Juntadas() {
         <div className="page-content" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h2>Juntadas con los pibes/as</h2>
+                    <h2>Dividi tus gastos con amigos</h2>
                     <p style={{ color: 'var(--text-dim)' }}>Divisor de gastos (ahora con detalle de consumos)</p>
                 </div>
                 <button onClick={resetAll} className="action-btn" title="Reiniciar todo">
