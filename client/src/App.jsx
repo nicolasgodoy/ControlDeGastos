@@ -37,11 +37,11 @@ import Toast from './components/Toast';
 // Main App Component
 function AppContent() {
     const { user, logout } = useAuth();
-    const { debts, loading, error, toggleStatus, addDebt, updateDebt, deleteDebt, importDebts } = useDebts();
+    const { debts, loading, error, toggleStatus, bulkUpdateStatus, addDebt, updateDebt, deleteDebt, importDebts, deleteAllDebts } = useDebts();
 
     // --- Handlers for Expenses ---
     const [editingExpense, setEditingExpense] = useState(null);
-    const { expenses, loading: expensesLoading, addExpense, deleteExpense, updateExpense } = useExpenses();
+    const { expenses, loading: expensesLoading, addExpense, deleteExpense, updateExpense, deleteAllExpenses } = useExpenses();
 
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -211,8 +211,8 @@ function AppContent() {
 
                 <Routes>
                     <Route path="/" element={<Dashboard debts={debts} expenses={expenses} loading={loading} error={error} onToggleStatus={requestPayment} />} />
-                    <Route path="/gastos" element={<Gastos expenses={expenses} loading={expensesLoading} onDeleteExpense={requestDeleteExpense} onEditExpense={requestEditExpense} onAddExpense={() => { setEditingExpense(null); setModalOpen(true); }} />} />
-                    <Route path="/deudas" element={<Deudas debts={debts} loading={loading} onToggleStatus={requestPayment} onDeleteDebt={deleteDebt} importDebts={importDebts} />} />
+                    <Route path="/gastos" element={<Gastos expenses={expenses} loading={expensesLoading} onDeleteExpense={requestDeleteExpense} onEditExpense={requestEditExpense} onAddExpense={() => { setEditingExpense(null); setModalOpen(true); }} onDeleteAll={deleteAllExpenses} />} />
+                    <Route path="/deudas" element={<Deudas debts={debts} loading={loading} onToggleStatus={requestPayment} onBulkStatus={bulkUpdateStatus} onDeleteDebt={deleteDebt} importDebts={importDebts} onDeleteAll={deleteAllDebts} />} />
                     <Route path="/deudas/nueva" element={<DebtForm />} />
                     <Route path="/deudas/editar/:id" element={<DebtForm />} />
                     <Route path="/ingresos" element={<Ingresos />} />

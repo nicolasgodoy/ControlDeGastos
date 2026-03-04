@@ -5,10 +5,11 @@ import IncomeModal from '../components/IncomeModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 
 const Ingresos = () => {
-    const { incomes, loading, addIncome, updateIncome, deleteIncome } = useIncome();
+    const { incomes, loading, addIncome, updateIncome, deleteIncome, deleteAllIncomes } = useIncome();
     const [modalOpen, setModalOpen] = useState(false);
     const [editingIncome, setEditingIncome] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, incomeId: null });
+    const [deleteAllModal, setDeleteAllModal] = useState(false);
     const [filterMonth, setFilterMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
 
     const handleSaveIncome = async (data) => {
@@ -94,12 +95,30 @@ const Ingresos = () => {
                         Total del mes: <strong style={{ color: 'var(--success)', fontSize: '1.2rem' }}>{formatCurrency(totalIncome)}</strong>
                     </p>
                 </div>
-                <button
-                    className="add-btn"
-                    onClick={() => { setEditingIncome(null); setModalOpen(true); }}
-                >
-                    <PlusCircle size={20} /> Agregar Ingreso
-                </button>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    {incomes.length > 0 && (
+                        <button
+                            className="icon-btn danger"
+                            onClick={() => setDeleteAllModal(true)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.5rem 1rem',
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                border: '1px solid rgba(239, 68, 68, 0.2)'
+                            }}
+                        >
+                            <Trash2 size={20} /> Eliminar Todo
+                        </button>
+                    )}
+                    <button
+                        className="add-btn"
+                        onClick={() => { setEditingIncome(null); setModalOpen(true); }}
+                    >
+                        <PlusCircle size={20} /> Agregar Ingreso
+                    </button>
+                </div>
             </div>
 
             <div className="filter-bar" style={{ marginBottom: '1.5rem' }}>
@@ -223,6 +242,17 @@ const Ingresos = () => {
                 onConfirm={handleDeleteConfirm}
                 title="¿Eliminar Ingreso?"
                 message="Esta acción eliminará el ingreso permanentemente."
+            />
+
+            <ConfirmationModal
+                isOpen={deleteAllModal}
+                onClose={() => setDeleteAllModal(false)}
+                onConfirm={async () => {
+                    await deleteAllIncomes();
+                    setDeleteAllModal(false);
+                }}
+                title="¿Eliminar Todos los Ingresos?"
+                message="Esta acción eliminará TODOS los ingresos de forma permanente. No se puede deshacer."
             />
 
             <style jsx>{`

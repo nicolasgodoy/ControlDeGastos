@@ -240,6 +240,20 @@ export const deleteDebt = async (req, res) => {
     }
 };
 
+export const deleteAllDebts = async (req, res) => {
+    try {
+        await fileMutex.lock();
+        const p = await ensureDebtsFile();
+        fs.writeFileSync(p, JSON.stringify([], null, 2));
+        fileMutex.unlock();
+        res.json({ message: 'Todas las deudas han sido eliminadas' });
+    } catch (error) {
+        if (fileMutex._locked) fileMutex.unlock();
+        console.error('Error deleting all debts:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const toggleDebtStatus = async (req, res) => {
     // Re-implemented to use JSON instead of overrides
     try {

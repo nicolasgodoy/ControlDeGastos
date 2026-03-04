@@ -39,12 +39,9 @@ export const useDebts = () => {
                 ...doc.data()
             }));
 
-            // Sort: Pending first, then by date
+            // Sort: Oldest dates first (Ascending)
             debtsData.sort((a, b) => {
-                if (a.status === b.status) {
-                    return new Date(a.date) - new Date(b.date);
-                }
-                return a.status === 'pending' ? -1 : 1;
+                return new Date(a.date) - new Date(b.date);
             });
 
             setDebts(debtsData);
@@ -125,6 +122,28 @@ export const useDebts = () => {
         }
     };
 
+    const bulkUpdateStatus = async (ids, status) => {
+        if (!user) return { success: false, error: 'User not authenticated' };
+        try {
+            const batch = writeBatch(db);
+            const now = new Date().toISOString();
+
+            ids.forEach(id => {
+                const debtRef = doc(db, 'debts', id);
+                batch.update(debtRef, {
+                    status,
+                    paidAt: status === 'paid' ? now : null
+                });
+            });
+
+            await batch.commit();
+            return { success: true };
+        } catch (err) {
+            console.error('Error in bulk update:', err);
+            return { success: false, error: err.message };
+        }
+    };
+
     const importDebts = async (file, mode = 'append') => {
         if (!user) return { success: false, error: 'User not authenticated' };
         const formData = new FormData();
@@ -160,5 +179,20 @@ export const useDebts = () => {
         }
     };
 
-    return { debts, loading, error, toggleStatus, addDebt, updateDebt, deleteDebt, importDebts, refreshDebts: () => { } };
+    const deleteAllDebts = async () => {
+        if (!user || debts.length === 0) return { success: false, error: 'No debts to delete' };
+        try {
+            const batch = writeBatch(db);
+            debts.forEach(d => {
+                batch.delete(doc(db, 'debts', d.id));
+            });
+            await batch.commit();
+            return { success: true };
+        } catch (err) {
+            console.error('Error deleting all debts:', err);
+            return { success: false, error: err.message };
+        }
+    };
+
+    return { debts, loading, error, toggleStatus, bulkUpdateStatus, addDebt, updateDebt, deleteDebt, importDebts, deleteAllDebts, refreshDebts: () => { } };
 };

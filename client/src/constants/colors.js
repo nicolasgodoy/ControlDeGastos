@@ -4,32 +4,25 @@
  */
 
 export const CATEGORY_COLORS = {
-    // Brand Gradient: Cold to Warm
-    'otros': "#0369a1",       // Dark Blue
-    'suplementos': "#38bdf8", // Cyan/Teal
-    'comida': "#0d9488",      // Teal/Emerald
-    'gym': "#22c55e",         // Green
-    'verduleria': "#188b43ff",
-    'juntadas': "#f59e0b",    // Amber/Gold
-    'farmacia': "#ea580c",    // Orange
-    'kiosko': "#e61f1fc4",      // Red
+    // Cold to Warm Gradient (Sky -> Blue -> Green -> Amber -> Red -> Pink)
+    'colectivo': "#38bdf8",    // Sky 400 (Coldest)
+    'uber': "#2563eb",         // Blue 600
+    'suplementos': "#06b6d4",  // Cyan 500
+    'comida': "#14b8a6",       // Teal 500
+    'verduleria': "#10b981",   // Emerald 500
+    'gym': "#22c55e",          // Green 500
+    'servicios': "#f59e0b",    // Amber 500 (Mid-Warm)
+    'juntadas': "#ea580c",     // Orange 600
+    'farmacia': "#dc2626",     // Red 600
+    'kiosko': "#be123c",       // Rose 700
+    'otros': "#db2777",        // Pink 600 (Warmest)
 
-    // Additional Categories (Keeping consistency for common names)
-    'supermercado': "#ec4899", // Pink
-    'transporte': "#0ea5e9",   // Sky Blue
-    'hogar': "#22c55e",        // Green
-    'servicios': "#10b981",    // Emerald
-    'entretenimiento': "#a855f7", // Purple
-    'salud': "#ef4444",        // Red
-    'compras': "#db2777",      // Pink-700
-    'ropa': "#d946ef",         // Fuchsia
-    'educacion': "#6366f1",    // Indigo
-    'cursos': "#4f46e5",       // Indigo-600
-    'varios': "#94a3b8",       // Slate-400
-    'deporte': "#f87171",      // Light Red
-    'regalos': "#f472b6",      // Pink-400
-    'taxis': "#0284c7",        // Sky-600
-    'default': "#71717a"       // Zinc fallback
+    // Additional Categories
+    'transporte': "#0ea5e9",
+    'hogar': "#84cc16",
+    'entretenimiento': "#8b5cf6",
+    'salud': "#ef4444",
+    'default': "#71717a"
 };
 
 export const ENTITY_COLORS = [

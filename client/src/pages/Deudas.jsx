@@ -7,10 +7,13 @@ import { ENTITY_COLORS } from '../constants/colors';
 
 // ENTITY_COLORS imported from ../constants/colors
 
-function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
+function Deudas({ debts, loading, onToggleStatus, onBulkStatus, onDeleteDebt, importDebts, onDeleteAll }) {
     const navigate = useNavigate();
     const [filter, setFilter] = useState('all'); // all, pending, paid
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [isProcessingBulk, setIsProcessingBulk] = useState(false);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
+    const [deleteAllModal, setDeleteAllModal] = useState(false);
     const [importModal, setImportModal] = useState({ isOpen: false, file: null });
     const [toast, setToast] = useState({ show: false, message: '' });
 
@@ -84,12 +87,55 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
         }
     };
 
+    const confirmDeleteAll = async () => {
+        const result = await onDeleteAll();
+        if (result.success) {
+            showStatus('success', 'Eliminado', 'Todas las deudas han sido eliminadas.');
+        } else {
+            showStatus('error', 'Error', 'No se pudieron eliminar las deudas.');
+        }
+        setDeleteAllModal(false);
+    };
+
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
             setImportModal({ isOpen: true, file });
         }
         e.target.value = null; // Reset input
+    };
+
+    // --- Bulk Selection Handlers ---
+    const handleToggleSelect = (id) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+        );
+    };
+
+    const handleSelectAllOnPage = () => {
+        const pageIds = currentDebts.map(d => d.id);
+        const allSelected = pageIds.every(id => selectedIds.includes(id));
+
+        if (allSelected) {
+            setSelectedIds(prev => prev.filter(id => !pageIds.includes(id)));
+        } else {
+            setSelectedIds(prev => [...new Set([...prev, ...pageIds])]);
+        }
+    };
+
+    const handleBulkConfirm = async (status) => {
+        if (selectedIds.length === 0 || isProcessingBulk) return;
+
+        setIsProcessingBulk(true);
+        const result = await onBulkStatus(selectedIds, status);
+        setIsProcessingBulk(false);
+
+        if (result.success) {
+            showStatus('success', '¡Éxito!', `Se actualizaron ${selectedIds.length} deudas.`);
+            setSelectedIds([]);
+        } else {
+            showStatus('error', 'Error', 'No se pudieron actualizar las deudas.');
+        }
     };
 
     const confirmImport = async (mode) => {
@@ -111,6 +157,20 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
         <div className="fade-in">
             <div className="top-actions">
                 <div>
+                    {debts.length > 0 && (
+                        <button
+                            className="action-btn"
+                            onClick={() => setDeleteAllModal(true)}
+                            style={{
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                color: '#ef4444',
+                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                marginRight: '0.75rem'
+                            }}
+                        >
+                            <Trash2 size={18} /> Eliminar Todo
+                        </button>
+                    )}
                     <input
                         type="file"
                         id="excel-upload"
@@ -192,7 +252,15 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
 
             <div className="glass-card" style={{ boxShadow: 'var(--shadow-md)' }}>
                 <div className="debts-table">
-                    <div className="table-header deudas-grid">
+                    <div className="table-header deudas-grid" style={{ gridTemplateColumns: '40px 2fr 1.5fr 1fr 1fr 1fr 120px' }}>
+                        <span style={{ display: 'flex', justifyContent: 'center' }}>
+                            <input
+                                type="checkbox"
+                                className="debt-checkbox"
+                                checked={currentDebts.length > 0 && currentDebts.every(d => selectedIds.includes(d.id))}
+                                onChange={handleSelectAllOnPage}
+                            />
+                        </span>
                         <span>Entidad</span>
                         <span>Préstamo</span>
                         <span>Vencimiento</span>
@@ -211,7 +279,15 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                                 const entityIndex = uniqueEntities.indexOf(debt.entity);
                                 const entityColor = ENTITY_COLORS[entityIndex % ENTITY_COLORS.length];
                                 return (
-                                    <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''}`}>
+                                    <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''} ${selectedIds.includes(debt.id) ? 'selected-row' : ''}`} style={{ gridTemplateColumns: '40px 2fr 1.5fr 1fr 1fr 1fr 120px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <input
+                                                type="checkbox"
+                                                className="debt-checkbox"
+                                                checked={selectedIds.includes(debt.id)}
+                                                onChange={() => handleToggleSelect(debt.id)}
+                                            />
+                                        </div>
                                         <div className="entity-info" style={{ fontWeight: '500', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                             <div className="entity-dot" style={{ backgroundColor: entityColor }}></div>
                                             {debt.entity}
@@ -410,6 +486,150 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                 title="Eliminar Deuda"
                 message="¿Estás seguro de que deseas eliminar esta deuda? Esta acción no se puede deshacer."
             />
+            {/* Modal Confirmar Eliminar Todas */}
+            <ConfirmationModal
+                isOpen={deleteAllModal}
+                onClose={() => setDeleteAllModal(false)}
+                onConfirm={confirmDeleteAll}
+                title="¿Eliminar Todas las Deudas?"
+                message="Esta acción eliminará TODAS las deudas de forma permanente. No se puede deshacer."
+            />
+            {/* Bulk Action Bar */}
+            {selectedIds.length > 0 && (
+                <div className="bulk-action-bar">
+                    <div className="bulk-info">
+                        <span className="selected-count">{selectedIds.length}</span>
+                        <span>deudas seleccionadas</span>
+                    </div>
+                    <div className="bulk-buttons">
+                        <button
+                            className="bulk-btn cancel"
+                            onClick={() => setSelectedIds([])}
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            className="bulk-btn mark-paid"
+                            onClick={() => handleBulkConfirm('paid')}
+                            disabled={isProcessingBulk}
+                        >
+                            <Check size={18} /> Marcar como Pagadas
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <style jsx>{`
+                .debt-checkbox {
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 4px;
+                    border: 1.5px solid var(--glass-border);
+                    background: var(--bg-subtle);
+                    cursor: pointer;
+                    accent-color: var(--primary);
+                }
+
+                .selected-row {
+                    background: rgba(var(--primary-rgb), 0.05) !important;
+                }
+
+                .bulk-action-bar {
+                    position: fixed;
+                    bottom: 2rem;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: var(--card-bg);
+                    border: 1px solid var(--glass-border);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    border-radius: 1rem;
+                    padding: 0.75rem 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 2rem;
+                    z-index: 1000;
+                    backdrop-filter: blur(10px);
+                    animation: slideUp 0.3s ease-out;
+                }
+
+                @keyframes slideUp {
+                    from { transform: translate(-50%, 100px); opacity: 0; }
+                    to { transform: translate(-50%, 0); opacity: 1; }
+                }
+
+                .bulk-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    color: var(--text-main);
+                    font-weight: 500;
+                }
+
+                .selected-count {
+                    background: var(--primary);
+                    color: white;
+                    padding: 0.2rem 0.6rem;
+                    border-radius: 2rem;
+                    font-size: 0.9rem;
+                    min-width: 25px;
+                    text-align: center;
+                }
+
+                .bulk-buttons {
+                    display: flex;
+                    gap: 0.75rem;
+                }
+
+                .bulk-btn {
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.75rem;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    transition: all 0.2s;
+                }
+
+                .bulk-btn.cancel {
+                    background: transparent;
+                    border: 1px solid var(--glass-border);
+                    color: var(--text-dim);
+                }
+
+                .bulk-btn.cancel:hover {
+                    background: var(--bg-subtle);
+                    color: var(--text-main);
+                }
+
+                .bulk-btn.mark-paid {
+                    background: var(--primary);
+                    border: none;
+                    color: white;
+                }
+
+                .bulk-btn.mark-paid:hover {
+                    background: var(--primary-dark);
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+                }
+
+                .bulk-btn:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    transform: none !important;
+                }
+
+                @media (max-width: 768px) {
+                    .bulk-action-bar {
+                        width: 90%;
+                        flex-direction: column;
+                        gap: 1rem;
+                        bottom: 5rem;
+                    }
+                }
+            `}</style>
         </div>
     );
 }

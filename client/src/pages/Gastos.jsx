@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Pencil, Trash2, X, PlusCircle, Filter, Calendar } from 'lucide-react';
 import { getCategoryColor } from '../constants/colors';
+import ConfirmationModal from '../components/ConfirmationModal';
 
-function Gastos({ expenses, loading, onDeleteExpense, onEditExpense, onAddExpense }) {
+function Gastos({ expenses, loading, onDeleteExpense, onEditExpense, onAddExpense, onDeleteAll }) {
+    const [deleteAllModal, setDeleteAllModal] = useState(false);
     // --- Month selector ---
     const todayISO = new Date().toISOString().slice(0, 7); // e.g. "2026-03"
     const [selectedMonth, setSelectedMonth] = useState(todayISO);
@@ -37,14 +39,31 @@ function Gastos({ expenses, loading, onDeleteExpense, onEditExpense, onAddExpens
         <div className="fade-in">
             <div className="top-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h2 style={{ margin: 0, fontWeight: '700' }}>Registro de Gastos</h2>
-                <button
-                    className="add-btn"
-                    onClick={onAddExpense}
-                    style={{ margin: 0 }}
-                >
-                    <PlusCircle size={18} />
-                    <span>Nuevo Gasto</span>
-                </button>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    {expenses.length > 0 && (
+                        <button
+                            className="action-btn"
+                            onClick={() => setDeleteAllModal(true)}
+                            style={{
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                color: '#ef4444',
+                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            <Trash2 size={18} />
+                            <span>Eliminar Todo</span>
+                        </button>
+                    )}
+                    <button
+                        className="add-btn"
+                        onClick={onAddExpense}
+                        style={{ margin: 0 }}
+                    >
+                        <PlusCircle size={18} />
+                        <span>Nuevo Gasto</span>
+                    </button>
+                </div>
             </div>
 
             {/* Filter Bar */}
@@ -183,6 +202,17 @@ function Gastos({ expenses, loading, onDeleteExpense, onEditExpense, onAddExpens
                     </div>
                 </div>
             )}
+            {/* Modal Confirmar Eliminar Todas */}
+            <ConfirmationModal
+                isOpen={deleteAllModal}
+                onClose={() => setDeleteAllModal(false)}
+                onConfirm={async () => {
+                    await onDeleteAll();
+                    setDeleteAllModal(false);
+                }}
+                title="¿Eliminar Todos los Gastos?"
+                message="Esta acción eliminará TODOS los gastos de forma permanente. No se puede deshacer."
+            />
         </div>
     );
 }

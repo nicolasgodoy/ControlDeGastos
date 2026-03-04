@@ -39,7 +39,9 @@ function ExpenseModal({ isOpen, onClose, onSave, initialData }) {
         { value: 'kiosko', label: 'Kiosko' },
         { value: 'supermercado', label: 'Supermercado' },
         { value: 'verduleria', label: 'Verduleria' },
-        { value: 'servicios', label: 'Servicios' }
+        { value: 'servicios', label: 'Servicios' },
+        { value: 'uber', label: 'Uber' },
+        { value: 'colectivo', label: 'Colectivo / SUBE' }
     ];
 
     const handleSubmit = async (e) => {

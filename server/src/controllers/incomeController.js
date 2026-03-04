@@ -170,8 +170,22 @@ export const deleteIncome = async (req, res) => {
         res.json({ message: 'Income deleted' });
 
     } catch (error) {
-        fileMutex.unlock();
+        if (fileMutex._locked) fileMutex.unlock();
         console.error('Error deleting income:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const deleteAllIncomes = async (req, res) => {
+    try {
+        await fileMutex.lock();
+        const p = await ensureIncomesFile();
+        fs.writeFileSync(p, JSON.stringify([], null, 2));
+        fileMutex.unlock();
+        res.json({ message: 'Todos los ingresos han sido eliminados' });
+    } catch (error) {
+        if (fileMutex._locked) fileMutex.unlock();
+        console.error('Error deleting all incomes:', error);
         res.status(500).json({ message: error.message });
     }
 };

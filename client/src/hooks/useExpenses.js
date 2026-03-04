@@ -10,6 +10,7 @@ import {
     deleteDoc,
     updateDoc,
     doc,
+    writeBatch,
     serverTimestamp,
     where
 } from 'firebase/firestore';
@@ -85,5 +86,20 @@ export const useExpenses = () => {
         }
     };
 
-    return { expenses, loading, error, addExpense, deleteExpense, updateExpense, refreshExpenses: () => { } };
+    const deleteAllExpenses = async () => {
+        if (!user || expenses.length === 0) return { success: false, error: 'No expenses to delete' };
+        try {
+            const batch = writeBatch(db);
+            expenses.forEach(e => {
+                batch.delete(doc(db, 'expenses', e.id));
+            });
+            await batch.commit();
+            return { success: true };
+        } catch (err) {
+            console.error('Error deleting all expenses:', err);
+            return { success: false, error: err.message };
+        }
+    };
+
+    return { expenses, loading, error, addExpense, deleteExpense, updateExpense, deleteAllExpenses, refreshExpenses: () => { } };
 };

@@ -14,15 +14,12 @@ import ExcelJS from 'exceljs';
  * - Orange background = PENDING (or no color)
  */
 export const parseDebtExcel = async (filePath) => {
-    // Force use of the updated file if it exists, otherwise use what was passed
-    const targetPath = filePath.includes('ExcelDeudas.xlsx') ? filePath : 'D:/ControlDeCostos/server/data/ExcelDeudas.xlsx';
-
     const workbook = new ExcelJS.Workbook();
     try {
-        await workbook.xlsx.readFile(targetPath);
-    } catch (e) {
-        console.error(`Error reading ${targetPath}, falling back to ${filePath}`);
         await workbook.xlsx.readFile(filePath);
+    } catch (e) {
+        console.error(`Error reading ${filePath}:`, e.message);
+        throw e;
     }
 
     const allDebts = [];
@@ -78,10 +75,18 @@ export const parseDebtExcel = async (filePath) => {
                     const fechaCell = row.getCell(colNum);
                     const cuotasCell = row.getCell(colNum + 1);
 
-                    const dateVal = fechaCell.value;
-                    const amountVal = cuotasCell.value;
+                    let dateVal = fechaCell.value;
+                    let amountVal = cuotasCell.value;
 
-                    if (dateVal && amountVal && (typeof amountVal === 'number' || !isNaN(parseFloat(String(amountVal).replace(',', '.'))))) {
+                    // Support formulas (ExcelJS returns { formula: '...', result: 123 })
+                    if (amountVal && typeof amountVal === 'object' && amountVal.result !== undefined) {
+                        amountVal = amountVal.result;
+                    }
+                    if (dateVal && typeof dateVal === 'object' && dateVal.result !== undefined) {
+                        dateVal = dateVal.result;
+                    }
+
+                    if (dateVal && amountVal) {
                         hasData = true;
 
                         // Parse amount

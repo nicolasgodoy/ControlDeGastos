@@ -71,12 +71,12 @@ const Balance = () => {
     const allPendingDebts = debts.filter(d => d.status === 'pending');
     const totalAllPendingDebts = allPendingDebts.reduce((sum, debt) => sum + parseFloat(debt.amount), 0);
 
-    // REAL balance: only what was actually spent (paid debts + expenses)
-    // Pending debts are NOT subtracted — they haven't left the account yet
-    const realBalance = totalIncome - totalPaidDebts - totalExpenses;
+    // Balance = Ingresos − Deudas pagadas − Gastos del mes
+    // Las deudas pendientes NO se restan porque todavía no salieron de la cuenta
+    const balance = totalIncome - totalPaidDebts - totalExpenses;
 
-    // PROJECTED balance: if all pending debts are also paid
-    const projectedBalance = realBalance - totalPendingDebts;
+    const balancePercentage = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
+    const committedPercentage = 100 - balancePercentage;
 
 
 
@@ -129,23 +129,23 @@ const Balance = () => {
             <div className="glass-card" style={{
                 marginBottom: '1rem',
                 padding: '1rem',
-                background: realBalance >= 0 ?
+                background: balance >= 0 ?
                     'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%)' :
                     'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.03) 100%)',
-                border: realBalance >= 0 ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(239, 68, 68, 0.15)',
+                border: balance >= 0 ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(239, 68, 68, 0.15)',
                 boxShadow: 'var(--shadow-md)'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>
-                        Balance Real (Efectivo Disponible)
+                        Balance Disponible
                     </p>
                     <h1 style={{
                         fontSize: '2.5rem',
                         fontWeight: '800',
                         margin: 0,
-                        color: realBalance >= 0 ? 'var(--success)' : 'var(--danger)'
+                        color: balance >= 0 ? 'var(--success)' : 'var(--danger)'
                     }}>
-                        <AnimatedNumber value={realBalance} prefix="$" decimals={2} duration={1000} />
+                        <AnimatedNumber value={balance} prefix="$" decimals={2} duration={1000} />
                     </h1>
                     <div style={{
                         marginTop: '1rem',
@@ -155,14 +155,14 @@ const Balance = () => {
                         gap: '0.4rem',
                         fontSize: '0.9rem',
                         fontWeight: '600',
-                        color: realBalance >= 0 ? 'var(--success)' : 'var(--danger)',
-                        background: realBalance >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        color: balance >= 0 ? 'var(--success)' : 'var(--danger)',
+                        background: balance >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
                         padding: '0.4rem 1rem',
                         borderRadius: '20px',
                         width: 'fit-content',
                         margin: '0.75rem auto'
                     }}>
-                        {realBalance >= 0 ? (
+                        {balance >= 0 ? (
                             <>
                                 <Sparkles size={16} />
                                 <span>Superávit</span>
@@ -175,7 +175,7 @@ const Balance = () => {
                         )}
                     </div>
 
-                    {/* Projected balance if all pending debts are paid */}
+                    {/* Pending debts reminder */}
                     {totalPendingDebts > 0 && (
                         <div style={{
                             display: 'flex',
@@ -183,13 +183,15 @@ const Balance = () => {
                             justifyContent: 'center',
                             gap: '0.5rem',
                             fontSize: '0.8rem',
-                            color: 'var(--text-dim)',
-                            marginTop: '0.25rem'
+                            color: 'var(--warning)',
+                            marginTop: '0.4rem',
+                            background: 'rgba(245, 158, 11, 0.08)',
+                            padding: '0.4rem 1rem',
+                            borderRadius: '20px',
+                            width: 'fit-content',
+                            margin: '0.4rem auto 0'
                         }}>
-                            <span>Balance proyectado (si pagás todas las deudas pendientes):</span>
-                            <span style={{ fontWeight: '700', color: projectedBalance >= 0 ? 'var(--success)' : 'var(--danger)' }}>
-                                ${projectedBalance.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
-                            </span>
+                            <span>⚠️ Quedan pendientes de pago: <strong>${totalPendingDebts.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong></span>
                         </div>
                     )}
                 </div>
@@ -243,47 +245,24 @@ const Balance = () => {
                     </div>
                 </div>
 
-                {/* Pending debts warning */}
-                {totalPendingDebts > 0 && (
-                    <div style={{
-                        marginTop: '0.75rem',
-                        padding: '0.75rem 1rem',
-                        background: 'rgba(245, 158, 11, 0.08)',
-                        borderRadius: '10px',
-                        border: '1px solid rgba(245, 158, 11, 0.2)',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        gap: '0.5rem'
-                    }}>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--warning)' }}>
-                            ⚠️ Compromisos pendientes del mes ({pendingMonthlyDebts.length}):
-                        </span>
-                        <span style={{ fontWeight: '700', color: 'var(--warning)', fontSize: '0.95rem' }}>
-                            ${totalPendingDebts.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
-                        </span>
-                    </div>
-                )}
+
 
                 {/* Progress Bar */}
                 {totalIncome > 0 && (
                     <div style={{ marginTop: '1.5rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-                            <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                                Ingresos comprometidos (real)
-                            </span>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Ingresos comprometidos</span>
                             <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>
-                                {totalIncome > 0 ? (100 - (realBalance / totalIncome * 100)).toFixed(1) : 0}%
+                                {committedPercentage.toFixed(1)}%
                             </span>
                         </div>
                         <div style={{ height: '8px', background: 'var(--bg-subtle)', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
                             <div style={{
                                 height: '100%',
-                                width: `${Math.min(100 - (realBalance / totalIncome * 100), 100)}%`,
-                                background: (realBalance / totalIncome) > 0.3 ?
+                                width: `${Math.min(committedPercentage, 100)}%`,
+                                background: balancePercentage > 30 ?
                                     'var(--success)' :
-                                    (realBalance / totalIncome) > 0.1 ?
+                                    balancePercentage > 10 ?
                                         'var(--warning)' :
                                         'var(--danger)',
                                 transition: 'width 0.5s ease'

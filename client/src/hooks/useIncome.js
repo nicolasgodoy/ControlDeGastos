@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, onSnapshot, orderBy, writeBatch } from 'firebase/firestore';
 
 export const useIncome = () => {
     const [incomes, setIncomes] = useState([]);
@@ -85,5 +85,20 @@ export const useIncome = () => {
         }
     };
 
-    return { incomes, loading, error, addIncome, updateIncome, deleteIncome };
+    const deleteAllIncomes = async () => {
+        if (!auth.currentUser || incomes.length === 0) return { success: false, error: 'No incomes to delete' };
+        try {
+            const batch = writeBatch(db);
+            incomes.forEach(i => {
+                batch.delete(doc(db, 'users', auth.currentUser.uid, 'incomes', i.id));
+            });
+            await batch.commit();
+            return { success: true };
+        } catch (err) {
+            console.error('Error deleting all incomes:', err);
+            return { success: false, error: err.message };
+        }
+    };
+
+    return { incomes, loading, error, addIncome, updateIncome, deleteIncome, deleteAllIncomes };
 };

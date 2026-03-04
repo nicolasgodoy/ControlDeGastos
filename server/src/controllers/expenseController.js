@@ -112,3 +112,14 @@ export const updateExpense = (req, res) => {
         res.status(500).json({ message: 'Error updating expense' });
     }
 };
+
+export const deleteAllExpenses = (req, res) => {
+    try {
+        const p = ensureExpensesFile();
+        fs.writeFileSync(p, '[]');
+        res.json({ message: 'Todos los gastos han sido eliminados' });
+    } catch (error) {
+        console.error('Error deleting all expenses:', error);
+        res.status(500).json({ message: 'Error al eliminar todos los gastos' });
+    }
+};
