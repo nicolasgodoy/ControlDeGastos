@@ -26,7 +26,8 @@ function DebtForm() {
         installments_paid: 0,
         installments_total: 1,
         interestRate: '',
-        rateType: 'TNA'
+        rateType: 'TNA',
+        status: 'pending'
     });
 
     const [calculatedPayment, setCalculatedPayment] = useState(null);
@@ -115,7 +116,8 @@ function DebtForm() {
                     installments_paid: existingDebt.installments_paid || 0,
                     installments_total: existingDebt.installments_total || 1,
                     interestRate: (existingDebt.interestRate !== null && existingDebt.interestRate !== undefined) ? existingDebt.interestRate.toString() : '',
-                    rateType: existingDebt.rateType || 'TNA'
+                    rateType: existingDebt.rateType || 'TNA',
+                    status: existingDebt.status || 'pending'
                 });
                 setShowAdvanced(existingDebt.installments_total > 1);
             }
@@ -212,7 +214,9 @@ function DebtForm() {
                     installments_total: installments,
                     interestRate: formData.interestRate !== '' ? parseFloat(formData.interestRate) : 0,
                     monthlyPayment: Math.round(monthlyAmount * 100) / 100,
-                    totalToPay: calculatedPayment ? calculatedPayment.total : parseFloat(formData.amount)
+                    totalToPay: calculatedPayment ? calculatedPayment.total : parseFloat(formData.amount),
+                    status: formData.status,
+                    paidAt: formData.status === 'paid' ? new Date().toISOString() : null
                 });
             }
 
@@ -230,7 +234,9 @@ function DebtForm() {
                 amount: amountNumber,
                 interestRate: formData.interestRate !== '' ? parseFloat(formData.interestRate) : null,
                 monthlyPayment: calculatedPayment ? calculatedPayment.monthly : null,
-                totalToPay: calculatedPayment ? calculatedPayment.total : amountNumber
+                totalToPay: calculatedPayment ? calculatedPayment.total : amountNumber,
+                status: formData.status,
+                paidAt: formData.status === 'paid' ? new Date().toISOString() : null
             };
 
             const result = await (id ? updateDebt(id, submitData) : addDebt(submitData));
@@ -392,6 +398,46 @@ function DebtForm() {
                                             paddingLeft: '2.5rem'
                                         }}
                                     />
+                                </div>
+                            </div>
+
+                            <div className="form-group" style={{ margin: 0 }}>
+                                <label style={{ marginBottom: '0.75rem', display: 'block', color: 'var(--text-dim)' }}>Estado Inicial</label>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, status: 'pending' })}
+                                        style={{
+                                            flex: 1,
+                                            padding: '0.75rem',
+                                            borderRadius: '0.75rem',
+                                            border: formData.status === 'pending' ? '2px solid var(--warning)' : '1px solid var(--glass-border)',
+                                            background: formData.status === 'pending' ? 'rgba(245, 158, 11, 0.1)' : 'transparent',
+                                            color: formData.status === 'pending' ? 'var(--warning)' : 'var(--text-dim)',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        Pendiente
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, status: 'paid' })}
+                                        style={{
+                                            flex: 1,
+                                            padding: '0.75rem',
+                                            borderRadius: '0.75rem',
+                                            border: formData.status === 'paid' ? '2px solid var(--success)' : '1px solid var(--glass-border)',
+                                            background: formData.status === 'paid' ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
+                                            color: formData.status === 'paid' ? 'var(--success)' : 'var(--text-dim)',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        Pagado
+                                    </button>
                                 </div>
                             </div>
                         </div>
