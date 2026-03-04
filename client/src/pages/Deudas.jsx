@@ -218,7 +218,12 @@ function Deudas({ debts, loading, onToggleStatus, onDeleteDebt, importDebts }) {
                                         </div>
                                         <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{debt.loanName}</span>
                                         <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>
-                                            {new Date(debt.date).toLocaleDateString()}
+                                            {debt.date
+                                                ? (() => {
+                                                    const [y, m, d] = debt.date.split('-');
+                                                    return new Date(+y, +m - 1, +d).toLocaleDateString('es-AR');
+                                                })()
+                                                : '-'}
                                         </span>
                                         <span style={{ fontFamily: 'monospace', fontSize: '1rem', color: 'var(--text-main)' }}>
                                             ${debt.amount.toLocaleString('es-AR')}

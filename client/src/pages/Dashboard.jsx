@@ -114,7 +114,9 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
     const getDaysRemaining = (dateString) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const target = new Date(dateString);
+        // Parse YYYY-MM-DD as local date to avoid UTC shift (e.g. GMT-3 showing day before)
+        const [y, m, d] = dateString.split('-').map(Number);
+        const target = new Date(y, m - 1, d);
         target.setHours(0, 0, 0, 0);
         const diffTime = target - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -402,10 +404,12 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                                         <div className="payment-details">
                                             <p className="title">{debt.entity}</p>
                                             <p className="date">
-                                                {new Date(debt.date).toLocaleDateString("es-ES", {
-                                                    day: "numeric",
-                                                    month: "short",
-                                                })} - {debt.loanName}
+                                                {debt.date
+                                                    ? (() => {
+                                                        const [y, m, d] = debt.date.split('-').map(Number);
+                                                        return new Date(y, m - 1, d).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                                                    })()
+                                                    : '-'} - {debt.loanName}
                                             </p>
                                         </div>
                                     </div>
