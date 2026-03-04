@@ -9,6 +9,7 @@ export const CATEGORY_COLORS = {
     'suplementos': "#38bdf8", // Cyan/Teal
     'comida': "#0d9488",      // Teal/Emerald
     'gym': "#22c55e",         // Green
+    'verduleria': "#188b43ff",
     'juntadas': "#f59e0b",    // Amber/Gold
     'farmacia': "#ea580c",    // Orange
     'kiosko': "#e61f1fc4",      // Red
@@ -28,7 +29,6 @@ export const CATEGORY_COLORS = {
     'deporte': "#f87171",      // Light Red
     'regalos': "#f472b6",      // Pink-400
     'taxis': "#0284c7",        // Sky-600
-    'verduleria': "#22c55e",   // Green (mapped to Hogar/Green flow)
     'default': "#71717a"       // Zinc fallback
 };
 
