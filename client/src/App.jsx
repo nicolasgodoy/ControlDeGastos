@@ -14,34 +14,60 @@ import {
     TrendingUp,
     DollarSign
 } from 'lucide-react';
-import { useDebts } from './hooks/useDebts';
-import { useExpenses } from './hooks/useExpenses';
 
-// Auth
+// Context Providers
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { DataProvider, useData } from './context/DataContext';
 
-// Components
-import Dashboard from './pages/Dashboard';
-import Gastos from './pages/Gastos';
-import Deudas from './pages/Deudas';
-import DebtForm from './pages/DebtForm';
-import Reportes from './pages/Reportes';
-import Juntadas from './pages/Juntadas';
-import Ingresos from './pages/Ingresos';
-import Balance from './pages/Balance';
-import Login from './pages/Login';
 import ExpenseModal from './components/ExpenseModal';
 import ConfirmationModal from './components/ConfirmationModal';
 import Toast from './components/Toast';
 
+// Lazy load pages for bundle optimization (bundle-dynamic-imports)
+const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const Gastos = React.lazy(() => import('./pages/Gastos'));
+const Deudas = React.lazy(() => import('./pages/Deudas'));
+const DebtForm = React.lazy(() => import('./pages/DebtForm'));
+const Reportes = React.lazy(() => import('./pages/Reportes'));
+const Juntadas = React.lazy(() => import('./pages/Juntadas'));
+const Ingresos = React.lazy(() => import('./pages/Ingresos'));
+const Balance = React.lazy(() => import('./pages/Balance'));
+const Login = React.lazy(() => import('./pages/Login'));
+
+// Loading component for Suspense
+const PageLoader = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem', color: 'var(--text-dim)' }}>
+        Cargando página...
+    </div>
+);
+
 // Main App Component
 function AppContent() {
     const { user, logout } = useAuth();
-    const { debts, loading, error, toggleStatus, bulkUpdateStatus, addDebt, updateDebt, deleteDebt, importDebts, deleteAllDebts } = useDebts();
+    const {
+        debts,
+        debtsLoading: loading,
+        debtsError: error,
+        toggleDebtStatus: toggleStatus,
+        bulkUpdateDebtStatus: bulkUpdateStatus,
+        addDebt,
+        updateDebt,
+        deleteDebt,
+        importDebts,
+        deleteAllDebts,
+        expenses,
+        expensesLoading,
+        addExpense,
+        deleteExpense,
+        updateExpense,
+        deleteAllExpenses,
+        incomes,
+        incomesLoading,
+        globalLoading
+    } = useData();
 
     // --- Handlers for Expenses ---
     const [editingExpense, setEditingExpense] = useState(null);
-    const { expenses, loading: expensesLoading, addExpense, deleteExpense, updateExpense, deleteAllExpenses } = useExpenses();
 
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -135,10 +161,6 @@ function AppContent() {
         setTheme(prev => prev === 'dark' ? 'light' : 'dark');
     };
 
-    if (!user) {
-        return <Login />;
-    }
-
     return (
         <div className="app-container">
             <nav className="sidebar glass-card">
@@ -209,18 +231,20 @@ function AppContent() {
                     </div>
                 </header>
 
-                <Routes>
-                    <Route path="/" element={<Dashboard debts={debts} expenses={expenses} loading={loading} error={error} onToggleStatus={requestPayment} />} />
-                    <Route path="/gastos" element={<Gastos expenses={expenses} loading={expensesLoading} onDeleteExpense={requestDeleteExpense} onEditExpense={requestEditExpense} onAddExpense={() => { setEditingExpense(null); setModalOpen(true); }} onDeleteAll={deleteAllExpenses} />} />
-                    <Route path="/deudas" element={<Deudas debts={debts} loading={loading} onToggleStatus={requestPayment} onBulkStatus={bulkUpdateStatus} onDeleteDebt={deleteDebt} importDebts={importDebts} onDeleteAll={deleteAllDebts} />} />
-                    <Route path="/deudas/nueva" element={<DebtForm />} />
-                    <Route path="/deudas/editar/:id" element={<DebtForm />} />
-                    <Route path="/ingresos" element={<Ingresos />} />
-                    <Route path="/balance" element={<Balance />} />
-                    <Route path="/reportes" element={<Reportes expenses={expenses} debts={debts} loading={loading || expensesLoading} />} />
-                    <Route path="/juntadas" element={<Juntadas />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                <React.Suspense fallback={<PageLoader />}>
+                    <Routes>
+                        <Route path="/" element={<Dashboard debts={debts} expenses={expenses} loading={loading} error={error} onToggleStatus={requestPayment} />} />
+                        <Route path="/gastos" element={<Gastos expenses={expenses} loading={expensesLoading} onDeleteExpense={requestDeleteExpense} onEditExpense={requestEditExpense} onAddExpense={() => { setEditingExpense(null); setModalOpen(true); }} onDeleteAll={deleteAllExpenses} />} />
+                        <Route path="/deudas" element={<Deudas debts={debts} loading={loading} onToggleStatus={requestPayment} onBulkStatus={bulkUpdateStatus} onDeleteDebt={deleteDebt} importDebts={importDebts} onDeleteAll={deleteAllDebts} />} />
+                        <Route path="/deudas/nueva" element={<DebtForm />} />
+                        <Route path="/deudas/editar/:id" element={<DebtForm />} />
+                        <Route path="/ingresos" element={<Ingresos />} />
+                        <Route path="/balance" element={<Balance />} />
+                        <Route path="/reportes" element={<Reportes expenses={expenses} debts={debts} loading={loading || expensesLoading} />} />
+                        <Route path="/juntadas" element={<Juntadas />} />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </React.Suspense>
             </main>
 
             <ExpenseModal
@@ -287,11 +311,33 @@ function AppContent() {
     );
 }
 
+// AuthGate: only mounts DataProvider when user is authenticated
+// This prevents the Firebase hooks inside DataProvider from running without a user
+function AuthGate() {
+    const { user, loading } = useAuth();
+
+    if (loading) return null; // wait for auth to resolve
+
+    if (!user) {
+        return (
+            <React.Suspense fallback={null}>
+                <Login />
+            </React.Suspense>
+        );
+    }
+
+    return (
+        <DataProvider>
+            <AppContent />
+        </DataProvider>
+    );
+}
+
 function App() {
     return (
         <BrowserRouter>
             <AuthProvider>
-                <AppContent />
+                <AuthGate />
             </AuthProvider>
         </BrowserRouter>
     );

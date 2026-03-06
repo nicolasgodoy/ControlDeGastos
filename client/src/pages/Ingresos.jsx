@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { PlusCircle, Edit2, Trash2, TrendingUp, Calendar, DollarSign, Filter } from 'lucide-react';
-import { useIncome } from '../hooks/useIncome';
+import { useData } from '../context/DataContext';
 import IncomeModal from '../components/IncomeModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 
 const Ingresos = () => {
-    const { incomes, loading, addIncome, updateIncome, deleteIncome, deleteAllIncomes } = useIncome();
+    const { incomes, incomesLoading: loading, addIncome, updateIncome, deleteIncome, deleteAllIncomes } = useData();
     const [modalOpen, setModalOpen] = useState(false);
     const [editingIncome, setEditingIncome] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, incomeId: null });

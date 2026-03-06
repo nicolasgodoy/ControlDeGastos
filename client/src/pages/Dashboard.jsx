@@ -57,9 +57,10 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // --- Month selector ---
+    // --- View mode & Month selector ---
     const todayISO = new Date().toISOString().slice(0, 7);
     const [selectedMonth, setSelectedMonth] = useState(todayISO);
+    const [viewMode, setViewMode] = useState('month'); // 'month' | 'total'
 
     const monthOptions = [];
     for (let i = 0; i < 12; i++) {
@@ -78,37 +79,66 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
         ? expenses.filter(exp => exp.date?.startsWith(selectedMonth))
         : [];
 
-    const totalDebt = debts.reduce((acc, debt) => acc + debt.amount, 0);
-    const pendingAmount = debts.filter(d => d.status === 'pending').reduce((a, b) => a + b.amount, 0);
-    const paidAmount = debts.filter(d => d.status === 'paid').reduce((a, b) => a + b.amount, 0);
+    // Single pass to gather global and monthly statistics (js-combine-iterations)
+    const {
+        totalDebtGlobal, pendingAmountGlobal, paidAmountGlobal, entityDataMap,
+        totalDebtMonth, pendingAmountMonth, paidAmountMonth, pendingDebtsRaw
+    } = (debts || []).reduce((acc, d) => {
+        const amount = Number(d.amount) || 0;
+        const debtMonth = d.date?.slice(0, 7);
+
+        // Global context
+        acc.totalDebtGlobal += amount;
+        if (d.status === 'pending') {
+            acc.pendingAmountGlobal += amount;
+            acc.pendingDebtsRaw.push(d);
+        } else if (d.status === 'paid') {
+            acc.paidAmountGlobal += amount;
+        }
+
+        // Monthly context: group by DUE month (not pay date)
+        if (debtMonth === selectedMonth) {
+            acc.totalDebtMonth += amount;
+            if (d.status === 'pending') acc.pendingAmountMonth += amount;
+            if (d.status === 'paid') acc.paidAmountMonth += amount;
+        }
+
+        // Chart data
+        if (d.entity) {
+            acc.entityDataMap[d.entity] = (acc.entityDataMap[d.entity] || 0) + amount;
+        }
+        return acc;
+    }, {
+        totalDebtGlobal: 0, pendingAmountGlobal: 0, paidAmountGlobal: 0, entityDataMap: {},
+        totalDebtMonth: 0, pendingAmountMonth: 0, paidAmountMonth: 0, pendingDebtsRaw: []
+    });
+
+    const entityData = Object.entries(entityDataMap).map(([name, value]) => ({ name, value }));
     const totalExpenses = currentMonthExpenses.reduce((acc, curr) => acc + curr.amount, 0);
 
-    const pendingDebts = debts
-        .filter(d => d.status === 'pending')
+    const pendingDebts = pendingDebtsRaw
         .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Data for Horizontal Bar Chart (selected month only)
+    // Category data logic
     const categoryDataMap = {};
     currentMonthExpenses.forEach(exp => {
-        const catKey = exp.category.toLowerCase();
+        const catKey = (exp.category || 'otros').toLowerCase();
         categoryDataMap[catKey] = (categoryDataMap[catKey] || 0) + exp.amount;
     });
-    const categoryData = Object.keys(categoryDataMap).map(key => ({
+
+    const categoryData = Object.entries(categoryDataMap).map(([key, value]) => ({
         name: key.charAt(0).toUpperCase() + key.slice(1),
-        value: categoryDataMap[key],
+        value,
         category: key
     })).sort((a, b) => b.value - a.value);
 
-    // Data for Donut Chart
-    const entityData = debts.reduce((acc, debt) => {
-        const existing = acc.find(item => item.name === debt.entity);
-        if (existing) {
-            existing.value += debt.amount;
-        } else {
-            acc.push({ name: debt.entity, value: debt.amount });
-        }
-        return acc;
-    }, []);
+    // Values to DISPLAY based on viewMode
+    const displayPaid = viewMode === 'total' ? paidAmountGlobal : paidAmountMonth;
+    const displayPending = viewMode === 'total' ? pendingAmountGlobal : pendingAmountMonth;
+    const displayTotal = viewMode === 'total' ? totalDebtGlobal : totalDebtMonth;
+    const displayExpenses = viewMode === 'total'
+        ? (expenses || []).reduce((a, c) => a + c.amount, 0)
+        : totalExpenses;
 
     // Helper for badges
     const getDaysRemaining = (dateString) => {
@@ -143,43 +173,92 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                 </div>
             )}
 
-            {/* Month selector bar */}
+            {/* Controls bar: flex on mobile, inline-flex on desktop */}
             <div style={{
-                display: 'flex',
+                display: isMobile ? 'flex' : 'inline-flex',
                 alignItems: 'center',
-                gap: '0.75rem',
-                marginBottom: '0.5rem',
-                padding: '0.75rem 1rem',
+                justifyContent: isMobile ? 'space-between' : 'flex-start',
+                gap: isMobile ? '0.5rem' : '0.8rem',
+                marginBottom: '1rem',
+                padding: isMobile ? '0.6rem 0.8rem' : '0.5rem 1rem 0.5rem 1.1rem',
                 background: 'var(--card-bg)',
-                borderRadius: '1rem',
+                borderRadius: isMobile ? '14px' : '999px',
                 border: '1px solid var(--glass-border)',
                 boxShadow: 'var(--shadow-sm)',
-                width: 'fit-content'
+                width: isMobile ? '100%' : 'fit-content',
+                maxWidth: '100%',
+                boxSizing: 'border-box'
             }}>
-                <Calendar size={16} color="var(--text-dim)" />
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>Viendo:</span>
-                <select
-                    value={selectedMonth}
-                    onChange={e => setSelectedMonth(e.target.value)}
-                    style={{
-                        padding: '0.3rem 0.75rem',
-                        borderRadius: '0.6rem',
-                        background: 'var(--bg-subtle)',
-                        border: '1px solid var(--glass-border)',
-                        color: 'var(--text-main)',
-                        fontSize: '0.85rem',
-                        outline: 'none',
-                        cursor: 'pointer',
-                        textTransform: 'capitalize',
-                        fontWeight: '600'
-                    }}
-                >
-                    {monthOptions.map(opt => (
-                        <option key={opt.value} value={opt.value} style={{ background: 'var(--card-bg)', textTransform: 'capitalize' }}>
-                            {opt.label}
-                        </option>
-                    ))}
-                </select>
+                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.6rem' : '0.8rem' }}>
+                    <Calendar size={isMobile ? 15 : 15} color="var(--text-dim)" style={{ flexShrink: 0 }} />
+
+                    {/* Toggle Por Mes / Total */}
+                    <div style={{ display: 'flex', borderRadius: '999px', overflow: 'hidden', border: '1px solid var(--glass-border)', flexShrink: 0 }}>
+                        <button
+                            onClick={() => setViewMode('month')}
+                            style={{
+                                padding: isMobile ? '0.4rem 0.9rem' : '0.3rem 1rem',
+                                fontSize: isMobile ? '0.9rem' : '0.85rem',
+                                fontWeight: '800',
+                                border: 'none',
+                                cursor: 'pointer',
+                                background: viewMode === 'month' ? 'var(--primary)' : 'transparent',
+                                color: viewMode === 'month' ? 'white' : 'var(--text-dim)',
+                                transition: 'all 0.15s',
+                                lineHeight: 1.4
+                            }}
+                        >Mes</button>
+                        <button
+                            onClick={() => setViewMode('total')}
+                            style={{
+                                padding: isMobile ? '0.4rem 0.9rem' : '0.3rem 1rem',
+                                fontSize: isMobile ? '0.9rem' : '0.85rem',
+                                fontWeight: '800',
+                                border: 'none',
+                                cursor: 'pointer',
+                                background: viewMode === 'total' ? 'var(--primary)' : 'transparent',
+                                color: viewMode === 'total' ? 'white' : 'var(--text-dim)',
+                                transition: 'all 0.15s',
+                                lineHeight: 1.4
+                            }}
+                        >Total</button>
+                    </div>
+                </div>
+
+                {/* Right side: Month selector or detail text */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {viewMode === 'month' && (
+                        <select
+                            value={selectedMonth}
+                            onChange={e => setSelectedMonth(e.target.value)}
+                            style={{
+                                padding: isMobile ? '0.4rem 0.6rem' : '0.3rem 0.75rem',
+                                borderRadius: '999px',
+                                background: 'var(--bg-subtle)',
+                                border: '1px solid var(--glass-border)',
+                                color: 'var(--text-main)',
+                                fontSize: isMobile ? '0.9rem' : '0.85rem',
+                                outline: 'none',
+                                cursor: 'pointer',
+                                textTransform: 'capitalize',
+                                fontWeight: '600',
+                                maxWidth: isMobile ? '170px' : '180px'
+                            }}
+                        >
+                            {monthOptions.map(opt => (
+                                <option key={opt.value} value={opt.value} style={{ background: 'var(--card-bg)', textTransform: 'capitalize' }}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+
+                    {!isMobile && (
+                        <span style={{ fontSize: '0.82rem', color: 'var(--text-dim)', paddingRight: '0.3rem', whiteSpace: 'nowrap' }}>
+                            {viewMode === 'total' ? '· Histórico' : `· ${selectedMonthLabel}`}
+                        </span>
+                    )}
+                </div>
             </div>
 
             <section className="dashboard-grid">
@@ -191,13 +270,11 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                             <div className="metric-info">
                                 <h4>Total Gastos</h4>
                                 <p className="value">
-                                    <AnimatedNumber value={totalExpenses} prefix="$" />
+                                    <AnimatedNumber value={displayExpenses} prefix="$" />
                                 </p>
-                                <p className="subtitle">Este mes</p>
+                                <p className="subtitle">{viewMode === 'total' ? 'Acumulado total' : 'Este mes'}</p>
                             </div>
-                            <div className="icon-box">
-                                <Wallet size={24} />
-                            </div>
+                            <div className="icon-box"><Wallet size={24} /></div>
                         </div>
                     </div>
 
@@ -207,13 +284,11 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                             <div className="metric-info">
                                 <h4>Deudas Pagadas</h4>
                                 <p className="value">
-                                    <AnimatedNumber value={paidAmount} prefix="$" />
+                                    <AnimatedNumber value={displayPaid} prefix="$" />
                                 </p>
-                                <p className="subtitle">Total amortizado</p>
+                                <p className="subtitle">{viewMode === 'total' ? 'Total amortizado' : 'Pagado este mes'}</p>
                             </div>
-                            <div className="icon-box">
-                                <Check size={24} />
-                            </div>
+                            <div className="icon-box"><Check size={24} /></div>
                         </div>
                     </div>
 
@@ -221,15 +296,13 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                     <div className="metric-card debt">
                         <div className="metric-content">
                             <div className="metric-info">
-                                <h4>Total Deudas</h4>
+                                <h4>{viewMode === 'total' ? 'Total Deudas' : 'Cuotas del Mes'}</h4>
                                 <p className="value">
-                                    <AnimatedNumber value={totalDebt} prefix="$" />
+                                    <AnimatedNumber value={displayTotal} prefix="$" />
                                 </p>
-                                <p className="subtitle">Global (Pagado + Pendiente)</p>
+                                <p className="subtitle">{viewMode === 'total' ? 'Global (pag. + pend.)' : 'Monto base del mes'}</p>
                             </div>
-                            <div className="icon-box">
-                                <TrendingDown size={24} />
-                            </div>
+                            <div className="icon-box"><TrendingDown size={24} /></div>
                         </div>
                     </div>
 
@@ -239,13 +312,11 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                             <div className="metric-info">
                                 <h4>Por Pagar</h4>
                                 <p className="value">
-                                    <AnimatedNumber value={pendingAmount} prefix="$" />
+                                    <AnimatedNumber value={displayPending} prefix="$" />
                                 </p>
-                                <p className="subtitle">Próximos vencimientos</p>
+                                <p className="subtitle">{viewMode === 'total' ? 'Pendiente total' : 'Pendiente este mes'}</p>
                             </div>
-                            <div className="icon-box">
-                                <Clock size={24} />
-                            </div>
+                            <div className="icon-box"><Clock size={24} /></div>
                         </div>
                     </div>
                 </div>

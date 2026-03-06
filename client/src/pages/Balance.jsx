@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Wallet, CreditCard, PieChart, Calendar, Sparkles, AlertOctagon } from 'lucide-react';
-import { useIncome } from '../hooks/useIncome';
-import { useDebts } from '../hooks/useDebts';
-import { useExpenses } from '../hooks/useExpenses';
+import { useData } from '../context/DataContext';
 import AnimatedNumber from '../components/AnimatedNumber';
 
 const Balance = () => {
-    const { incomes } = useIncome();
-    const { debts } = useDebts();
-    const { expenses } = useExpenses();
+    const { incomes, debts, expenses } = useData();
 
     // --- Month selector ---
     const todayISO = new Date().toISOString().slice(0, 7); // e.g. "2026-03"
@@ -41,35 +37,36 @@ const Balance = () => {
         return isoDateStr.slice(0, 7);
     };
 
-    // Monthly debts: due in selected month
-    // Exclude debts imported via Excel as 'paid' with no paidAt (historical records).
-    const monthlyDebts = debts.filter(d => {
-        if (d.status === 'paid' && !d.paidAt) return false;
+    // Consolidate monthly debt calculations (js-combine-iterations)
+    const { totalPaidDebts, totalPendingDebts, totalDebts, monthlyDebts } = (debts || []).reduce((acc, d) => {
         const debtMonth = getLocalMonthPrefix(d.date);
         const isSelectedMonth = debtMonth === selectedMonth;
-        // Overdue pending only for current month view
         const isOverduePending = selectedMonth === todayISO && d.status === 'pending' && debtMonth < selectedMonth;
-        return isSelectedMonth || isOverduePending;
-    });
 
-    // "Pagadas este mes": debts the user manually marked paid AND paidAt is in selectedMonth
-    const paidMonthlyDebts = monthlyDebts.filter(d =>
-        d.status === 'paid' &&
-        d.paidAt &&
-        d.paidAt.startsWith(selectedMonth)
-    );
-    const totalPaidDebts = paidMonthlyDebts.reduce((sum, d) => sum + parseFloat(d.amount), 0);
+        // Skip historical paid debts without paidAt
+        if (d.status === 'paid' && !d.paidAt) return acc;
 
-    // "Pendientes del mes": debts due this month not yet paid
+        if (isSelectedMonth || isOverduePending) {
+            acc.monthlyDebts.push(d);
+            acc.totalDebts += parseFloat(d.amount);
+
+            if (d.status === 'paid' && d.paidAt?.startsWith(selectedMonth)) {
+                acc.totalPaidDebts += parseFloat(d.amount);
+            } else if (d.status === 'pending') {
+                acc.totalPendingDebts += parseFloat(d.amount);
+            }
+        }
+        return acc;
+    }, { totalPaidDebts: 0, totalPendingDebts: 0, totalDebts: 0, monthlyDebts: [] });
+
+    // Derived arrays needed by JSX for counts
+    const paidMonthlyDebts = monthlyDebts.filter(d => d.status === 'paid' && d.paidAt?.startsWith(selectedMonth));
     const pendingMonthlyDebts = monthlyDebts.filter(d => d.status === 'pending');
-    const totalPendingDebts = pendingMonthlyDebts.reduce((sum, d) => sum + parseFloat(d.amount), 0);
+    const allPendingDebts = (debts || []).filter(d => d.status === 'pending');
 
-    // totalDebts for formula display = paid + pending of the month
-    const totalDebts = monthlyDebts.reduce((sum, debt) => sum + parseFloat(debt.amount), 0);
-
-    // Also track ALL pending debts for reference
-    const allPendingDebts = debts.filter(d => d.status === 'pending');
-    const totalAllPendingDebts = allPendingDebts.reduce((sum, debt) => sum + parseFloat(debt.amount), 0);
+    // Track ALL pending debts for reference
+    const totalAllPendingDebts = allPendingDebts
+        .reduce((sum, d) => sum + parseFloat(d.amount), 0);
 
     // Balance = Ingresos − Deudas pagadas − Gastos del mes
     // Las deudas pendientes NO se restan porque todavía no salieron de la cuenta

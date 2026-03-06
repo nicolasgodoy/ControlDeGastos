@@ -252,8 +252,8 @@ function Deudas({ debts, loading, onToggleStatus, onBulkStatus, onDeleteDebt, im
 
             <div className="glass-card" style={{ boxShadow: 'var(--shadow-md)' }}>
                 <div className="debts-table">
-                    <div className="table-header deudas-grid" style={{ gridTemplateColumns: '40px 2fr 1.5fr 1fr 1fr 1fr 120px' }}>
-                        <span style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="table-header deudas-grid" style={{ gridTemplateColumns: '50px 2fr 1.5fr 1fr 1fr 1fr 120px' }}>
+                        <span style={{ paddingLeft: '0.5rem' }}>
                             <input
                                 type="checkbox"
                                 className="debt-checkbox"
@@ -279,8 +279,8 @@ function Deudas({ debts, loading, onToggleStatus, onBulkStatus, onDeleteDebt, im
                                 const entityIndex = uniqueEntities.indexOf(debt.entity);
                                 const entityColor = ENTITY_COLORS[entityIndex % ENTITY_COLORS.length];
                                 return (
-                                    <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''} ${selectedIds.includes(debt.id) ? 'selected-row' : ''}`} style={{ gridTemplateColumns: '40px 2fr 1.5fr 1fr 1fr 1fr 120px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''} ${selectedIds.includes(debt.id) ? 'selected-row' : ''}`} style={{ gridTemplateColumns: '50px 2fr 1.5fr 1fr 1fr 1fr 120px' }}>
+                                        <div style={{ paddingLeft: '0.5rem' }}>
                                             <input
                                                 type="checkbox"
                                                 className="debt-checkbox"
@@ -288,7 +288,7 @@ function Deudas({ debts, loading, onToggleStatus, onBulkStatus, onDeleteDebt, im
                                                 onChange={() => handleToggleSelect(debt.id)}
                                             />
                                         </div>
-                                        <div className="entity-info" style={{ fontWeight: '500', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <div className="entity-info" style={{ fontWeight: '500', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
                                             <div className="entity-dot" style={{ backgroundColor: entityColor }}></div>
                                             {debt.entity}
                                         </div>
