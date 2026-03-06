@@ -43,14 +43,11 @@ const Balance = () => {
         const isSelectedMonth = debtMonth === selectedMonth;
         const isOverduePending = selectedMonth === todayISO && d.status === 'pending' && debtMonth < selectedMonth;
 
-        // Skip historical paid debts without paidAt
-        if (d.status === 'paid' && !d.paidAt) return acc;
-
         if (isSelectedMonth || isOverduePending) {
             acc.monthlyDebts.push(d);
             acc.totalDebts += parseFloat(d.amount);
 
-            if (d.status === 'paid' && d.paidAt?.startsWith(selectedMonth)) {
+            if (d.status === 'paid') {
                 acc.totalPaidDebts += parseFloat(d.amount);
             } else if (d.status === 'pending') {
                 acc.totalPendingDebts += parseFloat(d.amount);
@@ -59,8 +56,8 @@ const Balance = () => {
         return acc;
     }, { totalPaidDebts: 0, totalPendingDebts: 0, totalDebts: 0, monthlyDebts: [] });
 
-    // Derived arrays needed by JSX for counts
-    const paidMonthlyDebts = monthlyDebts.filter(d => d.status === 'paid' && d.paidAt?.startsWith(selectedMonth));
+    // Derived arrays for UI lists/counts
+    const paidMonthlyDebts = monthlyDebts.filter(d => d.status === 'paid');
     const pendingMonthlyDebts = monthlyDebts.filter(d => d.status === 'pending');
     const allPendingDebts = (debts || []).filter(d => d.status === 'pending');
 

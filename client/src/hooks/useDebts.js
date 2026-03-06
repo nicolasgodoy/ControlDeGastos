@@ -158,6 +158,14 @@ export const useDebts = () => {
 
             // Save imported debts to Firestore using batch to ensure user isolation
             const batch = writeBatch(db);
+
+            // If mode is 'replace', delete current ones first
+            if (mode === 'replace') {
+                debts.forEach(d => {
+                    batch.delete(doc(db, 'debts', d.id));
+                });
+            }
+
             importedDebts.forEach(d => {
                 const newDocRef = doc(collection(db, 'debts'));
                 // Use data from server but force current userId
