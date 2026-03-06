@@ -280,7 +280,7 @@ function Deudas({ debts, loading, onToggleStatus, onBulkStatus, onDeleteDebt, im
                                 const entityColor = ENTITY_COLORS[entityIndex % ENTITY_COLORS.length];
                                 return (
                                     <div key={debt.id} className={`table-row deudas-grid ${debt.status === 'paid' ? 'paid-row' : ''} ${selectedIds.includes(debt.id) ? 'selected-row' : ''}`} style={{ gridTemplateColumns: '50px 2fr 1.5fr 1fr 1fr 1fr 120px' }}>
-                                        <div style={{ paddingLeft: '0.5rem' }}>
+                                        <div style={{ paddingLeft: '0.1rem' }}>
                                             <input
                                                 type="checkbox"
                                                 className="debt-checkbox"
