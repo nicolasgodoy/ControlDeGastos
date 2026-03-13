@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building, Calendar } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building, Calendar, Car, Bus } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CATEGORY_COLORS, ENTITY_COLORS } from '../constants/colors';
 import AnimatedNumber from '../components/AnimatedNumber';
@@ -8,15 +8,18 @@ import AnimatedNumber from '../components/AnimatedNumber';
 const getCategoryIcon = (cat) => {
     const map = {
         'comida': Utensils,
-        'transporte': Zap, // Placeholder
+        'transporte': Zap,
         'hogar': Home,
+        'servicios': Home,
         'entretenimiento': Film,
         'salud': Heart,
         'compras': ShoppingCart,
         'educacion': BookOpen,
         'otros': Wallet,
         'supermercado': ShoppingCart,
-        'gym': Heart
+        'gym': Heart,
+        'uber': Car,
+        'colectivo': Bus
     };
     return map[cat.toLowerCase()] || Wallet;
 };
@@ -49,6 +52,27 @@ const getEntityIcon = (entityName, category) => {
 // --- Colors imported from ../constants/colors ---
 
 function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
+    const CATEGORY_LABELS = {
+        'comida': 'Comida',
+        'transporte': 'Transporte',
+        'hogar': 'Hogar',
+        'servicios': 'Servicios',
+        'entretenimiento': 'Entretenimiento',
+        'salud': 'Salud',
+        'compras': 'Compras',
+        'educacion': 'Educación',
+        'supermercado': 'Supermercado',
+        'gym': 'Gimnasio',
+        'uber': 'Uber',
+        'colectivo': 'Colectivo / SUBE',
+        'otros': 'Otros'
+    };
+
+    const getCategoryLabel = (cat) => {
+        if (!cat) return 'Otros';
+        return CATEGORY_LABELS[cat.toLowerCase().trim()] || (cat.charAt(0).toUpperCase() + cat.slice(1));
+    };
+
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     useEffect(() => {
@@ -127,7 +151,7 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
     });
 
     const categoryData = Object.entries(categoryDataMap).map(([key, value]) => ({
-        name: key.charAt(0).toUpperCase() + key.slice(1),
+        name: getCategoryLabel(key),
         value,
         category: key
     })).sort((a, b) => b.value - a.value);
@@ -332,16 +356,13 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                             {categoryData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart
-                                        data={categoryData}
                                         layout="vertical"
-                                        margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
+                                        data={categoryData}
+                                        margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
                                     >
                                         <XAxis
                                             type="number"
-                                            tickFormatter={(value) => `$${value}`}
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fill: "var(--text-dim)", fontSize: 12 }}
+                                            hide
                                         />
                                         <YAxis
                                             type="category"
@@ -349,7 +370,7 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                                             axisLine={false}
                                             tickLine={false}
                                             tick={{ fill: "var(--text-main)", fontSize: 12 }}
-                                            width={70}
+                                            width={90}
                                         />
                                         <Tooltip
                                             formatter={(value) => [`$${value.toLocaleString('es-AR')}`, "Gasto"]}
