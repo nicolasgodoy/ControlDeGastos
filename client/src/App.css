@@ -32,7 +32,7 @@
 }
 
 [data-theme="light"] {
-    --bg-dark: #f8fafc;
+    --bg-dark: #e9f3fd;
     /* Slate 50 */
     --card-bg: #ffffff;
     /* White Card */
@@ -207,6 +207,16 @@ body {
 .metric-info .subtitle {
     font-size: 0.75rem;
     color: var(--text-dim);
+}
+
+/* Light mode: números en negro sobre fondo claro */
+[data-theme="light"] .metric-card .value {
+    color: #22252d;
+}
+
+/* Dark mode: números en blanco suave */
+[data-theme="dark"] .metric-card .value {
+    color: #f1f5f9;
 }
 
 .metric-card .icon-box {
@@ -1207,7 +1217,42 @@ select option {
 
     /* ... existing table styles ... */
     .top-cards {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .metric-card {
+        padding: 1rem;
+        border-radius: 0.85rem;
+    }
+
+    .metric-info h4 {
+        font-size: 0.75rem;
+    }
+
+    .metric-info .value {
+        font-size: 1.15rem;
+        word-break: break-all;
+        letter-spacing: -0.03em;
+    }
+
+    .metric-info .subtitle {
+        font-size: 0.65rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+
+    .metric-card .icon-box {
+        padding: 0.4rem;
+        border-radius: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .metric-card .icon-box svg {
+        width: 16px;
+        height: 16px;
     }
 
     .secondary-charts-grid {
