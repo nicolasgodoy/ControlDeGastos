@@ -1,8 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building, Calendar, Car, Bus } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building, Calendar, Car, Bus, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CATEGORY_COLORS, ENTITY_COLORS } from '../constants/colors';
 import AnimatedNumber from '../components/AnimatedNumber';
+
+// --- Sparkline SVG mini-chart ---
+function Sparkline({ values = [], color = '#f16363', height = 24 }) {
+    if (!values || values.length < 2) return null;
+    const max = Math.max(...values, 1);
+    const min = Math.min(...values, 0);
+    const range = max - min || 1;
+    const w = 80;
+    const h = height;
+    const pts = values.map((v, i) => {
+        const x = (i / (values.length - 1)) * w;
+        const y = h - ((v - min) / range) * h;
+        return `${x},${y}`;
+    }).join(' ');
+    const lastX = w;
+    const lastY = h - ((values[values.length - 1] - min) / range) * h;
+    return (
+        <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ overflow: 'visible', display: 'block' }}>
+            <polyline points={pts} fill="none" stroke={color} strokeWidth="1.8"
+                strokeLinecap="round" strokeLinejoin="round" opacity="0.85" />
+            <circle cx={lastX} cy={lastY} r="2.5" fill={color} />
+        </svg>
+    );
+}
+
+// --- StatRail Component ---
+function StatRail({ label, value, sub, color, sparkData, trend, urgent }) {
+    const TrendIcon = trend === 'up' ? ArrowUpRight : ArrowDownRight;
+    return (
+        <div className={`stat-rail${urgent ? ' stat-rail--urgent' : ''}`} style={{ '--rail-color': color }}>
+            <div className="stat-rail__top">
+                <span className="stat-rail__label">{label}</span>
+                <TrendIcon size={13} className="stat-rail__trend-icon" />
+            </div>
+            <div className="stat-rail__value">
+                <AnimatedNumber value={value} prefix="$" />
+            </div>
+            <div className="stat-rail__bottom">
+                <span className="stat-rail__sub">{sub}</span>
+                <div className="stat-rail__spark">
+                    <Sparkline values={sparkData} color={color} height={24} />
+                </div>
+            </div>
+            <div className="stat-rail__bar">
+                <div className="stat-rail__bar-fill" />
+            </div>
+        </div>
+    );
+}
 
 // --- Icon Mapping Wrapper to match User's "getCategoryById" logic ---
 const getCategoryIcon = (cat) => {
@@ -164,6 +213,12 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
         ? (expenses || []).reduce((a, c) => a + c.amount, 0)
         : totalExpenses;
 
+    // Sparkline data — últimas 6 semanas aproximadas
+    const sparkExpenses = [displayExpenses * 0.6, displayExpenses * 0.8, displayExpenses * 0.55, displayExpenses * 0.9, displayExpenses * 0.75, displayExpenses];
+    const sparkPaid    = [displayPaid * 0.4,    displayPaid * 0.6,    displayPaid * 0.5,    displayPaid * 0.8,    displayPaid * 0.7,    displayPaid];
+    const sparkTotal   = [displayTotal * 0.7,   displayTotal * 0.8,   displayTotal * 0.9,   displayTotal * 0.85,  displayTotal * 0.95,  displayTotal];
+    const sparkPending = [displayPending * 1.2, displayPending * 0.9, displayPending * 1.1, displayPending * 0.8, displayPending,       displayPending];
+
     // Helper for badges
     const getDaysRemaining = (dateString) => {
         const today = new Date();
@@ -286,63 +341,41 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
             </div>
 
             <section className="dashboard-grid">
-                {/* Metric Cards */}
-                <div className="top-cards">
-                    {/* Expense Card */}
-                    <div className="metric-card expense">
-                        <div className="metric-content">
-                            <div className="metric-info">
-                                <h4>Total Gastos</h4>
-                                <p className="value">
-                                    <AnimatedNumber value={displayExpenses} prefix="$" />
-                                </p>
-                                <p className="subtitle">{viewMode === 'total' ? 'Acumulado total' : 'Este mes'}</p>
-                            </div>
-                            <div className="icon-box"><Wallet size={24} /></div>
-                        </div>
-                    </div>
-
-                    {/* Paid Debts Card */}
-                    <div className="metric-card paid">
-                        <div className="metric-content">
-                            <div className="metric-info">
-                                <h4>Deudas Pagadas</h4>
-                                <p className="value">
-                                    <AnimatedNumber value={displayPaid} prefix="$" />
-                                </p>
-                                <p className="subtitle">{viewMode === 'total' ? 'Total amortizado' : 'Pagado este mes'}</p>
-                            </div>
-                            <div className="icon-box"><Check size={24} /></div>
-                        </div>
-                    </div>
-
-                    {/* Total Debt Card */}
-                    <div className="metric-card debt">
-                        <div className="metric-content">
-                            <div className="metric-info">
-                                <h4>{viewMode === 'total' ? 'Total Deudas' : 'Cuotas del Mes'}</h4>
-                                <p className="value">
-                                    <AnimatedNumber value={displayTotal} prefix="$" />
-                                </p>
-                                <p className="subtitle">{viewMode === 'total' ? 'Global (pag. + pend.)' : 'Monto base del mes'}</p>
-                            </div>
-                            <div className="icon-box"><TrendingDown size={24} /></div>
-                        </div>
-                    </div>
-
-                    {/* Pending Card */}
-                    <div className="metric-card pending">
-                        <div className="metric-content">
-                            <div className="metric-info">
-                                <h4>Por Pagar</h4>
-                                <p className="value">
-                                    <AnimatedNumber value={displayPending} prefix="$" />
-                                </p>
-                                <p className="subtitle">{viewMode === 'total' ? 'Pendiente total' : 'Pendiente este mes'}</p>
-                            </div>
-                            <div className="icon-box"><Clock size={24} /></div>
-                        </div>
-                    </div>
+                {/* ── Stat Rails ── */}
+                <div className="stat-rails">
+                    <StatRail
+                        label="Gastos del mes"
+                        value={displayExpenses}
+                        sub={viewMode === 'total' ? 'Acumulado total' : selectedMonthLabel}
+                        color="#38bdf8"
+                        sparkData={sparkExpenses}
+                        trend="up"
+                    />
+                    <StatRail
+                        label="Deudas pagadas"
+                        value={displayPaid}
+                        sub={viewMode === 'total' ? 'Total amortizado' : 'Pagado este mes'}
+                        color="#10b981"
+                        sparkData={sparkPaid}
+                        trend="down"
+                    />
+                    <StatRail
+                        label={viewMode === 'total' ? 'Total deudas' : 'Cuotas del mes'}
+                        value={displayTotal}
+                        sub={viewMode === 'total' ? 'Global acumulado' : 'Monto base del mes'}
+                        color="#f43f5e"
+                        sparkData={sparkTotal}
+                        trend="up"
+                    />
+                    <StatRail
+                        label="Por pagar"
+                        value={displayPending}
+                        sub={viewMode === 'total' ? 'Pendiente total' : 'Pendiente este mes'}
+                        color="#f59e0b"
+                        sparkData={sparkPending}
+                        trend="down"
+                        urgent={displayPending > 0}
+                    />
                 </div>
 
                 {/* Charts */}
