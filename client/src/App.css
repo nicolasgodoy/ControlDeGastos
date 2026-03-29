@@ -1476,7 +1476,12 @@ select option {
 }
 
 @keyframes rail-pulse {
-    0%, 100% { border-color: var(--glass-border); }
+
+    0%,
+    100% {
+        border-color: var(--glass-border);
+    }
+
     50% {
         border-color: var(--rail-color);
         box-shadow: 0 0 0 3px color-mix(in srgb, var(--rail-color) 10%, transparent);
@@ -1497,7 +1502,9 @@ select option {
     transition: opacity 0.2s, height 0.2s;
 }
 
-.stat-rail:hover::before { opacity: 1; }
+.stat-rail:hover::before {
+    opacity: 1;
+}
 
 .stat-rail__top {
     display: flex;
@@ -1520,11 +1527,13 @@ select option {
     flex-shrink: 0;
 }
 
-.stat-rail:hover .stat-rail__trend-icon { opacity: 1; }
+.stat-rail:hover .stat-rail__trend-icon {
+    opacity: 1;
+}
 
 .stat-rail__value {
-    font-size: 1.6rem;
-    font-weight: 800;
+    font-size: 2.5rem;
+    font-weight: 600;
     letter-spacing: -0.04em;
     color: var(--text-main);
     line-height: 1.1;
@@ -1558,7 +1567,9 @@ select option {
     align-items: flex-end;
 }
 
-.stat-rail:hover .stat-rail__spark { opacity: 1; }
+.stat-rail:hover .stat-rail__spark {
+    opacity: 1;
+}
 
 /* Bottom progress bar */
 .stat-rail__bar {
@@ -1579,18 +1590,25 @@ select option {
     transition: opacity 0.2s;
 }
 
-.stat-rail:hover .stat-rail__bar-fill { opacity: 0.9; }
+.stat-rail:hover .stat-rail__bar-fill {
+    opacity: 0.9;
+}
 
 /* Light mode */
 [data-theme="light"] .stat-rail {
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 /* ═══ RESPONSIVE ═══ */
 
 @media (max-width: 1200px) {
-    .stat-rails { grid-template-columns: repeat(2, 1fr); }
-    .stat-rail__value { font-size: 1.35rem; }
+    .stat-rails {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-rail__value {
+        font-size: 1.35rem;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1609,7 +1627,9 @@ select option {
         letter-spacing: -0.03em;
     }
 
-    .stat-rail__spark { display: none; }
+    .stat-rail__spark {
+        display: none;
+    }
 
     .stat-rail__sub {
         font-size: 0.65rem;
@@ -1618,6 +1638,11 @@ select option {
 }
 
 @media (max-width: 480px) {
-    .stat-rail__value { font-size: 0.95rem; }
-    .stat-rail__label { font-size: 0.62rem; }
+    .stat-rail__value {
+        font-size: 1.5rem;
+    }
+
+    .stat-rail__label {
+        font-size: 0.68rem;
+    }
 }
