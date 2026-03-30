@@ -166,56 +166,6 @@ function Reportes({ expenses, debts, loading }) {
                 </div>
             </div>
 
-            {/* KPI Cards Grid */}
-            <section className="stats-grid">
-                <div className="glass-card stat-item">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                            <p className="label">Promedio de Gastos</p>
-                            <p className="value">${(filteredStats.avgMonthly || 0).toLocaleString('es-AR', { maximumFractionDigits: 0 })}</p>
-                            <p className="subtitle" style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>Histórico mensual</p>
-                        </div>
-                        <div className="icon-box" style={{ background: 'rgba(99, 102, 241, 0.2)', padding: '0.5rem', borderRadius: '0.5rem' }}>
-                            <Calendar size={20} color="#6366f1" />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="glass-card stat-item">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                            <p className="label">Gasto del Periodo</p>
-                            <p className="value">${(filteredStats.currentMonth || 0).toLocaleString('es-AR')}</p>
-                            <p className="subtitle" style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>Seleccionado</p>
-                        </div>
-                        <div className="icon-box" style={{ background: 'rgba(56, 189, 248, 0.2)', padding: '0.5rem', borderRadius: '0.5rem' }}>
-                            <TrendingDown size={20} color="#38bdf8" />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="glass-card stat-item">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                            <p className="label">vs. Mes Anterior</p>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-                                <span className={`value ${filteredStats.trend > 0 ? 'danger' : 'success'}`} style={{ fontSize: '1.5rem' }}>
-                                    {Math.abs(filteredStats.trend || 0).toFixed(1)}%
-                                </span>
-                                {filteredStats.trend > 0 ? (
-                                    <ArrowUpRight size={20} color="var(--danger)" />
-                                ) : (
-                                    <ArrowDownRight size={20} color="var(--success)" />
-                                )}
-                            </div>
-                        </div>
-                        <div className="icon-box" style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '0.5rem', borderRadius: '0.5rem' }}>
-                            <Activity size={20} color="#10b981" />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* Main Chart Section */}
             <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: '400px', minWidth: 0 }}>
                 <h3 style={{ marginBottom: '1.5rem', flexShrink: 0 }}>Evolución de Gastos vs Deudas</h3>
@@ -262,6 +212,7 @@ function Reportes({ expenses, debts, loading }) {
                     </div>
                 )}
             </div>
+
 
             {/* Secondary Charts Grid */}
             <div className="secondary-charts-grid" style={{ display: 'grid', gap: '1.5rem', minWidth: 0 }}>
@@ -346,6 +297,73 @@ function Reportes({ expenses, debts, loading }) {
                     )}
                 </div>
             </div>
+
+            {/* KPI Cards Grid - Moved to bottom and highlighted */}
+            <section className="report-summary-section" style={{ 
+                marginTop: '1rem', 
+                padding: '2rem', 
+                background: 'rgba(99, 102, 241, 0.03)', 
+                borderRadius: '1.5rem', 
+                border: '1px dashed rgba(99, 102, 241, 0.2)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.5rem'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <BarChart2 size={24} color="var(--primary-solid)" />
+                    <h3 style={{ margin: 0, fontSize: '1.25rem' }}>Métricas Clave del Reporte</h3>
+                </div>
+
+                <div className="stats-grid">
+                    <div className="glass-card stat-item" style={{ borderLeft: '4px solid #6366f1' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div>
+                                <p className="label" style={{ fontWeight: '600', color: 'var(--text-dim)', fontSize: '0.85rem' }}>Promedio de Gastos</p>
+                                <p className="value" style={{ fontSize: '1.75rem', marginTop: '0.5rem' }}>${(filteredStats.avgMonthly || 0).toLocaleString('es-AR', { maximumFractionDigits: 0 })}</p>
+                                <p className="subtitle" style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>Histórico mensual</p>
+                            </div>
+                            <div className="icon-box" style={{ background: 'rgba(99, 102, 241, 0.1)', padding: '0.6rem', borderRadius: '0.75rem' }}>
+                                <Calendar size={20} color="#6366f1" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass-card stat-item" style={{ borderLeft: '4px solid #38bdf8' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div>
+                                <p className="label" style={{ fontWeight: '600', color: 'var(--text-dim)', fontSize: '0.85rem' }}>Gasto del Periodo</p>
+                                <p className="value" style={{ fontSize: '1.75rem', marginTop: '0.5rem' }}>${(filteredStats.currentMonth || 0).toLocaleString('es-AR')}</p>
+                                <p className="subtitle" style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>Mes seleccionado</p>
+                            </div>
+                            <div className="icon-box" style={{ background: 'rgba(56, 189, 248, 0.1)', padding: '0.6rem', borderRadius: '0.75rem' }}>
+                                <TrendingDown size={20} color="#38bdf8" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass-card stat-item" style={{ borderLeft: '4px solid #10b981' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div>
+                                <p className="label" style={{ fontWeight: '600', color: 'var(--text-dim)', fontSize: '0.85rem' }}>vs. Mes Anterior</p>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                    <span className={`value ${filteredStats.trend > 0 ? 'danger' : 'success'}`} style={{ fontSize: '1.75rem' }}>
+                                        {Math.abs(filteredStats.trend || 0).toFixed(1)}%
+                                    </span>
+                                    {filteredStats.trend > 0 ? (
+                                        <ArrowUpRight size={22} color="var(--danger)" />
+                                    ) : (
+                                        <ArrowDownRight size={22} color="var(--success)" />
+                                    )}
+                                </div>
+                                <p className="subtitle" style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>Tendencia</p>
+                            </div>
+                            <div className="icon-box" style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '0.6rem', borderRadius: '0.75rem' }}>
+                                <Activity size={20} color="#10b981" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }
