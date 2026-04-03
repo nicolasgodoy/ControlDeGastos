@@ -3,6 +3,7 @@ import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, Calenda
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CATEGORY_COLORS, ENTITY_COLORS } from '../constants/colors';
 import AnimatedNumber from '../components/AnimatedNumber';
+import { BankIcon, getBankColor } from '../components/BankIcon';
 
 // --- Sparkline SVG mini-chart ---
 function Sparkline({ values = [], color = '#f16363', height = 24 }) {
@@ -523,8 +524,8 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                             return (
                                 <div key={debt.id} className="payment-item">
                                     <div className="payment-left">
-                                        <div className="category-icon" style={{ backgroundColor: iconColor }}>
-                                            <Icon size={16} />
+                                        <div className="category-icon" style={{ backgroundColor: getBankColor(debt.entity), padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <BankIcon entity={debt.entity} size={32} />
                                         </div>
                                         <div className="payment-details">
                                             <p className="title">{debt.entity}</p>

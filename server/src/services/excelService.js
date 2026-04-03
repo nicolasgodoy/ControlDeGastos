@@ -2,17 +2,106 @@ import ExcelJS from 'exceljs';
 
 /**
  * Service to parse the debt spreadsheet.
- * Structure observed from user's screenshots:
- * 
- * Row 1: Bank name (GALICIA, UALA, MERCADO PAGO, ICBC)
- * Row 2: PRESTAMO 1, PRESTAMO 2, etc. (spanning 2 columns each)
- * Row 3: Fecha | Cuotas headers for each prestamo
- * Row 4+: Data rows with date and amount
- * 
- * Colors:
- * - Green background = PAID
- * - Orange background = PENDING (or no color)
+ *
+ * Structure:
+ *   Row N:   Bank name (GALICIA, UALA, MERCADO PAGO, ICBC, NARANJA)
+ *   Row N+1: PRESTAMO 1, PRESTAMO 2, …  (1 per odd column)
+ *   Row N+2: Fecha | Cuotas | Fecha | Cuotas | … (header row)
+ *   Row N+3+: Data rows
+ *   Row X:   TOTAL row – remaining balance per loan column
+ *
+ * Colors on amount cells:
+ *   Green  → PAID   (skip – already settled)
+ *   Orange → PENDING (load)
+ *   White/none → PENDING (load – not yet coloured by user)
+ *
+ * Decision: only load PENDING entries.
+ * If all cells of a loan are green its TOTAL will be 0 and we naturally
+ * load nothing for it.
  */
+
+// ── Amount string parser ──────────────────────────────────────────────────────
+// Handles Argentine formatting quirks that ExcelJS returns as strings:
+//   "20,228,87"  → 20228.87   (double-comma, last = decimal)
+//   "20.228,87"  → 20228.87   (dots = thousands, comma = decimal)
+//   "15900.38"   → 15900.38   (US style)
+//   "78760"      → 78760      (integer)
+function parseAmountStr(raw) {
+    const str = String(raw).trim();
+    const isNeg = str.startsWith('-');
+    const s = str.replace(/^-/, '').trim();
+
+    const dots   = (s.match(/\./g) || []).length;
+    const commas = (s.match(/,/g) || []).length;
+
+    let numStr;
+
+    if (dots === 0 && commas === 0) {
+        // plain integer "78760"
+        numStr = s;
+    } else if (dots === 1 && commas === 0) {
+        // US style "15900.38" or unusual "20228.87"
+        numStr = s;
+    } else if (dots === 0 && commas === 1) {
+        // AR decimal "20228,87" or thousands "20,228"
+        const [intPart, decPart] = s.split(',');
+        numStr = decPart.length <= 2
+            ? intPart.replace(/\./g, '') + '.' + decPart
+            : s.replace(/,/g, '');
+    } else if (dots === 0 && commas >= 2) {
+        // All-comma format "20,228,87" → last comma is decimal
+        const lastIdx   = s.lastIndexOf(',');
+        const decPart   = s.slice(lastIdx + 1);
+        const intPart   = s.slice(0, lastIdx).replace(/,/g, '');
+        numStr = decPart.length <= 2
+            ? intPart + '.' + decPart
+            : s.replace(/,/g, '');
+    } else {
+        // Mixed "20.228,87" – dots = thousands, trailing comma = decimal
+        const commaIdx = s.lastIndexOf(',');
+        const decPart  = s.slice(commaIdx + 1);
+        const intPart  = s.slice(0, commaIdx).replace(/\./g, '');
+        numStr = decPart.length <= 2
+            ? intPart + '.' + decPart
+            : s.replace(/[,.]/g, '');
+    }
+
+    const val = parseFloat(numStr) || 0;
+    return isNeg ? -val : val;
+}
+
+// ── Colour helpers ────────────────────────────────────────────────────────────
+function isGreen(argb) {
+    if (!argb) return false;
+    const u = argb.toUpperCase();
+    return u.includes('38761D') || u.includes('6AA84F') ||
+           u.includes('34A853') || u.includes('00B050') ||
+           u.includes('92D050') || u.includes('00FF00');
+}
+
+function getCellArgb(cell) {
+    const fill = cell.fill;
+    if (!fill) return '';
+    return fill.fgColor?.argb || fill.bgColor?.argb || '';
+}
+
+// ── Date formatter ────────────────────────────────────────────────────────────
+function formatDate(dateVal) {
+    if (dateVal instanceof Date) {
+        const y = dateVal.getUTCFullYear();
+        const m = String(dateVal.getUTCMonth() + 1).padStart(2, '0');
+        const d = String(dateVal.getUTCDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+    const s = String(dateVal);
+    if (s.includes('/')) {
+        const parts = s.split('/');
+        if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+    }
+    return s.length >= 5 ? s : null;
+}
+
+// ── Main parser ───────────────────────────────────────────────────────────────
 export const parseDebtExcel = async (filePath) => {
     const workbook = new ExcelJS.Workbook();
     try {
@@ -29,163 +118,126 @@ export const parseDebtExcel = async (filePath) => {
         const sheetName = worksheet.name.toUpperCase();
         console.log(`\n=== Processing sheet: ${sheetName} ===`);
 
-        let currentBank = 'General';
-        let loanNames = [];
+        let currentBank  = 'General';
+        let loanNames    = [];   // [{ col, name }]
+        let loanTotals   = {};   // col → remaining total (from TOTAL row)
         let inDataSection = false;
 
-        // Iterate through rows to find data
         for (let rowNum = 1; rowNum <= worksheet.rowCount; rowNum++) {
-            const row = worksheet.getRow(rowNum);
+            const row          = worksheet.getRow(rowNum);
             const firstCellVal = String(row.getCell(1).value || '').trim().toUpperCase();
 
-            // 1. Detect Bank header (Row where same value repeats or single bank name)
-            // Bank names usually: GALICIA, UALA, MERCADO PAGO, ICBC
-            if (['GALICIA', 'UALA', 'MERCADO PAGO', 'ICBC'].includes(firstCellVal)) {
-                currentBank = firstCellVal;
+            // ── 1. Bank header ───────────────────────────────────────────────
+            if (['GALICIA', 'UALA', 'MERCADO PAGO', 'ICBC', 'NARANJA'].includes(firstCellVal)) {
+                currentBank   = firstCellVal;
                 inDataSection = false;
+                loanNames     = [];
+                loanTotals    = {};
                 console.log(`Detected bank section: ${currentBank}`);
                 continue;
             }
 
-            // 2. Detect Loan Names and Fecha/Cuotas headers
-            // A row that contains "FECHA" in multiple columns means we found the header row
+            // ── 2. TOTAL row – read remaining balances per loan column ────────
+            if (inDataSection && firstCellVal === 'TOTAL') {
+                for (const loan of loanNames) {
+                    const cell  = row.getCell(loan.col + 1);
+                    let val = cell.value;
+                    if (val && typeof val === 'object' && val.result !== undefined) val = val.result;
+                    const num = typeof val === 'number' ? val : parseAmountStr(String(val || '0'));
+                    loanTotals[loan.col] = num;
+                }
+                console.log(`  TOTAL row found for ${currentBank}:`, loanTotals);
+                continue;
+            }
+
+            // Skip other summary rows (TOTAL MENS, NARANJA label, etc.)
+            if (firstCellVal.startsWith('TOTAL') || firstCellVal === 'NARANJA') continue;
+
+            // ── 3. Header row (contains "FECHA") ─────────────────────────────
             let isHeaderRow = false;
             row.eachCell({ includeEmpty: true }, (cell) => {
-                const val = String(cell.value || '').toUpperCase();
-                if (val === 'FECHA') isHeaderRow = true;
+                if (String(cell.value || '').toUpperCase() === 'FECHA') isHeaderRow = true;
             });
 
             if (isHeaderRow) {
                 inDataSection = true;
-                loanNames = [];
-                // Look at the row above to get loan names
+                loanNames     = [];
                 const prevRow = worksheet.getRow(rowNum - 1);
                 for (let c = 1; c <= worksheet.columnCount; c += 2) {
-                    const loanTitle = String(prevRow.getCell(c).value || prevRow.getCell(c + 1).value || 'Préstamo').trim();
-                    loanNames.push(loanTitle);
+                    const loanTitle = String(
+                        prevRow.getCell(c).value || prevRow.getCell(c + 1).value || ''
+                    ).trim();
+                    // Only register columns with a real loan name (skip blank / TOTAL summary cols)
+                    if (loanTitle && !loanTitle.toUpperCase().includes('TOTAL')) {
+                        loanNames.push({ col: c, name: loanTitle });
+                    }
                 }
                 continue;
             }
 
-            // 3. Process data rows
-            if (inDataSection) {
-                let hasData = false;
-                for (let i = 0; i < loanNames.length; i++) {
-                    const colNum = (i * 2) + 1;
-                    const fechaCell = row.getCell(colNum);
-                    const cuotasCell = row.getCell(colNum + 1);
+            // ── 4. Data rows ─────────────────────────────────────────────────
+            if (!inDataSection) continue;
 
-                    let dateVal = fechaCell.value;
-                    let amountVal = cuotasCell.value;
+            for (const loan of loanNames) {
+                // Skip this loan entirely if its TOTAL = 0 (fully settled)
+                if (loan.col in loanTotals && loanTotals[loan.col] <= 0) continue;
 
-                    // Support formulas (ExcelJS returns { formula: '...', result: 123 })
-                    if (amountVal && typeof amountVal === 'object' && amountVal.result !== undefined) {
-                        amountVal = amountVal.result;
-                    }
-                    if (dateVal && typeof dateVal === 'object' && dateVal.result !== undefined) {
-                        dateVal = dateVal.result;
-                    }
+                const colNum    = loan.col;
+                const fechaCell = row.getCell(colNum);
+                const cuotasCell = row.getCell(colNum + 1);
 
-                    if (dateVal && amountVal) {
-                        hasData = true;
+                let dateVal   = fechaCell.value;
+                let amountVal = cuotasCell.value;
 
-                        // Parse amount
-                        let amount = 0;
-                        if (typeof amountVal === 'number') {
-                            amount = amountVal;
-                        } else {
-                            const numStr = String(amountVal)
-                                .replace(/\./g, '')
-                                .replace(',', '.')
-                                .replace(/[^0-9.-]/g, '');
-                            amount = parseFloat(numStr) || 0;
-                        }
+                // Unwrap formula results
+                if (amountVal && typeof amountVal === 'object' && amountVal.result !== undefined) amountVal = amountVal.result;
+                if (dateVal   && typeof dateVal   === 'object' && dateVal.result   !== undefined) dateVal   = dateVal.result;
 
-                        if (amount <= 0) continue;
+                if (!dateVal || amountVal === null || amountVal === undefined || amountVal === '') continue;
 
-                        // Parse date
-                        let formattedDate = '';
-                        if (dateVal instanceof Date) {
-                            // ExcelJS usually returns dates in UTC (midnight). 
-                            // In GMT-3, this shows as previous day 21:00.
-                            // To get the actual date written in the cell (e.g. 10/09/2025), we should use UTC methods.
-                            const year = dateVal.getUTCFullYear();
-                            const month = String(dateVal.getUTCMonth() + 1).padStart(2, '0');
-                            const day = String(dateVal.getUTCDate()).padStart(2, '0');
-                            formattedDate = `${year}-${month}-${day}`;
-                        } else {
-                            const dateStr = String(dateVal);
-                            // Handle DD/MM/YYYY
-                            if (dateStr.includes('/')) {
-                                const parts = dateStr.split('/');
-                                if (parts.length === 3) {
-                                    // Assuming DD/MM/YYYY
-                                    formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-                                } else {
-                                    formattedDate = dateStr;
-                                }
-                            } else {
-                                if (dateStr.length < 5) continue;
-                                formattedDate = dateStr;
-                            }
-                        }
+                // Parse amount
+                const amount = typeof amountVal === 'number'
+                    ? amountVal
+                    : parseAmountStr(String(amountVal));
 
-                        // Check status by color
-                        let status = 'pending';
-                        const fill = cuotasCell.fill;
-                        if (fill && (fill.fgColor || fill.bgColor)) {
-                            const argb = (fill.fgColor?.argb || fill.bgColor?.argb || '').toUpperCase();
-                            // FF6AA84F, FF34A853 are green (paid)
-                            if (argb.includes('6AA84F') || argb.includes('34A853') ||
-                                argb.includes('00B050') || argb.includes('92D050') || argb.includes('00FF00')) {
-                                status = 'paid';
-                            }
-                        }
+                if (amount <= 0) continue;
 
-                        allDebts.push({
-                            id: `${currentBank}-${debtId++}`,
-                            entity: currentBank,
-                            loanName: loanNames[i],
-                            date: formattedDate,
-                            amount: amount,
-                            status: status
-                        });
-                    }
-                }
+                // Parse date
+                const formattedDate = formatDate(dateVal);
+                if (!formattedDate) continue;
 
-                // If we hit a block of empty rows in a data section, maybe we are at the end of that section
-                // But the user's sheet has gaps, so we'll just continue until the next bank header.
+                // Determine status by cell colour
+                const argb = getCellArgb(cuotasCell);
+
+                // GREEN = already paid → SKIP (user only wants outstanding debts)
+                if (isGreen(argb)) continue;
+
+                // Everything else = pending (orange, white, no colour)
+                allDebts.push({
+                    id:       `${currentBank}-${debtId++}`,
+                    entity:   currentBank,
+                    loanName: loan.name,
+                    date:     formattedDate,
+                    amount:   Math.round(amount * 100) / 100,   // 2 decimal places
+                    status:   'pending',
+                });
             }
         }
     });
 
-    // Filter out "PagoAnticipado" entries
+    // Filter out any "PagoAnticipado" artefacts
     const filteredDebts = allDebts.filter(debt =>
         !debt.loanName.toUpperCase().includes('PAGOANTICIPADO') &&
         !String(debt.date).toUpperCase().includes('PAGOANTICIPADO')
     );
 
-    console.log(`\n=== Total debts after filtering: ${filteredDebts.length} ===`);
+    // Sort chronologically
+    filteredDebts.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Sort by date (chronological order)
-    filteredDebts.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateA - dateB;
-    });
+    console.log(`\n=== Pending debts loaded: ${filteredDebts.length} ===`);
 
-    // If still no debts, return sample data
     if (filteredDebts.length === 0) {
-        console.log('Returning sample data as fallback');
-        return [
-            { id: 'GAL-1', entity: 'GALICIA', loanName: 'PRESTAMO 1', amount: 75017.65, date: '2025-09-10', status: 'pending' },
-            { id: 'GAL-2', entity: 'GALICIA', loanName: 'PRESTAMO 2', amount: 52000.00, date: '2025-10-15', status: 'paid' },
-            { id: 'UAL-1', entity: 'UALA', loanName: 'PRESTAMO 1', amount: 65962.75, date: '2025-04-07', status: 'pending' },
-            { id: 'UAL-2', entity: 'UALA', loanName: 'PRESTAMO 2', amount: 87876.68, date: '2025-05-15', status: 'paid' },
-            { id: 'MP-1', entity: 'MERCADO PAGO', loanName: 'PRESTAMO 1', amount: 39483.00, date: '2025-10-13', status: 'pending' },
-            { id: 'MP-2', entity: 'MERCADO PAGO', loanName: 'PRESTAMO 2', amount: 164433.33, date: '2025-10-13', status: 'paid' },
-            { id: 'ICBC-1', entity: 'ICBC', loanName: 'PRESTAMO 1', amount: 33026.21, date: '2025-06-04', status: 'pending' },
-        ];
+        console.log('No pending debts found — returning empty array.');
     }
 
     return filteredDebts;

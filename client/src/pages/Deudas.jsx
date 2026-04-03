@@ -4,6 +4,7 @@ import { Check, Filter, PlusCircle, Pencil, Trash2 } from 'lucide-react';
 import Toast from '../components/Toast';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { ENTITY_COLORS } from '../constants/colors';
+import { BankIcon, getBankColor } from '../components/BankIcon';
 
 // ENTITY_COLORS imported from ../constants/colors
 
@@ -288,9 +289,9 @@ function Deudas({ debts, loading, onToggleStatus, onBulkStatus, onDeleteDebt, im
                                                 onChange={() => handleToggleSelect(debt.id)}
                                             />
                                         </div>
-                                        <div className="entity-info" style={{ fontWeight: '500', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
-                                            <div className="entity-dot" style={{ backgroundColor: entityColor }}></div>
-                                            {debt.entity}
+                                        <div className="entity-info" style={{ fontWeight: '500', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+                                            <BankIcon entity={debt.entity} size={28} style={{ borderRadius: '6px', flexShrink: 0 }} />
+                                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{debt.entity}</span>
                                         </div>
                                         <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>{debt.loanName}</span>
                                         <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>

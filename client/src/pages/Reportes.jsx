@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Legend } from 'recharts';
 import { TrendingDown, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight, DollarSign, BarChart2, PieChart as PieChartIcon, Activity, Filter } from 'lucide-react';
 import { CATEGORY_COLORS, getCategoryColor } from '../constants/colors';
+import { getBankColor } from '../components/BankIcon';
 
 function Reportes({ expenses, debts, loading }) {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -38,6 +39,7 @@ function Reportes({ expenses, debts, loading }) {
     const { categoryData, monthlyData, filteredStats, currentMonthData } = useMemo(() => {
         const defaultData = {
             categoryData: [],
+            entityData: [],
             monthlyData: [],
             currentMonthData: { spending: 0, debt: 0 },
             filteredStats: { avgMonthly: 0, trend: 0, currentMonth: 0 }
@@ -102,6 +104,19 @@ function Reportes({ expenses, debts, loading }) {
             color: getCategoryColor(catName)
         }));
 
+        // Entity Distribution for selectedPeriod
+        const entityMap = {};
+        filteredDebts.forEach(debt => {
+            const ent = debt.entity;
+            entityMap[ent] = (entityMap[ent] || 0) + debt.amount;
+        });
+
+        const entityData = Object.keys(entityMap).map(entName => ({
+            name: entName,
+            value: entityMap[entName],
+            color: getBankColor(entName)
+        })).sort((a,b) => b.value - a.value);
+
         // Summary Stats for selectedPeriod
         const totalSpentAllTime = (expenses || []).reduce((sum, item) => sum + item.amount, 0);
         const distinctMonths = new Set((expenses || []).map(e => e.date.substring(0, 7))).size || 1;
@@ -125,6 +140,7 @@ function Reportes({ expenses, debts, loading }) {
 
         return {
             categoryData,
+            entityData,
             monthlyData,
             currentMonthData: { spending: currentMonthSpending, debt: currentMonthDebt },
             filteredStats: {
@@ -215,7 +231,7 @@ function Reportes({ expenses, debts, loading }) {
 
 
             {/* Secondary Charts Grid */}
-            <div className="secondary-charts-grid" style={{ display: 'grid', gap: '1.5rem', minWidth: 0 }}>
+            <div className="secondary-charts-grid" style={{ display: 'grid', gap: '1.5rem', minWidth: 0, gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)' }}>
                 <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: '350px', minWidth: 0 }}>
                     <h3 style={{ marginBottom: '1rem', flexShrink: 0 }}>Gastos por Categoría</h3>
                     {categoryData.length > 0 ? (
@@ -255,6 +271,49 @@ function Reportes({ expenses, debts, loading }) {
                         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)', flexGrow: 1 }}>
                             <PieChartIcon size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
                             <p>No hay gastos para este periodo</p>
+                        </div>
+                    )}
+                </div>
+
+                <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: '350px', minWidth: 0 }}>
+                    <h3 style={{ marginBottom: '1rem', flexShrink: 0 }}>Deudas por Entidad</h3>
+                    {entityData.length > 0 ? (
+                        <div style={{ flexGrow: 1, minHeight: 0, position: 'relative' }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={entityData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={100}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                        animationDuration={1000}
+                                    >
+                                        {entityData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                                        ))}
+                                    </Pie>
+                                    <RechartsTooltip
+                                        formatter={(val) => [`$${val.toLocaleString()}`, "Monto"]}
+                                        contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', borderRadius: '8px', color: 'var(--text-main)' }}
+                                        itemStyle={{ color: 'var(--text-main)' }}
+                                        labelStyle={{ color: 'var(--text-main)', fontWeight: 'bold' }}
+                                    />
+                                    <Legend
+                                        layout={isMobile ? "horizontal" : "vertical"}
+                                        align={isMobile ? "center" : "right"}
+                                        verticalAlign={isMobile ? "bottom" : "middle"}
+                                        wrapperStyle={isMobile ? { paddingTop: '20px', fontSize: '12px' } : { fontSize: '13px' }}
+                                    />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+                    ) : (
+                        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)', flexGrow: 1 }}>
+                            <TrendingDown size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
+                            <p>No hay deudas para este periodo</p>
                         </div>
                     )}
                 </div>
