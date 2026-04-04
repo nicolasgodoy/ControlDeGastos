@@ -233,7 +233,7 @@ function AppContent() {
 
                 <React.Suspense fallback={<PageLoader />}>
                     <Routes>
-                        <Route path="/" element={<Dashboard debts={debts} expenses={expenses} loading={loading} error={error} onToggleStatus={requestPayment} />} />
+                        <Route path="/" element={<Dashboard debts={debts} expenses={expenses} incomes={incomes} loading={loading} error={error} onToggleStatus={requestPayment} />} />
                         <Route path="/gastos" element={<Gastos expenses={expenses} loading={expensesLoading} onDeleteExpense={requestDeleteExpense} onEditExpense={requestEditExpense} onAddExpense={() => { setEditingExpense(null); setModalOpen(true); }} onDeleteAll={deleteAllExpenses} />} />
                         <Route path="/deudas" element={<Deudas debts={debts} loading={loading} onToggleStatus={requestPayment} onBulkStatus={bulkUpdateStatus} onDeleteDebt={deleteDebt} importDebts={importDebts} onDeleteAll={deleteAllDebts} />} />
                         <Route path="/deudas/nueva" element={<DebtForm />} />

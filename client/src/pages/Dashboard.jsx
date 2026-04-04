@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building, Calendar, Car, Bus, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, AlertCircle, AlertTriangle, Check, Wallet, TrendingDown, Clock, CalendarClock, ShoppingCart, Zap, Home, Film, Heart, BookOpen, Utensils, Landmark, Smartphone, CreditCard, Building, Calendar, Car, Bus, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { CATEGORY_COLORS, ENTITY_COLORS } from '../constants/colors';
 import AnimatedNumber from '../components/AnimatedNumber';
@@ -54,6 +54,54 @@ function StatRail({ label, value, sub, color, sparkData, trend, urgent }) {
     );
 }
 
+// --- ProgressRail Component ---
+function ProgressRail({ label, percentage, sub, color }) {
+    const radius = 20;
+    const circumference = 2 * Math.PI * radius;
+    const safePercentage = isNaN(percentage) ? 0 : Math.min(100, Math.max(0, percentage));
+    const strokeDashoffset = circumference - (safePercentage / 100) * circumference;
+
+    return (
+        <div className="stat-rail" style={{ '--rail-color': color }}>
+            <div className="stat-rail__top">
+                <span className="stat-rail__label">{label}</span>
+                <Check size={13} className="stat-rail__trend-icon" />
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexGrow: 1, padding: '0.6rem 0' }}>
+                <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
+                    <svg width="50" height="50" style={{ transform: 'rotate(-90deg)' }}>
+                        <circle cx="25" cy="25" r={radius} stroke="var(--bg-hover)" strokeWidth="5" fill="none" />
+                        <circle 
+                            cx="25" cy="25" r={radius} 
+                            stroke={color} 
+                            strokeWidth="5" 
+                            fill="none" 
+                            strokeDasharray={circumference}
+                            strokeDashoffset={strokeDashoffset}
+                            style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                            strokeLinecap="round"
+                        />
+                    </svg>
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                        {Math.round(safePercentage)}%
+                    </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: '600', color: safePercentage === 100 ? 'var(--success)' : 'var(--text-main)', lineHeight: 1 }}>
+                        {safePercentage === 100 ? '¡Todo al día!' : `${Math.round(100 - safePercentage)}% restante`}
+                    </span>
+                    <span className="stat-rail__sub" style={{ margin: 0 }}>{sub}</span>
+                </div>
+            </div>
+
+            <div className="stat-rail__bar">
+                <div className="stat-rail__bar-fill" />
+            </div>
+        </div>
+    );
+}
+
 // --- Icon Mapping Wrapper to match User's "getCategoryById" logic ---
 const getCategoryIcon = (cat) => {
     const map = {
@@ -101,7 +149,7 @@ const getEntityIcon = (entityName, category) => {
 
 // --- Colors imported from ../constants/colors ---
 
-function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
+function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus }) {
     const CATEGORY_LABELS = {
         'comida': 'Comida',
         'transporte': 'Transporte',
@@ -153,6 +201,11 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
         ? expenses.filter(exp => exp.date?.startsWith(selectedMonth))
         : [];
 
+    // Filter incomes to selected month
+    const currentMonthIncomes = incomes
+        ? incomes.filter(inc => inc.date?.startsWith(selectedMonth))
+        : [];
+
     // Single pass to gather global and monthly statistics (js-combine-iterations)
     const {
         totalDebtGlobal, pendingAmountGlobal, paidAmountGlobal, entityDataMap,
@@ -177,8 +230,8 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
             if (d.status === 'paid') acc.paidAmountMonth += amount;
         }
 
-        // Chart data
-        if (d.entity) {
+        // Chart data - mostrar solo lo que se adeuda (pendiente)
+        if (d.entity && d.status === 'pending') {
             acc.entityDataMap[d.entity] = (acc.entityDataMap[d.entity] || 0) + amount;
         }
         return acc;
@@ -213,6 +266,12 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
     const displayExpenses = viewMode === 'total'
         ? (expenses || []).reduce((a, c) => a + c.amount, 0)
         : totalExpenses;
+
+    const displayIncomes = viewMode === 'total'
+        ? (incomes || []).reduce((a, c) => a + Number(c.amount), 0)
+        : currentMonthIncomes.reduce((a, c) => a + Number(c.amount), 0);
+
+    const availableBalance = displayIncomes - displayExpenses - displayTotal;
 
     // Sparkline data — últimas 6 semanas aproximadas
     const sparkExpenses = [displayExpenses * 0.6, displayExpenses * 0.8, displayExpenses * 0.55, displayExpenses * 0.9, displayExpenses * 0.75, displayExpenses];
@@ -342,6 +401,41 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
             </div>
 
             <section className="dashboard-grid">
+                {/* ── Banner Ahorro ── */}
+                {displayIncomes > 0 && (
+                    <div style={{
+                        padding: '1.25rem',
+                        borderRadius: '1rem',
+                        background: availableBalance >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)',
+                        border: `1px solid ${availableBalance >= 0 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(244, 63, 94, 0.3)'}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1.25rem',
+                        marginBottom: '0.25rem'
+                    }}>
+                        {availableBalance >= 0 ? (
+                            <div style={{ background: 'var(--success)', color: 'white', padding: '0.6rem', borderRadius: '50%', flexShrink: 0, boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)' }}>
+                                <TrendingUp size={28} />
+                            </div>
+                        ) : (
+                            <div style={{ background: 'var(--danger)', color: 'white', padding: '0.6rem', borderRadius: '50%', flexShrink: 0, boxShadow: '0 4px 12px rgba(244, 63, 94, 0.3)' }}>
+                                <TrendingDown size={28} />
+                            </div>
+                        )}
+                        <div>
+                            <h4 style={{ margin: 0, color: availableBalance >= 0 ? 'var(--success)' : 'var(--danger)', fontSize: '1.15rem', fontWeight: '700' }}>
+                               {availableBalance >= 0 ? '¡Excelente mes!' : 'Atención con tus finanzas'}
+                            </h4>
+                            <p style={{ margin: '0.25rem 0 0 0', color: 'var(--text-main)', fontSize: '0.95rem', lineHeight: '1.4' }}>
+                                {availableBalance >= 0 
+                                    ? <>Venís con un saldo a favor de <strong>${availableBalance.toLocaleString('es-AR')}</strong> limpios (ya descontando tus gastos y cuotas).</>
+                                    : <>Estás excedido/a por <strong>${Math.abs(availableBalance).toLocaleString('es-AR')}</strong> (tus gastos y cuotas superan los ingresos).</>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* ── Stat Rails ── */}
                 <div className="stat-rails">
                     <StatRail
@@ -361,14 +455,6 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                         trend="down"
                     />
                     <StatRail
-                        label={viewMode === 'total' ? 'Total deudas' : 'Cuotas del mes'}
-                        value={displayTotal}
-                        sub={viewMode === 'total' ? 'Global acumulado' : 'Monto base del mes'}
-                        color="#f43f5e"
-                        sparkData={sparkTotal}
-                        trend="up"
-                    />
-                    <StatRail
                         label="Por pagar"
                         value={displayPending}
                         sub={viewMode === 'total' ? 'Pendiente total' : 'Pendiente este mes'}
@@ -376,6 +462,12 @@ function Dashboard({ debts, expenses, loading, error, onToggleStatus }) {
                         sparkData={sparkPending}
                         trend="down"
                         urgent={displayPending > 0}
+                    />
+                    <ProgressRail
+                        label="Progreso de Pagos"
+                        percentage={displayTotal > 0 ? (displayPaid / displayTotal) * 100 : 0}
+                        sub={viewMode === 'total' ? 'Deuda global' : 'Meta del mes'}
+                        color="#8b5cf6"
                     />
                 </div>
 

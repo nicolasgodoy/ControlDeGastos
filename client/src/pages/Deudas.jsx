@@ -397,26 +397,40 @@ function Deudas({ debts, loading, onToggleStatus, onBulkStatus, onDeleteDebt, im
             {importModal.isOpen && (
                 <div className="modal-overlay" style={{ background: 'var(--overlay-bg)' }} onClick={() => setImportModal({ isOpen: false, file: null })}>
                     <div className="modal glass-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', textAlign: 'center', padding: '2rem', boxShadow: 'var(--shadow-md)' }}>
-                        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Importar Deudas</h2>
+                        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Importar archivo Excel</h2>
                         <p style={{ color: 'var(--text-dim)', marginBottom: '1.5rem' }}>
-                            Seleccioná cómo querés importar el archivo Excel:
+                            {debts.length > 0 
+                                ? 'Ya tenés deudas guardadas. ¿Cómo querés importar las nuevas?' 
+                                : 'Todo listo para procesar tus cuotas y préstamos en el archivo.'}
                         </p>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            <button
-                                className="add-btn"
-                                onClick={() => confirmImport('append')}
-                                style={{ width: '100%', background: 'var(--primary-solid)', color: 'white' }}
-                            >
-                                Sumar a las actuales
-                            </button>
-                            <button
-                                className="action-btn"
-                                onClick={() => confirmImport('replace')}
-                                style={{ width: '100%', color: 'var(--danger)', border: '1px solid var(--danger)', background: 'transparent' }}
-                            >
-                                Reemplazar todas
-                            </button>
+                            {debts.length > 0 ? (
+                                <>
+                                    <button
+                                        className="add-btn"
+                                        onClick={() => confirmImport('append')}
+                                        style={{ width: '100%', background: 'var(--primary-solid)', color: 'white' }}
+                                    >
+                                        Añadir a mis deudas actuales
+                                    </button>
+                                    <button
+                                        className="action-btn"
+                                        onClick={() => confirmImport('replace')}
+                                        style={{ width: '100%', color: 'var(--danger)', border: '1px solid var(--danger)', background: 'transparent' }}
+                                    >
+                                        Borrar actuales y cargar de cero
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    className="add-btn"
+                                    onClick={() => confirmImport('append')}
+                                    style={{ width: '100%', background: 'var(--primary-solid)', color: 'white' }}
+                                >
+                                    Cargar deudas al sistema
+                                </button>
+                            )}
                             <button
                                 className="action-btn"
                                 onClick={() => setImportModal({ isOpen: false, file: null })}

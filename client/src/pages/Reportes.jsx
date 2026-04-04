@@ -36,7 +36,7 @@ function Reportes({ expenses, debts, loading }) {
     }, [expenses, debts]);
 
     // Process Data based on selectedPeriod
-    const { categoryData, monthlyData, filteredStats, currentMonthData } = useMemo(() => {
+    const { categoryData, entityData, monthlyData, filteredStats, currentMonthData } = useMemo(() => {
         const defaultData = {
             categoryData: [],
             entityData: [],
@@ -66,7 +66,9 @@ function Reportes({ expenses, debts, loading }) {
             if (isExpense) {
                 monthMap[sortKey].spending += Number(item.amount) || 0;
             } else if ('entity' in item) {
-                monthMap[sortKey].debt += Number(item.amount) || 0;
+                if (item.status === 'pending') {
+                    monthMap[sortKey].debt += Number(item.amount) || 0;
+                }
             }
         });
 
@@ -88,13 +90,13 @@ function Reportes({ expenses, debts, loading }) {
         const monthlyData = displayMonths.map(key => monthMap[key]);
 
         // 2. Filtered Data for selectedPeriod
-        const filteredExpenses = (expenses || []).filter(exp => exp.date.startsWith(selectedPeriod));
-        const filteredDebts = (debts || []).filter(debt => debt.date.startsWith(selectedPeriod));
+        const filteredExpenses = (expenses || []).filter(exp => exp.date?.startsWith(selectedPeriod));
+        const filteredDebts = (debts || []).filter(debt => debt.date?.startsWith(selectedPeriod) && debt.status === 'pending');
 
         // Category Distribution for selectedPeriod
         const catMap = {};
         filteredExpenses.forEach(exp => {
-            const cat = exp.category.toLowerCase();
+            const cat = (exp.category || 'otros').toLowerCase();
             catMap[cat] = (catMap[cat] || 0) + exp.amount;
         });
 
