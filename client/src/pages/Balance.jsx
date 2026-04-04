@@ -81,9 +81,14 @@ const MonthProjectionCard = ({ month, isCurrentMonth, isCurrent }) => {
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
                             <span style={{ color: 'var(--success)' }}>↑</span> {fmt(month.income)}
                         </span>
-                        {month.debts > 0 && (
+                        {month.pendingDebts > 0 && (
                             <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                                <span style={{ color: 'var(--warning)' }}>↓</span> {fmt(month.debts)} deudas
+                                <span style={{ color: 'var(--warning)' }}>↓</span> {fmt(month.pendingDebts)} a pagar
+                            </span>
+                        )}
+                        {month.paidDebts > 0 && (
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                                <span style={{ color: 'var(--success)' }}>✓</span> {fmt(month.paidDebts)} ya pagado
                             </span>
                         )}
                         {month.expenses > 0 && (
@@ -116,10 +121,17 @@ const MonthProjectionCard = ({ month, isCurrentMonth, isCurrent }) => {
                         border: '1px solid var(--glass-border)',
                         display: 'flex',
                     }}>
-                        {/* Debts bar */}
+                        {/* Paid Debts bar */}
                         <div style={{
                             height: '100%',
-                            width: `${Math.min((month.debts / month.income) * 100, 100)}%`,
+                            width: `${Math.min((month.paidDebts / month.income) * 100, 100)}%`,
+                            background: 'var(--success)',
+                            transition: 'width 0.5s ease',
+                        }} />
+                        {/* Pending Debts bar */}
+                        <div style={{
+                            height: '100%',
+                            width: `${Math.min((month.pendingDebts / month.income) * 100, 100 - (month.paidDebts / month.income) * 100)}%`,
                             background: 'var(--warning)',
                             transition: 'width 0.5s ease',
                         }} />
@@ -131,10 +143,15 @@ const MonthProjectionCard = ({ month, isCurrentMonth, isCurrent }) => {
                             transition: 'width 0.5s ease',
                         }} />
                     </div>
-                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.3rem' }}>
-                        {month.debts > 0 && (
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.3rem', flexWrap: 'wrap' }}>
+                        {month.pendingDebts > 0 && (
                             <span style={{ fontSize: '0.65rem', color: 'var(--warning)' }}>
-                                ■ Deudas {((month.debts / month.income) * 100).toFixed(0)}%
+                                ■ Pendientes {((month.pendingDebts / month.income) * 100).toFixed(0)}%
+                            </span>
+                        )}
+                        {month.paidDebts > 0 && (
+                            <span style={{ fontSize: '0.65rem', color: 'var(--success)' }}>
+                                ■ Pagadas {((month.paidDebts / month.income) * 100).toFixed(0)}%
                             </span>
                         )}
                         {month.expenses > 0 && (

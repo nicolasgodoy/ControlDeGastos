@@ -167,7 +167,7 @@ export const useDebts = () => {
                     const firstCellVal = String(row.getCell(1).value || '').trim().toUpperCase();
 
                     // 1. Detect Bank header
-                    if (['GALICIA', 'UALA', 'MERCADO PAGO', 'ICBC'].includes(firstCellVal)) {
+                    if (['GALICIA', 'UALA', 'MERCADO PAGO', 'ICBC', 'NARANJA', 'NARANJA X'].includes(firstCellVal)) {
                         currentBank = firstCellVal;
                         inDataSection = false;
                         continue;
@@ -253,9 +253,28 @@ export const useDebts = () => {
                                 const fill = cuotasCell.fill;
                                 if (fill && (fill.fgColor || fill.bgColor)) {
                                     const argb = (fill.fgColor?.argb || fill.bgColor?.argb || '').toUpperCase();
-                                    // FF6AA84F, FF34A853 are green (paid)
-                                    if (argb.includes('6AA84F') || argb.includes('34A853') ||
-                                        argb.includes('00B050') || argb.includes('92D050') || argb.includes('00FF00')) {
+                                    const theme = fill.fgColor?.theme;
+                                    
+                                    // Robust green check
+                                    let isGreen = false;
+                                    if (argb) {
+                                        if (argb.includes('38761D') || argb.includes('6AA84F') ||
+                                            argb.includes('34A853') || argb.includes('00B050') ||
+                                            argb.includes('92D050') || argb.includes('00FF00') ||
+                                            argb.includes('B6D7A8') || argb.includes('D9EAD3') ||
+                                            argb.includes('E2EFDA') || argb.includes('C6E0B4') ||
+                                            argb.includes('A9D08E')) {
+                                            isGreen = true;
+                                        } else if (argb.length === 8 && argb.startsWith('FF')) {
+                                            const r = parseInt(argb.substring(2, 4), 16);
+                                            const g = parseInt(argb.substring(4, 6), 16);
+                                            const b = parseInt(argb.substring(6, 8), 16);
+                                            if (g > r + 20 && g > b + 20 && g > 100) isGreen = true;
+                                        }
+                                    }
+                                    if (theme === 6 || theme === 9) isGreen = true;
+
+                                    if (isGreen) {
                                         status = 'paid';
                                     }
                                 }
