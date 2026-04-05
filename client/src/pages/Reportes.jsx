@@ -36,31 +36,39 @@ function Reportes({ expenses, debts, loading }) {
     }, [expenses, debts]);
 
     // Process Data based on selectedPeriod
-    const { categoryData, entityData, monthlyData, filteredStats, currentMonthData } = useMemo(() => {
+    const { categoryData, entityData, monthlyData, filteredStats, currentMonthData, totalRemainingDebt } = useMemo(() => {
         const defaultData = {
             categoryData: [],
             entityData: [],
             monthlyData: [],
             currentMonthData: { spending: 0, debt: 0 },
-            filteredStats: { avgMonthly: 0, trend: 0, currentMonth: 0 }
+            filteredStats: { avgMonthly: 0, trend: 0, currentMonth: 0 },
+            totalRemainingDebt: 0
         };
 
         // If both are empty, return default
         if ((!expenses || expenses.length === 0) && (!debts || debts.length === 0)) return defaultData;
 
-        // 1. Total Monthly Evolution (Center around selectedPeriod)
+        // 1. Calculate historical and future debt Hits
         const monthMap = {};
-        [...(expenses || []), ...(debts || [])].forEach(item => {
+        const allDebts = debts || [];
+        const allExpenses = expenses || [];
+
+        // Pre-calculate the total pending debt across all time
+        const totalPendingNow = allDebts
+            .filter(d => d.status === 'pending')
+            .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+
+        [...allExpenses, ...allDebts].forEach(item => {
             if (!item.date) return;
             const sortKey = item.date.substring(0, 7);
             const date = new Date(item.date);
             const monthName = date.toLocaleString('es-ES', { month: 'short' });
 
             if (!monthMap[sortKey]) {
-                monthMap[sortKey] = { name: monthName, rawDate: sortKey, spending: 0, debt: 0 };
+                monthMap[sortKey] = { name: monthName, rawDate: sortKey, spending: 0, debt: 0, accumulatedDebt: 0 };
             }
 
-            // Robust check: Expenses have category AND NO entity. Debts have entity.
             const isExpense = 'category' in item && !('entity' in item);
 
             if (isExpense) {
@@ -73,25 +81,36 @@ function Reportes({ expenses, debts, loading }) {
         });
 
         const sortedMonths = Object.keys(monthMap).sort();
+        
+        // Calculate Accumulated Debt (Running Balance)
+        // We start with totalPendingNow and subtract the debt impacts of previous months
+        // But wait, the debts in monthMap are only the ones PENDING in those months.
+        // For a future-looking chart, for any month M, the accumulated debt is the sum of all pending debts >= M.
+        
+        sortedMonths.forEach(mKey => {
+            monthMap[mKey].accumulatedDebt = allDebts
+                .filter(d => d.status === 'pending' && (!d.date || d.date.substring(0, 7) >= mKey))
+                .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+        });
+
         const selectedIdx = sortedMonths.indexOf(selectedPeriod);
 
         let displayMonths = [];
         if (selectedIdx !== -1) {
-            // Show 4 months before and up to 2 months after selected for context
-            displayMonths = sortedMonths.slice(Math.max(0, selectedIdx - 4), selectedIdx + 2);
+            // Show 4 months before and up to 4 months after selected for better context of debt reduction
+            displayMonths = sortedMonths.slice(Math.max(0, selectedIdx - 4), selectedIdx + 5);
         } else {
-            // Fallback to months around today
             const todayKey = new Date().toISOString().substring(0, 7);
             const todayIdx = sortedMonths.findIndex(k => k >= todayKey);
             const start = todayIdx !== -1 ? Math.max(0, todayIdx - 3) : Math.max(0, sortedMonths.length - 6);
-            displayMonths = sortedMonths.slice(start, start + 6);
+            displayMonths = sortedMonths.slice(start, start + 8);
         }
 
         const monthlyData = displayMonths.map(key => monthMap[key]);
 
         // 2. Filtered Data for selectedPeriod
-        const filteredExpenses = (expenses || []).filter(exp => exp.date?.startsWith(selectedPeriod));
-        const filteredDebts = (debts || []).filter(debt => debt.date?.startsWith(selectedPeriod) && debt.status === 'pending');
+        const filteredExpenses = allExpenses.filter(exp => exp.date?.startsWith(selectedPeriod));
+        const filteredDebts = allDebts.filter(debt => debt.date?.startsWith(selectedPeriod) && debt.status === 'pending');
 
         // Category Distribution for selectedPeriod
         const catMap = {};
@@ -120,8 +139,8 @@ function Reportes({ expenses, debts, loading }) {
         })).sort((a,b) => b.value - a.value);
 
         // Summary Stats for selectedPeriod
-        const totalSpentAllTime = (expenses || []).reduce((sum, item) => sum + item.amount, 0);
-        const distinctMonths = new Set((expenses || []).map(e => e.date.substring(0, 7))).size || 1;
+        const totalSpentAllTime = allExpenses.reduce((sum, item) => sum + item.amount, 0);
+        const distinctMonths = new Set(allExpenses.map(e => e.date.substring(0, 7))).size || 1;
         const avgMonthly = totalSpentAllTime / distinctMonths;
 
         const currentMonthSpending = filteredExpenses.reduce((sum, item) => sum + item.amount, 0);
@@ -145,6 +164,7 @@ function Reportes({ expenses, debts, loading }) {
             entityData,
             monthlyData,
             currentMonthData: { spending: currentMonthSpending, debt: currentMonthDebt },
+            totalRemainingDebt: totalPendingNow,
             filteredStats: {
                 avgMonthly,
                 trend: isFinite(trend) ? trend : 0,
@@ -200,6 +220,10 @@ function Reportes({ expenses, debts, loading }) {
                                         <stop offset="5%" stopColor="#dc2626" stopOpacity={0.8} />
                                         <stop offset="95%" stopColor="#dc2626" stopOpacity={0} />
                                     </linearGradient>
+                                    <linearGradient id="colorAccumulated" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                                    </linearGradient>
                                 </defs>
                                 <XAxis
                                     dataKey="name"
@@ -218,7 +242,8 @@ function Reportes({ expenses, debts, loading }) {
                                     labelStyle={{ color: 'var(--text-main)', fontWeight: 'bold', marginBottom: '4px' }}
                                 />
                                 <Area type="monotone" dataKey="spending" name="Gastos" stroke="#0ea5e9" strokeWidth={2} fillOpacity={1} fill="url(#colorSpending)" />
-                                <Area type="monotone" dataKey="debt" name="Deudas" stroke="#dc2626" strokeWidth={2} fillOpacity={1} fill="url(#colorDebt)" />
+                                <Area type="monotone" dataKey="debt" name="Cuotas del Mes" stroke="#dc2626" strokeWidth={2} fillOpacity={1} fill="url(#colorDebt)" />
+                                <Area type="monotone" dataKey="accumulatedDebt" name="Deuda Pendiente (Saldo)" stroke="#8b5cf6" strokeWidth={2} fillOpacity={1} fill="url(#colorAccumulated)" strokeDasharray="5 5" />
                                 <Legend verticalAlign="top" height={36} />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -420,6 +445,19 @@ function Reportes({ expenses, debts, loading }) {
                             </div>
                             <div className="icon-box" style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '0.6rem', borderRadius: '0.75rem' }}>
                                 <Activity size={20} color="#10b981" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass-card stat-item" style={{ borderLeft: '4px solid #8b5cf6' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div>
+                                <p className="label" style={{ fontWeight: '600', color: 'var(--text-dim)', fontSize: '0.85rem' }}>Deuda Total Pendiente</p>
+                                <p className="value" style={{ fontSize: '1.75rem', marginTop: '0.5rem' }}>${(totalRemainingDebt || 0).toLocaleString('es-AR')}</p>
+                                <p className="subtitle" style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>Resto del plan</p>
+                            </div>
+                            <div className="icon-box" style={{ background: 'rgba(139, 92, 246, 0.1)', padding: '0.6rem', borderRadius: '0.75rem' }}>
+                                <DollarSign size={20} color="#8b5cf6" />
                             </div>
                         </div>
                     </div>

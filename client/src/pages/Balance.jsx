@@ -77,43 +77,48 @@ const MonthProjectionCard = ({ month, isCurrentMonth, isCurrent }) => {
                     </div>
 
                     {/* Mini stats row */}
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                            <span style={{ color: 'var(--success)' }}>↑</span> {fmt(month.income)}
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.4rem' }}>
+                        <span style={{ fontSize: '0.92rem', color: 'var(--text-dim)' }}>
+                            <span style={{ color: 'var(--success)' }}>↑</span> <strong style={{ color: 'var(--text-main)' }}>{fmt(month.income)}</strong>
                         </span>
                         {month.pendingDebts > 0 && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                                <span style={{ color: 'var(--warning)' }}>↓</span> {fmt(month.pendingDebts)} a pagar
+                            <span style={{ fontSize: '0.92rem', color: 'var(--text-dim)' }}>
+                                <span style={{ color: 'var(--warning)' }}>↓</span> <strong style={{ color: 'var(--text-main)' }}>{fmt(month.pendingDebts)}</strong> pendientes
                             </span>
                         )}
-                        {month.paidDebts > 0 && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                                <span style={{ color: 'var(--success)' }}>✓</span> {fmt(month.paidDebts)} ya pagado
+                        {month.paidDebts > 0 && isCurrentMonth && (
+                            <span style={{ fontSize: '0.92rem', color: 'var(--text-dim)' }}>
+                                <span style={{ color: 'var(--success)' }}>✓</span> <strong style={{ color: 'var(--text-main)' }}>{fmt(month.paidDebts)}</strong> pagado
                             </span>
                         )}
                         {month.expenses > 0 && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                                <span style={{ color: 'var(--primary)' }}>↓</span> {fmt(month.expenses)} gastos
+                            <span style={{ fontSize: '0.92rem', color: 'var(--text-dim)' }}>
+                                <span style={{ color: 'var(--primary)' }}>↓</span> <strong style={{ color: 'var(--text-main)' }}>{fmt(month.expenses)}</strong> gastos
                             </span>
                         )}
+                        <span style={{ fontSize: '0.92rem', color: 'var(--text-dim)', borderLeft: '1px solid var(--glass-border)', paddingLeft: '0.75rem' }}>
+                            Resto Deuda: <strong style={{ color: 'var(--text-main)' }}>{fmt(month.remainingDebtAfterMonth)}</strong>
+                        </span>
                     </div>
                 </div>
 
                 {/* Right: balance del mes + acumulado */}
-                <div style={{ textAlign: 'right', minWidth: '130px' }}>
-                    <div style={{ fontSize: '0.65rem', color: 'var(--text-dim)', marginBottom: '1px' }}>balance del mes</div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: '800', color: balanceColor, lineHeight: 1.1 }}>
+                <div style={{ textAlign: 'right', minWidth: '150px' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        {isCurrentMonth ? 'Saldo Libre (Real)' : 'Saldo Libre del mes'}
+                    </div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '800', color: balanceColor, lineHeight: 1.1 }}>
                         {month.projectedBalance >= 0 ? '+' : ''}{fmt(month.projectedBalance)}
                     </div>
-                    <div style={{ fontSize: '0.65rem', color: 'var(--text-dim)', marginTop: '4px', marginBottom: '1px' }}>acumulado</div>
-                    <div style={{ fontSize: '0.8rem', fontWeight: '700', color: cumulativeColor }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '8px', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Acumulado</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: '700', color: cumulativeColor }}>
                         {month.cumulativeBalance >= 0 ? '+' : ''}{fmt(month.cumulativeBalance)}
                     </div>
                 </div>
             </div>
 
             {/* Debt bar */}
-            {(month.debts > 0 || month.expenses > 0) && month.income > 0 && (
+            {(month.barPendingDebts > 0 || month.barPaidDebts > 0 || month.barExpenses > 0) && month.income > 0 && (
                 <div style={{ marginTop: '0.75rem' }}>
                     <div style={{
                         height: '5px', background: 'var(--bg-subtle)',
@@ -124,42 +129,49 @@ const MonthProjectionCard = ({ month, isCurrentMonth, isCurrent }) => {
                         {/* Paid Debts bar */}
                         <div style={{
                             height: '100%',
-                            width: `${Math.min((month.paidDebts / month.income) * 100, 100)}%`,
+                            width: `${Math.min((month.barPaidDebts / month.income) * 100, 100)}%`,
                             background: 'var(--success)',
                             transition: 'width 0.5s ease',
                         }} />
                         {/* Pending Debts bar */}
                         <div style={{
                             height: '100%',
-                            width: `${Math.min((month.pendingDebts / month.income) * 100, 100 - (month.paidDebts / month.income) * 100)}%`,
+                            width: `${Math.min((month.barPendingDebts / month.income) * 100, 100 - (month.barPaidDebts / month.income) * 100)}%`,
                             background: 'var(--warning)',
                             transition: 'width 0.5s ease',
                         }} />
                         {/* Expenses bar */}
                         <div style={{
                             height: '100%',
-                            width: `${Math.min((month.expenses / month.income) * 100, 100 - (month.debts / month.income) * 100)}%`,
+                            width: `${Math.min((month.barExpenses / month.income) * 100, 100 - ((month.barPaidDebts + month.barPendingDebts) / month.income) * 100)}%`,
                             background: 'var(--primary)',
                             transition: 'width 0.5s ease',
                         }} />
                     </div>
                     <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.3rem', flexWrap: 'wrap' }}>
-                        {month.pendingDebts > 0 && (
+                        {month.barPendingDebts > 0 && (
                             <span style={{ fontSize: '0.65rem', color: 'var(--warning)' }}>
-                                ■ Pendientes {((month.pendingDebts / month.income) * 100).toFixed(0)}%
+                                ■ Pendientes {((month.barPendingDebts / month.income) * 100).toFixed(0)}%
                             </span>
                         )}
-                        {month.paidDebts > 0 && (
+                        {month.barPaidDebts > 0 && (
                             <span style={{ fontSize: '0.65rem', color: 'var(--success)' }}>
-                                ■ Pagadas {((month.paidDebts / month.income) * 100).toFixed(0)}%
+                                ■ {isCurrentMonth ? 'Pagado+Adelantos' : 'Pagadas'} {((month.barPaidDebts / month.income) * 100).toFixed(0)}%
                             </span>
                         )}
-                        {month.expenses > 0 && (
+                        {month.barExpenses > 0 && (
                             <span style={{ fontSize: '0.65rem', color: 'var(--primary)' }}>
-                                ■ Gastos {((month.expenses / month.income) * 100).toFixed(0)}%
+                                ■ Gastos {((month.barExpenses / month.income) * 100).toFixed(0)}%
                             </span>
                         )}
                     </div>
+                </div>
+            )}
+
+            {/* If there are prepayments, show a little note for future months */}
+            {!isCurrentMonth && month.paidDebts > 0 && (
+                <div style={{ fontSize: '0.75rem', color: 'var(--success)', marginTop: '0.5rem', fontWeight: '600' }}>
+                    ✓ {fmt(month.paidDebts)} ya adelantadas (no afectan este saldo)
                 </div>
             )}
 
@@ -266,7 +278,28 @@ const Balance = () => {
     const allPendingDebts = (debts || []).filter(d => d.status === 'pending');
     const totalAllPendingDebts = allPendingDebts.reduce((s, d) => s + parseFloat(d.amount || 0), 0);
 
-    const balance = totalIncome - totalPaidDebts - totalExpenses;
+    // Sum of all debts that are due in the FUTURE but already paid (adelantos)
+    const adelantosGlobal = useMemo(() => {
+        return (debts || []).reduce((acc, d) => {
+            const m = d.date?.slice(0, 7) || '';
+            if (m > todayISO && d.status === 'paid') return acc + parseFloat(d.amount || 0);
+            return acc;
+        }, 0);
+    }, [debts, todayISO]);
+
+    const isFuture = selectedMonth > todayISO;
+    const isCurrent = selectedMonth === todayISO;
+
+    // Balance calculation:
+    // Future: Income - Pending - Expenses (already paid debts don't affect future income)
+    // Current/Past: Income - Pending - Paid - Expenses (Money that left the pocket in that month)
+    // Note: Adelantos for FUTURE months are NOT subtracted here to keep the monthly "Saldo Libre" clean,
+    // they are instead subtracted from the cumulative balance below.
+    const balance = totalIncome 
+        - (isFuture ? 0 : totalPaidDebts) 
+        - totalPendingDebts 
+        - totalExpenses;
+    
     const balancePercentage = totalIncome > 0 ? (balance / totalIncome) * 100 : 0;
     const committedPercentage = 100 - balancePercentage;
 
@@ -288,34 +321,25 @@ const Balance = () => {
             ? recentVals.reduce((a, b) => a + b, 0) / recentVals.length
             : 0;
 
-        // Estimate a "base monthly expenses" from past expense data (avg last 3 months)
-        const recentExpenseMonths = {};
-        expenses.forEach(exp => {
-            const m = exp.date?.slice(0, 7) || '';
-            if (m) recentExpenseMonths[m] = (recentExpenseMonths[m] || 0) + parseFloat(exp.amount || 0);
-        });
-        const recentExpVals = Object.entries(recentExpenseMonths)
-            .sort(([a], [b]) => b.localeCompare(a))
-            .slice(0, 3)
-            .map(([, v]) => v);
-        const avgMonthlyExpenses = recentExpVals.length > 0
-            ? recentExpVals.reduce((a, b) => a + b, 0) / recentExpVals.length
-            : 0;
+        // monthly expense averaging logic removed per user request (not used in projection)
 
         // Group all debts by YYYY-MM
         const debtsByMonth = {};
+        let futurePaidDebtsSum = 0;
         (debts || []).forEach(d => {
             const m = d.date?.slice(0, 7) || '';
             if (!m) return;
             if (!debtsByMonth[m]) debtsByMonth[m] = [];
             debtsByMonth[m].push(d);
+
+            // Collect debts that are due in the FUTURE but are already marked PAID
+            if (m > todayISO && d.status === 'paid') {
+                futurePaidDebtsSum += parseFloat(d.amount || 0);
+            }
         });
 
         const months = [];
         let cumulativeBalance = 0;
-
-        // Adjust cumulative starting point: add all already-paid months' surplus
-        // (simplified: start at 0 and let negatives accumulate going forward)
 
         for (let m = currentMonthNum; m <= 12; m++) {
             const yyyy = currentYear;
@@ -329,13 +353,11 @@ const Balance = () => {
                 ? actualIncomeEntries.reduce((s, i) => s + parseFloat(i.amount || 0), 0)
                 : avgMonthlyIncome;
 
-            // Expenses: use actual data if available, else avg
+            // Expenses: use actual data only (no fallback to avg for future months)
             const actualExpenseEntries = expenses.filter(e => e.date?.startsWith(key));
-            const monthExpenses = actualExpenseEntries.length > 0
-                ? actualExpenseEntries.reduce((s, e) => s + parseFloat(e.amount || 0), 0)
-                : avgMonthlyExpenses;
+            const monthExpenses = actualExpenseEntries.reduce((s, e) => s + parseFloat(e.amount || 0), 0);
 
-            // Debts: all debts that fall in this month (regardless of paid/pending status)
+            // Debts: all debts that fall in this month
             const monthDebtItems = debtsByMonth[key] || [];
             const monthDebtsTotal = monthDebtItems.reduce((s, d) => s + parseFloat(d.amount || 0), 0);
             const paidDebtsTotal = monthDebtItems
@@ -345,9 +367,17 @@ const Balance = () => {
                 .filter(d => d.status === 'pending')
                 .reduce((s, d) => s + parseFloat(d.amount || 0), 0);
 
-            // Projected balance = income - ALL debts of this month - expenses
-            // (so user sees real cash impact even if not yet paid)
-            const projectedBalance = monthIncome - monthDebtsTotal - monthExpenses;
+            // Cash flow logic for the month:
+            // - For any month: deduct what's still pending and what was paid IN that month
+            // - For future months: if it's already paid, it doesn't take from that month's income
+            let cashFlowDeductions = pendingDebtsTotal + (isCurrentMonth ? paidDebtsTotal : 0);
+            
+            // Bar visualization: match the balance logic
+            let barPaidDebts = isCurrentMonth ? paidDebtsTotal : 0;
+            let barPendingDebts = pendingDebtsTotal;
+            let barExpenses = monthExpenses;
+
+            const projectedBalance = monthIncome - cashFlowDeductions - monthExpenses;
             cumulativeBalance += projectedBalance;
 
             months.push({
@@ -357,12 +387,19 @@ const Balance = () => {
                 debts: monthDebtsTotal,
                 paidDebts: paidDebtsTotal,
                 pendingDebts: pendingDebtsTotal,
+                futurePaidDebtsSum: isCurrentMonth ? futurePaidDebtsSum : 0,
                 expenses: monthExpenses,
                 projectedBalance,
                 cumulativeBalance,
                 debtItems: monthDebtItems,
+                barPendingDebts,
+                barPaidDebts,
+                barExpenses,
                 hasActualIncome: actualIncomeEntries.length > 0,
                 hasActualExpenses: actualExpenseEntries.length > 0,
+                remainingDebtAfterMonth: (debts || [])
+                    .filter(d => d.status === 'pending' && (d.date && d.date.substring(0, 7) > key))
+                    .reduce((s, d) => s + parseFloat(d.amount || 0), 0)
             });
         }
         return months;
@@ -487,10 +524,12 @@ const Balance = () => {
 
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
-                            <CreditCard size={16} color="var(--warning)" />
-                            <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)' }}>DEUDAS PAGADAS</span>
+                            <CreditCard size={16} color={totalPaidDebts > 0 ? "var(--success)" : "var(--warning)"} />
+                            <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)' }}>
+                                {isFuture ? 'YA ADELANTADAS' : 'DEUDAS PAGADAS'}
+                            </span>
                         </div>
-                        <p style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--success)', margin: 0 }}>
+                        <p style={{ fontSize: '1.2rem', fontWeight: '700', color: totalPaidDebts > 0 ? 'var(--success)' : 'var(--text-dim)', margin: 0 }}>
                             <AnimatedNumber value={totalPaidDebts} prefix="$" decimals={0} />
                         </p>
                         <p style={{ fontSize: '0.65rem', color: 'var(--warning)', margin: '2px 0 0' }}>
@@ -668,17 +707,27 @@ const Balance = () => {
                 {/* Legend */}
                 <div style={{
                     display: 'flex', gap: '1rem', flexWrap: 'wrap',
-                    padding: '0.6rem 0.9rem',
-                    background: 'var(--bg-subtle)',
-                    borderRadius: '0.6rem',
-                    border: '1px solid var(--glass-border)',
-                    marginBottom: '0.75rem',
-                    fontSize: '0.73rem', color: 'var(--text-dim)',
+                    padding: '0.75rem 1rem',
+                    background: 'rgba(99, 102, 241, 0.05)',
+                    borderRadius: '0.75rem',
+                    border: '1px solid rgba(99, 102, 241, 0.15)',
+                    marginBottom: '1rem',
+                    fontSize: '0.78rem', color: 'var(--text-main)',
+                    lineHeight: '1.4',
                 }}>
-                    <span>💡 Ingresos sin datos reales usan el promedio de los últimos meses</span>
-                    <span>· Gastos sin datos reales usan promedio histórico</span>
-                    <span style={{ color: 'var(--warning)' }}>■ Naranja = pendiente</span>
-                    <span style={{ color: 'var(--success)' }}>■ Verde = pagado</span>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>💡 Nota sobre Proyecciones:</span>
+                            El "Saldo Libre" es dinámico y disminuirá a medida que cargues tus gastos personales reales en cada mes.
+                        </span>
+                        <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>
+                            · Los meses futuros sin datos reales de ingresos usan tu promedio histórico.
+                        </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1rem' }}>
+                        <span style={{ color: 'var(--warning)', fontWeight: '600' }}>■ Naranja: Pendiente</span>
+                        <span style={{ color: 'var(--success)', fontWeight: '600' }}>■ Verde: Pagado</span>
+                    </div>
                 </div>
 
                 {/* Month cards */}
