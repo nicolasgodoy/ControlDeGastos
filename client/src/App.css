@@ -9,7 +9,6 @@
     --text-main: #f4f4f5;
     /* Zinc 100 */
     --text-dim: #a1a1aa;
-    /* Zinc 400 */
 
     --primary: linear-gradient(135deg, #f16363 0%, #e9700c 100%);
     --primary-solid: #f16363;
@@ -32,14 +31,18 @@
 }
 
 [data-theme="light"] {
-    --bg-dark: #f0f4f9;      /* More muted, slightly grayish-blue background */
-    --card-bg: #ffffff;      
+    --bg-dark: #f0f4f9;
+    /* More muted, slightly grayish-blue background */
+    --card-bg: #ffffff;
     --glass-border: rgba(15, 23, 42, 0.08);
 
-    --text-main: #334155;    /* Slate 700 - Softer than pure black */
-    --text-dim: #64748b;     /* Slate 500 */
+    --text-main: #334155;
+    /* Slate 700 - Softer than pure black */
+    --text-dim: #64748b;
+    /* Slate 500 */
 
-    --primary: #ef4444;      /* Slightly more muted red */
+    --primary: #ef4444;
+    /* Slightly more muted red */
     --primary-solid: #ef4444;
     --primary-hover: #dc2626;
 
@@ -50,7 +53,7 @@
     --info: #2563eb;
 
     /* Semantic Subtles */
-    --bg-subtle: rgba(15, 23, 42, 0.03); 
+    --bg-subtle: rgba(15, 23, 42, 0.03);
     --bg-hover: rgba(15, 23, 42, 0.05);
     --overlay-bg: rgba(15, 23, 42, 0.3);
 
