@@ -1,67 +1,47 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useCountUp } from '../hooks/useCountUp';
+import React, { useEffect, useState, useRef } from 'react';
 
 /**
- * Animated numeric display with IntersectionObserver — only animates when visible.
- *
- * Props:
- *  value    {number}  - The number to display
- *  prefix   {string}  - e.g. "$"
- *  suffix   {string}  - e.g. "%"
- *  decimals {number}  - decimal places (default 0)
- *  locale   {string}  - locale for formatting (default 'es-AR')
- *  duration {number}  - animation ms (default 900)
- *  className {string} - optional CSS class on the wrapping span
- *  style    {object}  - optional inline styles on the wrapping span
+ * Reusable animated counter component for numbers using pure React (no framer-motion dependency).
  */
-const AnimatedNumber = ({
-    value = 0,
-    prefix = '',
-    suffix = '',
-    decimals = 0,
-    locale = 'es-AR',
-    duration = 900,
-    className,
-    style
-}) => {
-    const ref = useRef(null);
-    const [visible, setVisible] = useState(false);
+const AnimatedNumber = ({ value = 0, prefix = "", suffix = "", decimals = 0, duration = 1000 }) => {
+    const [displayValue, setDisplayValue] = useState(value);
+    const prevValueRef = useRef(value);
+    const startTimeRef = useRef(null);
 
-    // Start animation only when element enters the viewport
     useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
+        const startValue = prevValueRef.current;
+        const endValue = value;
+        
+        if (startValue === endValue) return;
 
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setVisible(true);
-                    // Once visible, no need to keep observing
-                    observer.unobserve(el);
-                }
-            },
-            { threshold: 0.1 }
-        );
+        const animate = (timestamp) => {
+            if (!startTimeRef.current) startTimeRef.current = timestamp;
+            const progress = Math.min((timestamp - startTimeRef.current) / duration, 1);
+            
+            // Easing function: easeOutExpo
+            const easedProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            
+            const current = startValue + (endValue - startValue) * easedProgress;
+            setDisplayValue(current);
 
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, []);
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                startTimeRef.current = null;
+                prevValueRef.current = endValue;
+            }
+        };
 
-    // Re-trigger animation on value change even after first visibility
-    const count = useCountUp(value, duration, visible);
+        requestAnimationFrame(animate);
+    }, [value, duration]);
 
-    const formatted = decimals > 0
-        ? count.toLocaleString(locale, {
-            minimumFractionDigits: decimals,
-            maximumFractionDigits: decimals
-        })
-        : Math.round(count).toLocaleString(locale);
+    const formattedValue = new Intl.NumberFormat('es-AR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+    }).format(displayValue);
 
-    return (
-        <span ref={ref} className={className} style={style}>
-            {prefix}{formatted}{suffix}
-        </span>
-    );
+    return <span>{prefix}{formattedValue}{suffix}</span>;
 };
 
 export default AnimatedNumber;
+export { AnimatedNumber }; // Also export named for flexibility
