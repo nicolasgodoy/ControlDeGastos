@@ -619,8 +619,13 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
                                         <div className="category-icon" style={{ backgroundColor: getBankColor(debt.entity), padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <BankIcon entity={debt.entity} size={32} />
                                         </div>
-                                        <div className="payment-details">
-                                            <p className="title">{debt.entity}</p>
+                                        <div className="payment-details" style={{ minWidth: 0 }}>
+                                            <p className="title" style={{ 
+                                                whiteSpace: 'nowrap', 
+                                                overflow: 'hidden', 
+                                                textOverflow: 'ellipsis',
+                                                maxWidth: isMobile ? '120px' : 'none'
+                                            }}>{debt.entity}</p>
                                             <p className="date">
                                                 {debt.date
                                                     ? (() => {
@@ -632,7 +637,7 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
                                         </div>
                                     </div>
 
-                                    <div className="payment-right">
+                                    <div className="payment-right" style={{ flexShrink: 0 }}>
                                         <span className="payment-amount">
                                             ${debt.amount.toLocaleString('es-AR')}
                                         </span>

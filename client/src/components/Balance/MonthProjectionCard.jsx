@@ -38,10 +38,10 @@ export const MonthProjectionCard = ({ month, fmt }) => {
                 </div>
             )}
             
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
-                <div style={{ flexGrow: 1 }}>
+            <div className="projection-header">
+                <div style={{ flexGrow: 1, minWidth: 0 }}>
                     <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', marginTop: month.isCurrentMonth ? '1.5rem' : '0' }}>{monthLabelDisplay}</h3>
-                    <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--text-dim)' }}>
+                    <div className="projection-stats-row">
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                             <TrendingUp size={14} color="var(--success)" /> <AnimatedNumber value={month.income} prefix="$ " />
                         </span>
@@ -52,7 +52,7 @@ export const MonthProjectionCard = ({ month, fmt }) => {
                         )}
                         {month.pendingDebts > 0 && (
                             <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                <TrendingDown size={14} color="var(--warning)" /> <AnimatedNumber value={month.pendingDebts} prefix="$ " /> <span style={{fontSize: '0.75rem'}}>pendientes</span>
+                                <TrendingDown size={14} color="var(--warning)" /> <AnimatedNumber value={month.pendingDebts} prefix="$ " /> <span style={{fontSize: '0.75rem'}}>pend.</span>
                             </span>
                         )}
                         {month.expenses > 0 && (
@@ -60,22 +60,27 @@ export const MonthProjectionCard = ({ month, fmt }) => {
                                 <Wallet size={14} color="var(--text-dim)" /> <AnimatedNumber value={month.expenses} prefix="$ " /> <span style={{fontSize: '0.75rem'}}>gastos</span>
                             </span>
                         )}
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', borderLeft: '1px solid var(--glass-border)', paddingLeft: '0.75rem' }}>
-                            <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem' }}>Resto Deuda:</span> <strong>{fmt(month.totalDebts)}</strong>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem' }}>Resto:</span> <strong>{fmt(month.totalDebts)}</strong>
                         </span>
                     </div>
                 </div>
 
-                <div style={{ textAlign: 'right', minWidth: '150px' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        {month.isCurrentMonth ? 'Saldo Libre (Real)' : 'Saldo Libre del mes'}
+                <div className="projection-values-column">
+                    <div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Saldo Libre ({month.isCurrentMonth ? 'Real' : 'Mes'})
+                        </div>
+                        <div className="main-value" style={{ fontSize: '1.5rem', fontWeight: '800', color: balanceColor, lineHeight: 1.1 }}>
+                            {month.projectedBalance >= 0 ? '+' : ''}{fmt(month.projectedBalance)}
+                        </div>
                     </div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '800', color: balanceColor, lineHeight: 1.1 }}>
-                        {month.projectedBalance >= 0 ? '+' : ''}{fmt(month.projectedBalance)}
-                    </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '8px', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Acumulado</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: '700', color: cumulativeColor }}>
-                        {month.cumulativeBalance >= 0 ? '+' : ''}{fmt(month.cumulativeBalance)}
+                    
+                    <div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '8px', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Acumulado</div>
+                        <div style={{ fontSize: '1.2rem', fontWeight: '700', color: cumulativeColor }}>
+                            {month.cumulativeBalance >= 0 ? '+' : ''}{fmt(month.cumulativeBalance)}
+                        </div>
                     </div>
                 </div>
             </div>

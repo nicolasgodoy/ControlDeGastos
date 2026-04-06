@@ -183,17 +183,8 @@ const Balance = () => {
                 </div>
 
                 {/* Projection Legend / Warning */}
-                <div style={{
-                    display: 'flex', gap: '1rem', flexWrap: 'wrap',
-                    padding: '1rem',
-                    background: 'rgba(99, 102, 241, 0.05)',
-                    borderRadius: '1rem',
-                    border: '1px solid rgba(99, 102, 241, 0.15)',
-                    marginBottom: '1.5rem',
-                    fontSize: '0.85rem', color: 'var(--text-main)',
-                    lineHeight: '1.5',
-                }}>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <div className="balance-notice">
+                    <div className="balance-notice-content">
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <span style={{ color: 'var(--primary)', fontWeight: '800' }}>💡 NOTA:</span>
                             El "Saldo Libre" es dinámico y disminuirá a medida que cargues nuevos gastos reales.
@@ -202,7 +193,7 @@ const Balance = () => {
                             · Meses futuros sin datos reales de ingresos estiman tu promedio histórico.
                         </span>
                     </div>
-                    <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1.25rem' }}>
+                    <div className="balance-notice-legend">
                         <span style={{ color: 'var(--warning)', fontWeight: '700' }}>■ Naranja: Deuda</span>
                         <span style={{ color: 'var(--success)', fontWeight: '700' }}>■ Verde: Pagado</span>
                     </div>
