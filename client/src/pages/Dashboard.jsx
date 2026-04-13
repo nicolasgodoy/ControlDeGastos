@@ -30,7 +30,7 @@ function Sparkline({ values = [], color = '#f16363', height = 24 }) {
 }
 
 // --- StatRail Component ---
-function StatRail({ label, value, sub, color, sparkData, trend, urgent }) {
+function StatRail({ label, value, sub, color, sparkData, trend, urgent, decimals = 0 }) {
     const TrendIcon = trend === 'up' ? ArrowUpRight : ArrowDownRight;
     return (
         <div className={`stat-rail${urgent ? ' stat-rail--urgent' : ''}`} style={{ '--rail-color': color }}>
@@ -39,7 +39,7 @@ function StatRail({ label, value, sub, color, sparkData, trend, urgent }) {
                 <TrendIcon size={13} className="stat-rail__trend-icon" />
             </div>
             <div className="stat-rail__value">
-                <AnimatedNumber value={value} prefix="$" />
+                <AnimatedNumber value={value} prefix="$" decimals={decimals} />
             </div>
             <div className="stat-rail__bottom">
                 <span className="stat-rail__sub">{sub}</span>
@@ -211,7 +211,8 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
         totalDebtGlobal, pendingAmountGlobal, paidAmountGlobal, entityDataMap,
         totalDebtMonth, pendingAmountMonth, paidAmountMonth, pendingDebtsRaw
     } = (debts || []).reduce((acc, d) => {
-        const amount = Number(d.amount) || 0;
+        const val = typeof d.amount === 'string' ? parseFloat(d.amount.replace(',','.')) : d.amount;
+        const amount = (isNaN(val) || val === null) ? 0 : val;
         const debtMonth = d.date?.slice(0, 7);
 
         // Global context
@@ -440,32 +441,35 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
                 <div className="stat-rails">
                     <StatRail
                         label="Gastos del mes"
-                        value={displayExpenses}
+                        value={Number(displayExpenses) || 0}
                         sub={viewMode === 'total' ? 'Acumulado total' : selectedMonthLabel}
                         color="#38bdf8"
                         sparkData={sparkExpenses}
                         trend="up"
+                        decimals={2}
                     />
                     <StatRail
                         label="Deudas pagadas"
-                        value={displayPaid}
+                        value={Number(displayPaid) || 0}
                         sub={viewMode === 'total' ? 'Total amortizado' : 'Pagado este mes'}
                         color="#10b981"
                         sparkData={sparkPaid}
                         trend="down"
+                        decimals={2}
                     />
                     <StatRail
                         label="Por pagar"
-                        value={displayPending}
+                        value={Number(displayPending) || 0}
                         sub={viewMode === 'total' ? 'Pendiente total' : 'Pendiente este mes'}
                         color="#f59e0b"
                         sparkData={sparkPending}
                         trend="down"
-                        urgent={displayPending > 0}
+                        urgent={Number(displayPending) > 0}
+                        decimals={2}
                     />
                     <ProgressRail
                         label="Progreso de Pagos"
-                        percentage={displayTotal > 0 ? (displayPaid / displayTotal) * 100 : 0}
+                        percentage={Number(displayTotal) > 0 ? (Number(displayPaid) / Number(displayTotal)) * 100 : 0}
                         sub={viewMode === 'total' ? 'Deuda global' : 'Meta del mes'}
                         color="#8b5cf6"
                     />

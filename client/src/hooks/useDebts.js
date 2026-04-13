@@ -153,173 +153,130 @@ export const useDebts = () => {
             await workbook.xlsx.load(buffer);
 
             const allDebts = [];
-            let debtCounter = 1;
+            const formatDate = (val) => {
+                if (!val) return null;
+                if (val instanceof Date || (val.getMonth && typeof val.getMonth === 'function')) {
+                    const d = new Date(val);
+                    return d.toISOString().split('T')[0];
+                }
+                if (typeof val === 'number' && val > 30000 && val < 60000) {
+                    const date = new Date(Math.round((val - 25569) * 86400 * 1000));
+                    return date.toISOString().split('T')[0];
+                }
+                const s = String(val).trim().toLowerCase();
+                const m1 = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+                if (m1) {
+                    let y = m1[3];
+                    if (y.length === 2) y = '20' + y;
+                    return `${y}-${m1[2].padStart(2, '0')}-${m1[1].padStart(2, '0')}`;
+                }
+                return null;
+            };
 
+            const parseAmountStr = (val) => {
+                if (val === null || val === undefined || val === '') return 0;
+                if (typeof val === 'number') return val;
+                if (typeof val === 'object' && val.result !== undefined) return parseAmountStr(val.result);
+                let cleaned = String(val).replace(/\$/g, '').replace(/\s/g, '');
+                if (cleaned.includes(',') && cleaned.includes('.')) {
+                    cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+                } else if (cleaned.includes(',')) {
+                    cleaned = cleaned.replace(',', '.');
+                }
+                return parseFloat(cleaned) || 0;
+            };
+
+            console.log('--- Iniciando Importación Final ---');
             workbook.eachSheet((worksheet) => {
-                const sheetName = worksheet.name.toUpperCase();
-                let currentBank = 'General';
-                let loanNames = [];
-                let inDataSection = false;
-
-                // Iterate through rows to find data
+                const bankHeaders = ['GALICIA', 'UALA', 'MERCADO PAGO', 'ICBC', 'NARANJA', 'NARANJA X'];
+                
                 for (let rowNum = 1; rowNum <= worksheet.rowCount; rowNum++) {
                     const row = worksheet.getRow(rowNum);
-                    const firstCellVal = String(row.getCell(1).value || '').trim().toUpperCase();
+                    const cell1 = String(row.getCell(1).value || '').trim().toUpperCase();
 
-                    // 1. Detect Bank header
-                    if (['GALICIA', 'UALA', 'MERCADO PAGO', 'ICBC', 'NARANJA', 'NARANJA X'].includes(firstCellVal)) {
-                        currentBank = firstCellVal;
-                        inDataSection = false;
-                        continue;
-                    }
+                    if (bankHeaders.includes(cell1)) {
+                        const currentBank = cell1;
+                        let loanCols = [];
+                        
+                        // Escanear columnas reales
+                        const limit = Math.min(rowNum + 50, worksheet.rowCount);
+                        for (let r = rowNum + 1; r <= limit; r++) {
+                            const scanRow = worksheet.getRow(r);
+                            const checkV = String(scanRow.getCell(1).value || '').toUpperCase();
+                            if (bankHeaders.includes(checkV) && r > rowNum + 1) break;
 
-                    // 2. Detect Loan Names and Fecha/Cuotas headers
-                    let isHeaderRow = false;
-                    row.eachCell({ includeEmpty: true }, (cell) => {
-                        const val = String(cell.value || '').toUpperCase();
-                        if (val === 'FECHA') isHeaderRow = true;
-                    });
+                            for (let c = 1; c <= 30; c++) {
+                                if (loanCols.find(x => x.col === c)) continue;
+                                let v1 = scanRow.getCell(c).value;
+                                let v2 = scanRow.getCell(c+1).value;
+                                if (v1 && typeof v1 === 'object' && v1.result !== undefined) v1 = v1.result;
+                                if (v2 && typeof v2 === 'object' && v2.result !== undefined) v2 = v2.result;
 
-                    if (isHeaderRow) {
-                        inDataSection = true;
-                        loanNames = [];
-                        // Look at the row above to get loan names
-                        const prevRow = worksheet.getRow(rowNum - 1);
-                        // Header pattern: Fecha | Monto, Fecha | Monto...
-                        for (let c = 1; c <= worksheet.columnCount; c += 2) {
-                            const loanTitle = String(prevRow.getCell(c).value || prevRow.getCell(c + 1).value || 'Préstamo').trim();
-                            loanNames.push(loanTitle);
+                                const fDate = formatDate(v1);
+                                const fAmt = parseAmountStr(v2);
+
+                                if (fDate && fAmt > 0) {
+                                    // Buscar nombre arriba
+                                    let loanName = '';
+                                    for (let off = -5; off <= 2; off++) {
+                                        const nr = worksheet.getRow(r + off);
+                                        if (!nr) continue;
+                                        const nv = String(nr.getCell(c).value || '').trim();
+                                        if (nv && !formatDate(nv) && isNaN(parseFloat(nv.replace(',','.')))) {
+                                            loanName = nv; break;
+                                        }
+                                    }
+                                    loanCols.push({ col: c, name: loanName || `P ${loanCols.length + 1}` });
+                                }
+                            }
                         }
-                        continue;
-                    }
 
-                    // 3. Process data rows
-                    if (inDataSection) {
-                        for (let i = 0; i < loanNames.length; i++) {
-                            const colNum = (i * 2) + 1;
-                            const fechaCell = row.getCell(colNum);
-                            const cuotasCell = row.getCell(colNum + 1);
+                        console.log(`Buscando datos para ${currentBank}...`);
 
-                            let dateVal = fechaCell.value;
-                            let amountVal = cuotasCell.value;
+                        for (let pr = rowNum + 1; pr <= worksheet.rowCount; pr++) {
+                            const dataRow = worksheet.getRow(pr);
+                            const checkV = String(dataRow.getCell(1).value || '').toUpperCase();
+                            if (bankHeaders.includes(checkV) && pr > rowNum + 1) break;
+                            if (checkV.includes('TOTAL')) break;
 
-                            // Support formulas
-                            if (amountVal && typeof amountVal === 'object' && amountVal.result !== undefined) {
-                                amountVal = amountVal.result;
-                            }
-                            if (dateVal && typeof dateVal === 'object' && dateVal.result !== undefined) {
-                                dateVal = dateVal.result;
-                            }
+                            for (const loan of loanCols) {
+                                let dVal = dataRow.getCell(loan.col).value;
+                                let aVal = dataRow.getCell(loan.col + 1).value;
+                                if (dVal && typeof dVal === 'object' && dVal.result !== undefined) dVal = dVal.result;
+                                if (aVal && typeof aVal === 'object' && aVal.result !== undefined) aVal = aVal.result;
 
-                            if (dateVal && amountVal) {
-                                // Parse amount
-                                let amount = 0;
-                                if (typeof amountVal === 'number') {
-                                    amount = amountVal;
-                                } else {
-                                    const numStr = String(amountVal)
-                                        .replace(/\./g, '')
-                                        .replace(',', '.')
-                                        .replace(/[^0-9.-]/g, '');
-                                    amount = parseFloat(numStr) || 0;
-                                }
+                                const fDate = formatDate(dVal);
+                                const amount = parseAmountStr(aVal);
 
-                                if (amount <= 0) continue;
-
-                                // Parse date
-                                let formattedDate = '';
-                                if (dateVal instanceof Date) {
-                                    const year = dateVal.getUTCFullYear();
-                                    const month = String(dateVal.getUTCMonth() + 1).padStart(2, '0');
-                                    const day = String(dateVal.getUTCDate()).padStart(2, '0');
-                                    formattedDate = `${year}-${month}-${day}`;
-                                } else {
-                                    const dateStr = String(dateVal);
-                                    if (dateStr.includes('/')) {
-                                        const parts = dateStr.split('/');
-                                        if (parts.length === 3) {
-                                            formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-                                        } else {
-                                            formattedDate = dateStr;
-                                        }
-                                    } else {
-                                        if (dateStr.length < 5) continue;
-                                        formattedDate = dateStr;
+                                if (fDate && amount > 0) {
+                                    let status = 'pending';
+                                    const fill = dataRow.getCell(loan.col + 1).fill;
+                                    if (fill && (fill.fgColor || fill.bgColor)) {
+                                        const argb = (fill.fgColor?.argb || fill.bgColor?.argb || '').toUpperCase();
+                                        if (argb.includes('93C47D') || argb.includes('B6D7A8') || argb.includes('D9EAD3') || argb.includes('6AA84F')) status = 'paid';
                                     }
+                                    allDebts.push({ entity: currentBank, loanName: loan.name, date: fDate, amount, status });
                                 }
-
-                                // Check status by color (matches server logic)
-                                let status = 'pending';
-                                const fill = cuotasCell.fill;
-                                if (fill && (fill.fgColor || fill.bgColor)) {
-                                    const argb = (fill.fgColor?.argb || fill.bgColor?.argb || '').toUpperCase();
-                                    const theme = fill.fgColor?.theme;
-                                    
-                                    // Robust green check
-                                    let isGreen = false;
-                                    if (argb) {
-                                        if (argb.includes('38761D') || argb.includes('6AA84F') ||
-                                            argb.includes('34A853') || argb.includes('00B050') ||
-                                            argb.includes('92D050') || argb.includes('00FF00') ||
-                                            argb.includes('B6D7A8') || argb.includes('D9EAD3') ||
-                                            argb.includes('E2EFDA') || argb.includes('C6E0B4') ||
-                                            argb.includes('A9D08E')) {
-                                            isGreen = true;
-                                        } else if (argb.length === 8 && argb.startsWith('FF')) {
-                                            const r = parseInt(argb.substring(2, 4), 16);
-                                            const g = parseInt(argb.substring(4, 6), 16);
-                                            const b = parseInt(argb.substring(6, 8), 16);
-                                            if (g > r + 20 && g > b + 20 && g > 100) isGreen = true;
-                                        }
-                                    }
-                                    if (theme === 6 || theme === 9) isGreen = true;
-
-                                    if (isGreen) {
-                                        status = 'paid';
-                                    }
-                                }
-
-                                allDebts.push({
-                                    entity: currentBank,
-                                    loanName: loanNames[i],
-                                    date: formattedDate,
-                                    amount: amount,
-                                    status: status
-                                });
                             }
                         }
                     }
                 }
             });
+            console.log('Importación completada. Total:', allDebts.length);
 
-            // Filter out internal keywords
-            const filteredDebts = allDebts.filter(debt =>
-                !debt.loanName.toUpperCase().includes('PAGOANTICIPADO') &&
-                !String(debt.date).toUpperCase().includes('PAGOANTICIPADO')
-            );
 
-            // Save to Firestore using batch
             const batch = writeBatch(db);
-
-            // If mode is 'replace', delete current ones first
             if (mode === 'replace') {
-                debts.forEach(d => {
-                    batch.delete(doc(db, 'debts', d.id));
-                });
+                debts.forEach(d => batch.delete(doc(db, 'debts', d.id)));
             }
 
-            filteredDebts.forEach(d => {
+            allDebts.forEach(d => {
                 const newDocRef = doc(collection(db, 'debts'));
-                batch.set(newDocRef, {
-                    ...d,
-                    userId: user.uid,
-                    createdAt: serverTimestamp()
-                });
+                batch.set(newDocRef, { ...d, userId: user.uid, createdAt: serverTimestamp() });
             });
 
             await batch.commit();
-
-            return { success: true, count: filteredDebts.length };
+            return { success: true, count: allDebts.length };
         } catch (err) {
             console.error('Error importing debts:', err);
             return { success: false, error: err.message };

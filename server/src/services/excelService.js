@@ -74,14 +74,19 @@ function parseAmountStr(raw) {
 function isGreen(argb) {
     if (!argb) return false;
     const u = argb.toUpperCase();
+    // Common green shades used in Excel for "Paid" status
     return u.includes('38761D') || u.includes('6AA84F') ||
            u.includes('34A853') || u.includes('00B050') ||
-           u.includes('92D050') || u.includes('00FF00');
+           u.includes('92D050') || u.includes('00FF00') ||
+           u.includes('B6D7A8') || u.includes('D9EAD3');
 }
 
 function getCellArgb(cell) {
     const fill = cell.fill;
     if (!fill) return '';
+    if (fill.type === 'pattern' && fill.fgColor) {
+        return fill.fgColor.argb || '';
+    }
     return fill.fgColor?.argb || fill.bgColor?.argb || '';
 }
 
@@ -93,12 +98,15 @@ function formatDate(dateVal) {
         const d = String(dateVal.getUTCDate()).padStart(2, '0');
         return `${y}-${m}-${d}`;
     }
-    const s = String(dateVal);
+    if (!dateVal) return null;
+    const s = String(dateVal).trim();
     if (s.includes('/')) {
         const parts = s.split('/');
         if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
     }
-    return s.length >= 5 ? s : null;
+    // Handle ISO strings that might come as text
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+    return s.length >= 5 && !isNaN(Date.parse(s)) ? new Date(s).toISOString().slice(0,10) : null;
 }
 
 // ── Main parser ───────────────────────────────────────────────────────────────
@@ -120,7 +128,7 @@ export const parseDebtExcel = async (filePath) => {
 
         let currentBank  = 'General';
         let loanNames    = [];   // [{ col, name }]
-        let loanTotals   = {};   // col → remaining total (from TOTAL row)
+        let loanTotals    = {};   // col → remaining total (from TOTAL row)
         let inDataSection = false;
 
         for (let rowNum = 1; rowNum <= worksheet.rowCount; rowNum++) {
@@ -130,15 +138,69 @@ export const parseDebtExcel = async (filePath) => {
             // ── 1. Bank header ───────────────────────────────────────────────
             if (['GALICIA', 'UALA', 'MERCADO PAGO', 'ICBC', 'NARANJA'].includes(firstCellVal)) {
                 currentBank   = firstCellVal;
-                inDataSection = false;
+                inDataSection = true;
                 loanNames     = [];
                 loanTotals    = {};
                 console.log(`Detected bank section: ${currentBank}`);
+
+                // --- ROBUST PRE-SCAN ---
+                const sectionStart = rowNum;
+                const sectionEnd   = Math.min(rowNum + 150, worksheet.rowCount);
+                const detectedCols = new Set();
+
+                for (let r = sectionStart; r <= sectionEnd; r++) {
+                    const scanRow = worksheet.getRow(r);
+                    const firstVal = String(scanRow.getCell(1).value || '').toUpperCase();
+                    if (r > sectionStart && ['GALICIA', 'UALA', 'MERCADO PAGO', 'ICBC', 'NARANJA'].includes(firstVal)) break;
+
+                    for (let c = 1; c <= worksheet.columnCount - 1; c++) {
+                        if (detectedCols.has(c)) continue;
+                        
+                        let v1 = scanRow.getCell(c).value;
+                        let v2 = scanRow.getCell(c+1).value;
+                        if (v1 && typeof v1 === 'object' && v1.result !== undefined) v1 = v1.result;
+                        if (v2 && typeof v2 === 'object' && v2.result !== undefined) v2 = v2.result;
+
+                        const fmtD = formatDate(v1);
+                        const isAmt = (typeof v2 === 'number' && v2 !== 0) || (v2 && !isNaN(parseAmountStr(String(v2))));
+
+                        if (fmtD && isAmt) {
+                            // Valid pair found
+                            detectedCols.add(c);
+                        }
+                    }
+                }
+
+                // Map detected columns to names
+                for (const c of Array.from(detectedCols).sort((a,b) => a-b)) {
+                    let nameCandidates = [];
+                    // Look in several rows around the start for anything that looks like a name
+                    for (let rOffset = -2; rOffset <= 3; rOffset++) {
+                        const targetRowNum = sectionStart + rOffset;
+                        if (targetRowNum < 1) continue;
+                        const targetRow = worksheet.getRow(targetRowNum);
+                        if (!targetRow) continue;
+                        const cell = targetRow.getCell(c);
+                        const val = cell.value;
+                        if (val instanceof Date) continue;
+                        const v = String(val || '').trim();
+                        if (v && !v.toUpperCase().includes('FECHA') && !v.toUpperCase().includes('CUOTAS') && 
+                            !v.toUpperCase().includes('TOTAL') && isNaN(Number(v.replace(',','.'))) &&
+                            !/^\d{1,2}[-/]\d{1,2}/.test(v)) {
+                            nameCandidates.push(v);
+                        }
+                    }
+                    
+                    let finalName = [...new Set(nameCandidates)].join(' ');
+                    if (!finalName) finalName = `P ${loanNames.length + 1}`;
+                    loanNames.push({ col: c, name: finalName });
+                }
+                console.log(`[Parser] Found ${loanNames.length} loans for ${currentBank}`);
                 continue;
             }
 
             // ── 2. TOTAL row – read remaining balances per loan column ────────
-            if (inDataSection && firstCellVal === 'TOTAL') {
+            if (inDataSection && firstCellVal.includes('TOTAL')) {
                 for (const loan of loanNames) {
                     const cell  = row.getCell(loan.col + 1);
                     let val = cell.value;
@@ -150,37 +212,15 @@ export const parseDebtExcel = async (filePath) => {
                 continue;
             }
 
-            // Skip other summary rows (TOTAL MENS, NARANJA label, etc.)
-            if (firstCellVal.startsWith('TOTAL') || firstCellVal === 'NARANJA') continue;
+            // Skip other summary rows
+            if (firstCellVal.startsWith('GASTOS FIJOS') || firstCellVal === 'ANTICIPOS') continue;
 
-            // ── 3. Header row (contains "FECHA") ─────────────────────────────
-            let isHeaderRow = false;
-            row.eachCell({ includeEmpty: true }, (cell) => {
-                if (String(cell.value || '').toUpperCase() === 'FECHA') isHeaderRow = true;
-            });
-
-            if (isHeaderRow) {
-                inDataSection = true;
-                loanNames     = [];
-                const prevRow = worksheet.getRow(rowNum - 1);
-                for (let c = 1; c <= worksheet.columnCount; c += 2) {
-                    const loanTitle = String(
-                        prevRow.getCell(c).value || prevRow.getCell(c + 1).value || ''
-                    ).trim();
-                    // Only register columns with a real loan name (skip blank / TOTAL summary cols)
-                    if (loanTitle && !loanTitle.toUpperCase().includes('TOTAL')) {
-                        loanNames.push({ col: c, name: loanTitle });
-                    }
-                }
-                continue;
-            }
-
-            // ── 4. Data rows ─────────────────────────────────────────────────
+            // ── 4. Data processing ───────────────────────────────────────────
             if (!inDataSection) continue;
 
             for (const loan of loanNames) {
-                // Skip this loan entirely if its TOTAL = 0 (fully settled)
-                if (loan.col in loanTotals && loanTotals[loan.col] <= 0) continue;
+                // Skip check for total balance (disabled to ensure Galicia P 5 & P 6 are imported)
+                // if (loan.col in loanTotals && loanTotals[loan.col] <= 0) continue;
 
                 const colNum    = loan.col;
                 const fechaCell = row.getCell(colNum);
@@ -195,6 +235,11 @@ export const parseDebtExcel = async (filePath) => {
 
                 if (!dateVal || amountVal === null || amountVal === undefined || amountVal === '') continue;
 
+                // Skip header leftovers in data rows
+                const sDate = String(dateVal).toUpperCase();
+                const sAmount = String(amountVal).toUpperCase();
+                if (sDate === 'FECHA' || sAmount === 'CUOTAS' || sDate === 'CUOTAS') continue;
+
                 // Parse amount
                 const amount = typeof amountVal === 'number'
                     ? amountVal
@@ -208,18 +253,15 @@ export const parseDebtExcel = async (filePath) => {
 
                 // Determine status by cell colour
                 const argb = getCellArgb(cuotasCell);
+                const status = isGreen(argb) ? 'paid' : 'pending';
 
-                // GREEN = already paid → SKIP (user only wants outstanding debts)
-                if (isGreen(argb)) continue;
-
-                // Everything else = pending (orange, white, no colour)
                 allDebts.push({
                     id:       `${currentBank}-${debtId++}`,
                     entity:   currentBank,
                     loanName: loan.name,
                     date:     formattedDate,
                     amount:   Math.round(amount * 100) / 100,   // 2 decimal places
-                    status:   'pending',
+                    status:   status,
                 });
             }
         }
