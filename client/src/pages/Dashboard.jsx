@@ -206,7 +206,7 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
         ? incomes.filter(inc => inc.date?.startsWith(selectedMonth))
         : [];
 
-    // Single pass to gather global and monthly statistics (js-combine-iterations)
+    // Single pass to gather global and monthly statistics
     const {
         totalDebtGlobal, pendingAmountGlobal, paidAmountGlobal, entityDataMap,
         totalDebtMonth, pendingAmountMonth, paidAmountMonth, pendingDebtsRaw
@@ -219,7 +219,7 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
         acc.totalDebtGlobal += amount;
         if (d.status === 'pending') {
             acc.pendingAmountGlobal += amount;
-            acc.pendingDebtsRaw.push(d);
+            acc.pendingDebtsRaw.push({...d}); // Clone to avoid mutation issues
         } else if (d.status === 'paid') {
             acc.paidAmountGlobal += amount;
         }
@@ -227,8 +227,12 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
         // Monthly context: group by DUE month (not pay date)
         if (debtMonth === selectedMonth) {
             acc.totalDebtMonth += amount;
-            if (d.status === 'pending') acc.pendingAmountMonth += amount;
             if (d.status === 'paid') acc.paidAmountMonth += amount;
+        }
+        
+        // Pending amount for the selected month should include THIS month's pending AND PAST overdue debts
+        if (d.status === 'pending' && debtMonth <= selectedMonth) {
+            acc.pendingAmountMonth += amount;
         }
 
         // Chart data - mostrar solo lo que se adeuda (pendiente)
