@@ -226,21 +226,17 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
         // Monthly context: group by DUE month (not pay date)
         if (debtMonth === selectedMonth) {
             acc.totalDebtMonth += amount;
-            if (d.status === 'paid') acc.paidAmountMonth += amount;
-        }
-        
-        // Pending amount for the selected month should include THIS month's pending AND PAST overdue debts
-        if (d.status === 'pending' && debtMonth <= selectedMonth) {
-            acc.pendingAmountMonth += amount;
-            if (debtMonth < selectedMonth) {
-                // If it's from a past month and still pending, we add it to the total of the current month
-                // so the progress bar is realistic.
-                acc.totalDebtMonth += amount;
+            if (d.status === 'paid') {
+                acc.paidAmountMonth += amount;
+            } else if (d.status === 'pending') {
+                acc.pendingAmountMonth += amount;
             }
         }
 
         // Use viewMode and selectedMonth to filter charts and upcoming list
-        const includeInMonthView = !debtMonth || debtMonth <= selectedMonth;
+        // We only show items belonging strictly to the selected month in the list/chart
+        const includeInMonthView = !debtMonth || debtMonth === selectedMonth;
+        
         if (d.status === 'pending') {
             if (viewMode === 'total' || includeInMonthView) {
                 acc.pendingDebtsRaw.push({...d});
