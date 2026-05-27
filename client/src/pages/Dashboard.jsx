@@ -219,7 +219,6 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
         acc.totalDebtGlobal += amount;
         if (d.status === 'pending') {
             acc.pendingAmountGlobal += amount;
-            acc.pendingDebtsRaw.push({...d}); // Clone to avoid mutation issues
         } else if (d.status === 'paid') {
             acc.paidAmountGlobal += amount;
         }
@@ -233,12 +232,25 @@ function Dashboard({ debts, expenses, incomes, loading, error, onToggleStatus })
         // Pending amount for the selected month should include THIS month's pending AND PAST overdue debts
         if (d.status === 'pending' && debtMonth <= selectedMonth) {
             acc.pendingAmountMonth += amount;
+            if (debtMonth < selectedMonth) {
+                // If it's from a past month and still pending, we add it to the total of the current month
+                // so the progress bar is realistic.
+                acc.totalDebtMonth += amount;
+            }
         }
 
-        // Chart data - mostrar solo lo que se adeuda (pendiente)
-        if (d.entity && d.status === 'pending') {
-            acc.entityDataMap[d.entity] = (acc.entityDataMap[d.entity] || 0) + amount;
+        // Use viewMode and selectedMonth to filter charts and upcoming list
+        const includeInMonthView = !debtMonth || debtMonth <= selectedMonth;
+        if (d.status === 'pending') {
+            if (viewMode === 'total' || includeInMonthView) {
+                acc.pendingDebtsRaw.push({...d});
+                
+                if (d.entity) {
+                    acc.entityDataMap[d.entity] = (acc.entityDataMap[d.entity] || 0) + amount;
+                }
+            }
         }
+
         return acc;
     }, {
         totalDebtGlobal: 0, pendingAmountGlobal: 0, paidAmountGlobal: 0, entityDataMap: {},
