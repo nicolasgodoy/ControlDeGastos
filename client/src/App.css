@@ -529,6 +529,28 @@ input::placeholder {
     transition: background-color 0.3s;
 }
 
+/* Sidebar mascot: subtle idle float + a little extra swagger on hover */
+.sidebar-mascot {
+    animation: mascot-float 4.5s ease-in-out infinite;
+    transition: transform 0.25s ease;
+}
+
+.sidebar-mascot:hover {
+    animation-play-state: paused;
+    transform: translateY(-6px) rotate(3deg) scale(1.04);
+}
+
+@keyframes mascot-float {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-7px) rotate(1.5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-mascot {
+        animation: none;
+    }
+}
+
 .logo h2 {
     font-size: 1.75rem;
     margin-bottom: 2.5rem;

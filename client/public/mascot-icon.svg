@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
+  <defs>
+    <linearGradient id="mascotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3f6b46"/>
+      <stop offset="100%" stop-color="#1e3a24"/>
+    </linearGradient>
+  </defs>
+  <rect width="440" height="440" rx="126" fill="url(#mascotGrad)"/>
+  <g transform="translate(70,70)">
+    <text x="150" y="205" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="130" fill="#ffffff" fill-opacity="0.15">$</text>
+    <path d="M76 122 L98 126" stroke="#18181b" stroke-width="7" stroke-linecap="round"/>
+    <path d="M224 122 L202 126" stroke="#18181b" stroke-width="7" stroke-linecap="round"/>
+    <rect x="70" y="132" width="62" height="42" rx="13" fill="#18181b"/>
+    <rect x="168" y="132" width="62" height="42" rx="13" fill="#18181b"/>
+    <rect x="132" y="146" width="36" height="10" rx="5" fill="#18181b"/>
+    <path d="M82 142 L100 142" stroke="#ffffff" stroke-opacity="0.35" stroke-width="6" stroke-linecap="round"/>
+    <path d="M180 142 L198 142" stroke="#ffffff" stroke-opacity="0.35" stroke-width="6" stroke-linecap="round"/>
+    <path d="M120 205 Q150 228 190 198" stroke="#18181b" stroke-width="11" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

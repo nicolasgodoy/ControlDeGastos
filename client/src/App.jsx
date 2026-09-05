@@ -165,29 +165,24 @@ function AppContent() {
         <div className="app-container">
             <nav className="sidebar glass-card">
                 <div className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem', padding: '0 0.5rem' }}>
-                    <div style={{
-                        width: '42px',
-                        height: '42px',
-                        borderRadius: '12px',
-                        background: 'linear-gradient(135deg, #f16363 0%, #e9700c 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontWeight: '800',
-                        fontSize: '1.5rem',
-                        flexShrink: 0
-                    }}>
-                        M
-                    </div>
+                    <img
+                        src="/mascot-icon.svg"
+                        alt="Flujo de Dinero"
+                        style={{
+                            width: '42px',
+                            height: '42px',
+                            borderRadius: '12px',
+                            flexShrink: 0
+                        }}
+                    />
                     <div>
-                        <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: '700', color: 'var(--text-main)' }}>MoneyFlow</h2>
+                        <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: '700', color: 'var(--text-main)' }}>Sr.Dinero</h2>
                         <p style={{ fontSize: '0.75rem', margin: 0, color: 'var(--text-dim)' }}>Control de Gastos</p>
                     </div>
                 </div>
                 <ul className="nav-links">
                     <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>
-                        <li><LayoutDashboard size={20} /> Dashboard</li>
+                        <li><LayoutDashboard size={20} /> Resumen</li>
                     </NavLink>
                     <NavLink to="/gastos" className={({ isActive }) => isActive ? 'active' : ''}>
                         <li><Wallet size={20} /> Gastos</li>
@@ -208,6 +203,19 @@ function AppContent() {
                         <li><Users size={20} /> Juntadas</li>
                     </NavLink>
                 </ul>
+
+                <img
+                    src="/mascot-full.svg"
+                    alt=""
+                    className="sidebar-mascot"
+                    style={{
+                        width: '70%',
+                        maxWidth: '150px',
+                        margin: '1rem auto 0',
+                        opacity: 0.9,
+                        alignSelf: 'center'
+                    }}
+                />
 
                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <button className="action-btn" onClick={logout} style={{ border: 'none', background: 'rgba(255,255,255,0.05)', color: 'var(--text-dim)' }}>

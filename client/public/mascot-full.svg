@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="billGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3f6b46"/>
+      <stop offset="100%" stop-color="#1e3a24"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M150 330 Q130 360 110 372" stroke="url(#billGrad)" stroke-width="22" stroke-linecap="round" fill="none"/>
+  <path d="M250 330 Q270 360 292 372" stroke="url(#billGrad)" stroke-width="22" stroke-linecap="round" fill="none"/>
+  <ellipse cx="104" cy="378" rx="20" ry="11" fill="#18181b"/>
+  <ellipse cx="298" cy="378" rx="20" ry="11" fill="#18181b"/>
+
+  <path d="M118 190 Q70 200 84 250 Q90 268 118 264" stroke="url(#billGrad)" stroke-width="24" stroke-linecap="round" fill="none"/>
+  <path d="M282 190 Q330 200 316 250 Q310 268 282 264" stroke="url(#billGrad)" stroke-width="24" stroke-linecap="round" fill="none"/>
+
+  <rect x="90" y="70" width="220" height="270" rx="30" fill="url(#billGrad)" stroke="#ffedd5" stroke-width="6"/>
+  <rect x="104" y="84" width="192" height="242" rx="20" fill="none" stroke="#ffedd5" stroke-width="2.5" stroke-opacity="0.6"/>
+
+  <circle cx="128" cy="108" r="13" fill="none" stroke="#ffedd5" stroke-width="2" stroke-opacity="0.7"/>
+  <circle cx="128" cy="108" r="6" fill="none" stroke="#ffedd5" stroke-width="2" stroke-opacity="0.7"/>
+  <circle cx="272" cy="108" r="13" fill="none" stroke="#ffedd5" stroke-width="2" stroke-opacity="0.7"/>
+  <circle cx="272" cy="108" r="6" fill="none" stroke="#ffedd5" stroke-width="2" stroke-opacity="0.7"/>
+  <circle cx="128" cy="302" r="13" fill="none" stroke="#ffedd5" stroke-width="2" stroke-opacity="0.7"/>
+  <circle cx="272" cy="302" r="13" fill="none" stroke="#ffedd5" stroke-width="2" stroke-opacity="0.7"/>
+  <text x="272" y="308" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="14" fill="#ffedd5" fill-opacity="0.8">$</text>
+
+  <text x="200" y="255" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="150" fill="#ffffff" fill-opacity="0.12">$</text>
+
+  <path d="M126 143 L172 148" stroke="#18181b" stroke-width="6" stroke-linecap="round"/>
+  <path d="M274 143 L228 148" stroke="#18181b" stroke-width="6" stroke-linecap="round"/>
+
+  <rect x="128" y="155" width="52" height="34" rx="10" fill="#18181b"/>
+  <rect x="220" y="155" width="52" height="34" rx="10" fill="#18181b"/>
+  <rect x="180" y="166" width="40" height="8" rx="4" fill="#18181b"/>
+  <path d="M138 163 L152 163" stroke="#ffffff" stroke-opacity="0.35" stroke-width="4" stroke-linecap="round"/>
+  <path d="M230 163 L244 163" stroke="#ffffff" stroke-opacity="0.35" stroke-width="4" stroke-linecap="round"/>
+
+  <path d="M172 218 Q200 236 234 212" stroke="#18181b" stroke-width="8" stroke-linecap="round" fill="none"/>
+
+  <circle cx="86" cy="256" r="15" fill="url(#billGrad)" stroke="#ffedd5" stroke-width="4"/>
+  <circle cx="314" cy="256" r="15" fill="url(#billGrad)" stroke="#ffedd5" stroke-width="4"/>
+
+  <text x="200" y="322" text-anchor="middle" font-family="'Courier New', monospace" font-weight="700" font-size="12" letter-spacing="3" fill="#ffedd5" fill-opacity="0.55">SD &#183; 01A</text>
+</svg>
