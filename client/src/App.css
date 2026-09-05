@@ -1332,6 +1332,15 @@ select option {
         grid-template-columns: 1fr !important;
     }
 
+    /* Reportes: KPI cards - the 280px minmax floor overflows narrow phones */
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .report-summary-section {
+        padding: 1.25rem !important;
+    }
+
     .charts-row {
         flex-direction: column;
     }
@@ -1449,7 +1458,7 @@ select option {
         gap: 0.75rem;
     }
 
-    .table-row.deudas-grid span:nth-child(5) {
+    .table-row.deudas-grid>span:nth-child(5) {
         /* Amount */
         grid-column: 2;
         grid-row: 1;
@@ -1459,7 +1468,7 @@ select option {
         text-align: right;
     }
 
-    .table-row.deudas-grid span:nth-child(3) {
+    .table-row.deudas-grid>span:nth-child(3) {
         /* Loan Name */
         grid-column: 1 / -1;
         /* Full width */
@@ -1468,9 +1477,13 @@ select option {
         color: var(--text-dim);
         margin-bottom: 0.25rem;
         padding-left: 2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block !important;
     }
 
-    .table-row.deudas-grid span:nth-child(4) {
+    .table-row.deudas-grid>span:nth-child(4) {
         /* Date */
         grid-column: 1;
         grid-row: 3;
@@ -1479,14 +1492,17 @@ select option {
         padding-left: 2rem;
     }
 
-    .table-row.deudas-grid span:nth-child(6) {
+    .table-row.deudas-grid>span:nth-child(6) {
         /* Status */
         grid-column: 2;
         grid-row: 3;
         justify-self: end;
     }
 
-    .table-row.deudas-grid span:last-child {
+    /* Direct-child combinator matters here: without it, this also matched
+       the entity-name <span> (last child of .entity-info), right-aligning
+       and clipping it from the start. */
+    .table-row.deudas-grid>span:last-child {
         /* Actions */
         grid-column: 1 / -1;
         grid-row: 4;

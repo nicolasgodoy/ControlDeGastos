@@ -242,9 +242,13 @@ function Reportes({ expenses, debts, loading }) {
                                     labelStyle={{ color: 'var(--text-main)', fontWeight: 'bold', marginBottom: '4px' }}
                                 />
                                 <Area type="monotone" dataKey="spending" name="Gastos" stroke="#0ea5e9" strokeWidth={2} fillOpacity={1} fill="url(#colorSpending)" />
-                                <Area type="monotone" dataKey="debt" name="Cuotas del Mes" stroke="#dc2626" strokeWidth={2} fillOpacity={1} fill="url(#colorDebt)" />
-                                <Area type="monotone" dataKey="accumulatedDebt" name="Deuda Pendiente (Saldo)" stroke="#8b5cf6" strokeWidth={2} fillOpacity={1} fill="url(#colorAccumulated)" strokeDasharray="5 5" />
-                                <Legend verticalAlign="top" height={36} />
+                                <Area type="monotone" dataKey="debt" name={isMobile ? "Cuotas" : "Cuotas del Mes"} stroke="#dc2626" strokeWidth={2} fillOpacity={1} fill="url(#colorDebt)" />
+                                <Area type="monotone" dataKey="accumulatedDebt" name={isMobile ? "Deuda" : "Deuda Pendiente (Saldo)"} stroke="#8b5cf6" strokeWidth={2} fillOpacity={1} fill="url(#colorAccumulated)" strokeDasharray="5 5" />
+                                <Legend
+                                    verticalAlign="top"
+                                    height={isMobile ? 28 : 36}
+                                    wrapperStyle={isMobile ? { fontSize: '11px' } : undefined}
+                                />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
