@@ -176,7 +176,7 @@ function AppContent() {
                         }}
                     />
                     <div>
-                        <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: '700', color: 'var(--text-main)' }}>Controla Tu Guita</h2>
+                        <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: '700', color: 'var(--text-main)' }}>Control de Biyuya</h2>
                         <p style={{ fontSize: '0.75rem', margin: 0, color: 'var(--text-dim)' }}>Control de Gastos</p>
                     </div>
                 </div>
@@ -206,6 +206,13 @@ function AppContent() {
 
                 <div className="sidebar-mascot-wrap">
                     <img src="/mascot-full.svg" alt="" className="sidebar-mascot" />
+                    <span className="mascot-coin" style={{ '--dx': '-55px', '--dy': '-75px', '--rot': '-200deg', '--delay': '0s', '--size': '16px' }} />
+                    <span className="mascot-coin" style={{ '--dx': '10px', '--dy': '-95px', '--rot': '240deg', '--delay': '0.08s', '--size': '13px' }} />
+                    <span className="mascot-coin" style={{ '--dx': '60px', '--dy': '-65px', '--rot': '180deg', '--delay': '0.15s', '--size': '15px' }} />
+                    <span className="mascot-coin" style={{ '--dx': '-85px', '--dy': '-25px', '--rot': '-260deg', '--delay': '0.05s', '--size': '12px' }} />
+                    <span className="mascot-coin" style={{ '--dx': '85px', '--dy': '-20px', '--rot': '260deg', '--delay': '0.2s', '--size': '14px' }} />
+                    <span className="mascot-coin" style={{ '--dx': '-25px', '--dy': '-105px', '--rot': '-150deg', '--delay': '0.25s', '--size': '11px' }} />
+                    <span className="mascot-coin" style={{ '--dx': '35px', '--dy': '-100px', '--rot': '150deg', '--delay': '0.12s', '--size': '13px' }} />
                 </div>
 
                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>

@@ -533,6 +533,7 @@ input::placeholder {
    shrinking with it so it never overflows the card. No idle motion —
    only a quick wave sequence when you hover it. */
 .sidebar-mascot-wrap {
+    position: relative;
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
@@ -549,6 +550,8 @@ input::placeholder {
     height: auto;
     object-fit: contain;
     opacity: 0.9;
+    position: relative;
+    z-index: 1;
 }
 
 .sidebar-mascot:hover {
@@ -564,8 +567,40 @@ input::placeholder {
     100% { transform: translateY(0) rotate(0deg); }
 }
 
+/* Gold coins burst out on hover */
+.mascot-coin {
+    position: absolute;
+    left: 50%;
+    bottom: 38%;
+    width: var(--size, 14px);
+    height: var(--size, 14px);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff7d6 0%, #ffd76a 35%, #d4a017 75%, #9c7a0f 100%);
+    box-shadow: 0 0 4px rgba(255, 215, 100, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 50%) scale(0.4);
+}
+
+.sidebar-mascot-wrap:hover .mascot-coin {
+    animation: coin-burst 1s ease-out forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes coin-burst {
+    0% { opacity: 0; transform: translate(-50%, 50%) scale(0.4) rotate(0deg); }
+    18% { opacity: 1; }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(50% + var(--dy))) scale(1) rotate(var(--rot));
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .sidebar-mascot:hover {
+        animation: none;
+    }
+    .sidebar-mascot-wrap:hover .mascot-coin {
         animation: none;
     }
 }
