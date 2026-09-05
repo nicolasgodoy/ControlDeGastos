@@ -176,7 +176,7 @@ function AppContent() {
                         }}
                     />
                     <div>
-                        <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: '700', color: 'var(--text-main)' }}>Sr.Dinero</h2>
+                        <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: '700', color: 'var(--text-main)' }}>Controla Tu Guita</h2>
                         <p style={{ fontSize: '0.75rem', margin: 0, color: 'var(--text-dim)' }}>Control de Gastos</p>
                     </div>
                 </div>

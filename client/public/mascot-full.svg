@@ -41,5 +41,5 @@
   <circle cx="86" cy="256" r="15" fill="url(#billGrad)" stroke="#ffedd5" stroke-width="4"/>
   <circle cx="314" cy="256" r="15" fill="url(#billGrad)" stroke="#ffedd5" stroke-width="4"/>
 
-  <text x="200" y="322" text-anchor="middle" font-family="'Courier New', monospace" font-weight="700" font-size="12" letter-spacing="3" fill="#ffedd5" fill-opacity="0.55">SD &#183; 01A</text>
+  <text x="200" y="322" text-anchor="middle" font-family="'Courier New', monospace" font-weight="700" font-size="12" letter-spacing="3" fill="#ffedd5" fill-opacity="0.55">CG &#183; 01A</text>
 </svg>
