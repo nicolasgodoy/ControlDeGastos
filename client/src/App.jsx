@@ -204,18 +204,9 @@ function AppContent() {
                     </NavLink>
                 </ul>
 
-                <img
-                    src="/mascot-full.svg"
-                    alt=""
-                    className="sidebar-mascot"
-                    style={{
-                        width: '70%',
-                        maxWidth: '150px',
-                        margin: '1rem auto 0',
-                        opacity: 0.9,
-                        alignSelf: 'center'
-                    }}
-                />
+                <div className="sidebar-mascot-wrap">
+                    <img src="/mascot-full.svg" alt="" className="sidebar-mascot" />
+                </div>
 
                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <button className="action-btn" onClick={logout} style={{ border: 'none', background: 'rgba(255,255,255,0.05)', color: 'var(--text-dim)' }}>

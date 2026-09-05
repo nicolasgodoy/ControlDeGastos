@@ -529,24 +529,43 @@ input::placeholder {
     transition: background-color 0.3s;
 }
 
-/* Sidebar mascot: subtle idle float + a little extra swagger on hover */
+/* Sidebar mascot: fills whatever room is left above the logout button,
+   shrinking with it so it never overflows the card. No idle motion —
+   only a quick wave sequence when you hover it. */
+.sidebar-mascot-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0.5rem 0;
+}
+
 .sidebar-mascot {
-    animation: mascot-float 4.5s ease-in-out infinite;
-    transition: transform 0.25s ease;
+    max-width: 130px;
+    width: 100%;
+    max-height: 100%;
+    height: auto;
+    object-fit: contain;
+    opacity: 0.9;
 }
 
 .sidebar-mascot:hover {
-    animation-play-state: paused;
-    transform: translateY(-6px) rotate(3deg) scale(1.04);
+    animation: mascot-wave 1.1s ease-in-out;
 }
 
-@keyframes mascot-float {
-    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
-    50% { transform: translateY(-7px) rotate(1.5deg); }
+@keyframes mascot-wave {
+    0% { transform: translateY(0) rotate(0deg); }
+    20% { transform: translateY(-10px) rotate(-6deg); }
+    40% { transform: translateY(-2px) rotate(5deg); }
+    60% { transform: translateY(-8px) rotate(-4deg); }
+    80% { transform: translateY(0) rotate(2deg); }
+    100% { transform: translateY(0) rotate(0deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .sidebar-mascot {
+    .sidebar-mascot:hover {
         animation: none;
     }
 }
